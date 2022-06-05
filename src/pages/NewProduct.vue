@@ -1,0 +1,446 @@
+<template>
+  <div class="row justify-around q-pa-md">
+    <div class="col-xl-3 col-lg-3 col-md-2 col-sm-2 col-xs-0"></div>
+    <div class="col-xl-6 col-lg-6 col-md-8 col-sm-8 col-xs-12">
+      <div class="row">
+        <q-card
+          rounded
+          class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12 q-pa-md"
+        >
+          <div class="text-h5 text-bold text-strong text-center q-pa-md">
+            Publicacion de un Nuevo Producto
+          </div>
+
+          <q-separator />
+
+          <q-input
+            class="q-pa-md"
+            v-model="editedItem.titulo"
+            label="Añade un Titulo"
+            color="blue"
+          />
+
+          <q-separator />
+
+          <q-field color="blue" class="q-pa-md" rounded outlined stack-label>
+            <template v-slot:control>
+              <div class="self-center full-width no-outline" tabindex="0">
+                Digite la descripcion
+              </div>
+            </template>
+          </q-field>
+
+          <q-editor
+            toolbar-rounded
+            color="info"
+            class="q-pa-md"
+            v-model="editedItem.descripcion"
+            label="Añade una descripcion"
+            :definitions="{
+              bold: { label: 'Bold', icon: null, tip: 'My bold tooltip' },
+            }"
+          />
+
+          <q-separator />
+
+          <q-input
+            class="q-pa-md"
+            v-model="editedItem.precio"
+            label="Digite el Precio"
+            color="blue"
+          />
+
+          <q-separator />
+
+          <q-input
+            class="q-pa-md"
+            v-model="editedItem.cantidad"
+            label="Digite la cantidad"
+            color="blue"
+          />
+
+          <q-separator />
+
+          <q-select
+            class="q-pa-md"
+            filled
+            v-model="editedItem.color"
+            :options="options"
+            label="Escoja el Color: "
+            stack-label
+            :dense="dense"
+            :options-dense="denseOpts"
+            color="blue"
+          />
+
+          <q-separator />
+
+          <form enctype="multipart/form-data" novalidate v-if="formulario">
+            <div class="dropbox">
+              <input
+                type="file"
+                multiple
+                accept="image/*"
+                class="input-file"
+                @change="iniciarCarga($event)"
+              />
+              <p>
+                {{ mensaje }}
+              </p>
+            </div>
+          </form>
+
+          <q-separator />
+
+          <!-- pintar las imagenes cargadas -->
+          <q-card bordered>
+            <q-card-section>
+              <div class="row items-star q-pa-md">
+                <q-card
+                  bordered
+                  v-for="(task, index) in urlImagen"
+                  :key="index"
+                  class="col-xl-2 col-lg-2 col-md-4 col-sm-6 col-xs-12 q-pa-md"
+                >
+                  <q-img :src="task">
+                    <q-btn
+                      class="glossy"
+                      dark
+                      rounded
+                      color="blue-7"
+                      label="x"
+                      size="xs"
+                      @click="eliminarImagen(index)"
+                    />
+                  </q-img>
+                </q-card>
+              </div>
+            </q-card-section>
+          </q-card>
+          <!-- pintar las imagenes cargadas -->
+
+          <q-btn
+            @click="anadirTarea()"
+            class="glossy"
+            dark
+            rounded
+            color="blue-7"
+            label="Guardar"
+          />
+
+          <q-separator />
+
+          <q-separator />
+        </q-card>
+      </div>
+    </div>
+    <div class="col-xl-3 col-lg-3 col-md-2 col-sm-2 col-xs-0 q-pa-md"></div>
+  </div>
+</template>
+
+<script>
+import { initializeApp } from "firebase/app";
+
+import {
+  getStorage,
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+} from "firebase/storage";
+
+export default {
+  props: {},
+  data() {
+    return {
+      valor: false,
+      files: [{}],
+      promesa: {},
+      urlImagen: [],
+      urlDescarga: [],
+      imagenes: [],
+      editedItem: {
+        titulo: "",
+        descripcion: "",
+        precio: "",
+        cantidad: "",
+        color: "",
+      },
+      options: [
+        "Rojo",
+        "Verde",
+        "Azul",
+        "Amarillo",
+        "Negro",
+        "Blanco",
+        "Morado",
+        "Naranja",
+        "Magenta",
+        "Cian",
+      ],
+      dense: false,
+      denseOpts: false,
+      formulario: true,
+      indice: 0,
+      mensaje:
+        "Arrastra tus archivos aqui para comenzar o haga clic para navegar",
+    };
+  },
+  mounted() {
+    this.iniciarFirebase();
+  },
+
+  methods: {
+    eliminarImagen(index) {
+      this.urlImagen.splice(index, 1);
+    },
+
+    iniciarCarga(evento) {
+      this.files = evento.target.files;
+      this.pintarImagenes();
+    },
+
+    pintarImagenes() {
+      for (let index = 0; index < this.files.length; index++) {
+        if (this.imagenCumpleRequisitos(index)) {
+          const reader = new FileReader();
+          reader.readAsDataURL(this.files[index]);
+          reader.onload = (e) => {
+            this.urlImagen.push(e.target.result);
+          };
+        }
+      }
+    },
+
+    pintarImagen(index) {
+      if (this.imagenCumpleRequisitos(index)) {
+        const reader = new FileReader();
+        reader.readAsDataURL(this.files[index]);
+        reader.onload = (e) => {
+          this.urlImagen.push(e.target.result);
+        };
+      }
+    },
+
+    //Este metodo es para saber si una imagen es valida
+    //la imagen debe tener una anchura de 1200px y una altura de 600px
+    //Su peso debe ser mayor a 60kb y menor a 2mbs
+    imagenCumpleRequisitos(index) {
+      let imagen = this.files[index];
+      let valido = false;
+      let tamanoMaximo = 3100000; //3 mbs
+      let tamanoMinimo = 60000; //60 kb
+      if (imagen.type === "image/png") {
+        if (imagen.size >= tamanoMinimo && imagen.size <= tamanoMaximo) {
+          valido = true;
+        }
+      }
+      return valido;
+    },
+
+    async subirImagenes() {
+      const storage = getStorage();
+
+      let nuevo = [];
+
+      for (let index = 0; index < this.files.length; index++) {
+        if (this.imagenCumpleRequisitos(index)) {
+          nuevo.push(this.files[index]);
+        }
+      }
+
+      let direccionNube = "images/" + "0/";
+      let indice = 1;
+
+      for (let index = 0; index < nuevo.length; index++) {
+        /** @type {any} */
+        const metadata = {
+          contentType: nuevo.type,
+        };
+
+        //this.files[index].name = "Imagen" + (indice+1) + ".png";
+        const storageRef = ref(storage, direccionNube + this.files[index].name);
+        const uploadTask = uploadBytesResumable(
+          storageRef,
+          nuevo[index],
+          metadata
+        );
+
+        try {
+          uploadTask.on(
+            "state_changed",
+            (snapshot) => {
+              const progress =
+                (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+              console.log("Imagen ", index + 1, " Progreso:", progress, "%");
+
+              switch (snapshot.state) {
+                case "paused":
+                  console.log("la Carga esta pausada");
+                  break;
+                case "running":
+                  //console.log("la Carga se esta ejecutando");
+                  break;
+              }
+            },
+            (error) => {
+              switch (error.code) {
+                case "storage/unauthorized":
+                  console.log(error + ": unauthorized");
+                  break;
+                case "storage/canceled":
+                  console.log(error + ": canceled");
+                  break;
+                case "storage/unknown":
+                  console.log(error + ": unknown");
+                  break;
+              }
+            },
+            () => {
+              let archivo = getDownloadURL(uploadTask.snapshot.ref);
+
+              const promesa = archivo.then((downloadURL) => {
+                this.urlDescarga.push(downloadURL);
+                this.añadirImagenApi(downloadURL, nuevo.length);
+              });
+            }
+          );
+        } catch (error) {
+          console.log(error + ": general");
+        }
+      }
+    },
+
+    async añadirImagenApi(downloadURL, tamano) {
+      console.log("Añadiendo imagen a la api");
+      let imagen = {
+        direccion: downloadURL,
+      };
+      try {
+        if (this.indice > 0) {
+          let url2 = "https://localhost:44370/api/prueba/recibirImagen";
+          fetch(url2, {
+            method: "POST", // or 'PUT'
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(imagen),
+          })
+            .then((response) => response) //.json()
+            .then((data) => {
+              //console.log("Success:", data);
+            })
+            .catch((error) => {
+              console.error("Error EN FETCH:", error);
+            });
+        }
+      } catch (error) {
+        console.log("Error general: ", error);
+      }
+
+      this.indice++;
+      if (this.indice == tamano) {
+        this.crearProducto();
+        this.indice = 0;
+      }
+    },
+
+    crearProducto() {
+      console.log("Creando producto");
+      this.editedItem.titulo = "Teclado";
+      this.editedItem.descripcion = "Teclado Twerty";
+      this.editedItem.precio = "12";
+      this.editedItem.color = "Rojo";
+      this.editedItem.cantidad = "5";
+
+      const Producto = {
+        imagen: this.urlDescarga[0],
+        titulo: this.editedItem.titulo,
+        precio: this.editedItem.precio,
+        color: this.editedItem.color,
+        cantidad: this.editedItem.cantidad,
+        descripcion: this.editedItem.descripcion,
+        nit_Empresa: "",
+        imagenes: this.urlDescarga,
+      };
+
+      //Quitar la primera imagen del array
+      //this.urlDescarga.shift();
+
+      let url = "https://localhost:44370/api/prueba/CreateProducto";
+
+      fetch(url, {
+        method: "POST", // or 'PUT'
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(Producto),
+      })
+        .then((response) => response) //.json()
+        .then((data) => {
+          //console.log("Success:", data);
+        })
+        .catch((error) => {
+          console.error("Error EN FETCH:", error);
+        });
+    },
+
+    iniciarFirebase() {
+      const firebaseConfig = {
+        apiKey: "AIzaSyCzVaDxudQnk2wzAe4m8pF5BtdgGKVsxso",
+        authDomain: "buy-online-7b548.firebaseapp.com",
+        projectId: "buy-online-7b548",
+        storageBucket: "buy-online-7b548.appspot.com",
+        messagingSenderId: "472565836098",
+        appId: "1:472565836098:web:b1ef86075a6ded313a80db",
+        measurementId: "G-M27HCV275E",
+      };
+      const app = initializeApp(firebaseConfig);
+    },
+
+    async anadirTarea() {
+      this.subirImagenes();
+      //Enlazar la url de cada imagen con el id del usuario que ah ingresado
+      //Este enlace debe ser llamado mediante la api fetch
+      //Necesitamos el id del usuario que esta logueado
+      //El id del usuario se obtiene se obtiene a traves de la store de vue
+    },
+  },
+};
+</script>
+
+
+
+<style lang="scss">
+.cargador {
+  width: 100%;
+}
+
+.dropbox {
+  outline: 2px dashed grey; /* the dash box */
+  outline-offset: -10px;
+  background: lightcyan;
+  color: dimgray;
+  padding: 10px 10px;
+  min-height: 200px; /* minimum height */
+  position: relative;
+  cursor: pointer;
+}
+
+.input-file {
+  opacity: 0; /* invisible but it's there! */
+  width: 100%;
+  height: 200px;
+  position: absolute;
+  cursor: pointer;
+}
+
+.dropbox:hover {
+  background: lightblue; /* when mouse over to the drop zone, change color */
+}
+
+.dropbox p {
+  font-size: 1.2em;
+  text-align: center;
+  padding: 50px 0;
+}
+</style>
