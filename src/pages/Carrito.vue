@@ -177,7 +177,7 @@
               bordered
               class="row items-start justify-center q-pa-md"
               v-for="(task, index) in this.comprados"
-              :key="index"
+              :key="index" 
             >
               <div class="col-2">
                 <q-img :src="task.imagen" />

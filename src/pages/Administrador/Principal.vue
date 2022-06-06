@@ -200,7 +200,6 @@
                     {{ productoSeleccionado.color }}
                   </div>
                 </q-card-section>
-
                 <q-separator />
               </q-card>
             </q-dialog>
@@ -397,7 +396,7 @@ export default {
   methods: {
     async ObtenerDomicilios(id) {
       try {
-        let idUsuario = parseInt(id);
+        let idUsuario = parseInt(id); 
         let url = this.urlBase + "ObtenerDomicilioUsuario";
         this.domicilios = await this.enviarPeticionRespuesta(
           url,
