@@ -28,7 +28,7 @@
         <div class="row">&nbsp;&nbsp;&nbsp;</div>
         <div class="row">&nbsp;&nbsp;&nbsp;</div>
         <div class="q-pa-md text-center text-white text-h6">
-          Bienvenido Hola mundo <br />
+          Bienvenido<br />
         </div>
         <div class="row">&nbsp;&nbsp;&nbsp;</div>
         <div class="row">

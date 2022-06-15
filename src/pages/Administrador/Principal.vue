@@ -1,7 +1,182 @@
 <template>
   <div class="row">
-    <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-xs-12"></div>
-    <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8 col-xs-12">
+    <div class="col-xl-0 col-lg-0 col-md-0 col-sm-0 col-xs-0"></div>
+    <div class="q-pa-md col-xl-11 col-lg-11 col-md-11 col-sm-12 col-xs-12">
+      <div class="row">
+        <div class="q-pa-md col-xl-3 col-lg-3 col-md-3 col-sm-12 col-xs-12">
+          <q-select
+            color="blue-7"
+            v-model="modelUsuarios"
+            :options="nombreUsuarios"
+            label="Seleccione un usuario"
+            @input="cargarDatosUsuario"
+          />
+        </div>
+      </div>
+
+      <!-- graphics than represent the data. -->
+      <div class="row">
+        <div class="q-pa-md col-xl-3 col-lg-3 col-md-3 col-sm-12 col-xs-12">
+          <q-card bordered>
+            <q-card-section>
+              <div class="row">
+                <div class="col-xl-10 col-lg-10 col-md-10 col-sm-10 col-xs-10">
+                  $ 340234 23% <br />
+                  Bitcoin Price
+                </div>
+                <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                  <q-icon size="md" color="blue" name="downloading" />
+                </div>
+              </div>
+            </q-card-section>
+          </q-card>
+        </div>
+        <div class="q-pa-md col-xl-3 col-lg-3 col-md-3 col-sm-12 col-xs-12">
+          <q-card bordered>
+            <q-card-section>
+              <div class="row">
+                <div class="col-xl-10 col-lg-10 col-md-10 col-sm-10 col-xs-10">
+                  $ 340234 23% <br />
+                  Bitcoin Price
+                </div>
+                <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                  <q-icon size="md" color="blue" name="downloading" />
+                </div>
+              </div>
+            </q-card-section>
+          </q-card>
+        </div>
+        <div class="q-pa-md col-xl-3 col-lg-3 col-md-3 col-sm-12 col-xs-12">
+          <q-card bordered>
+            <q-card-section>
+              <div class="row">
+                <div class="col-xl-10 col-lg-10 col-md-10 col-sm-10 col-xs-10">
+                  $ 340234 23% <br />
+                  Bitcoin Price
+                </div>
+                <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                  <q-icon size="md" color="blue" name="downloading" />
+                </div>
+              </div>
+            </q-card-section>
+          </q-card>
+        </div>
+        <div class="q-pa-md col-xl-3 col-lg-3 col-md-3 col-sm-12 col-xs-12">
+          <q-card bordered>
+            <q-card-section>
+              <div class="row">
+                <div class="col-xl-10 col-lg-10 col-md-10 col-sm-10 col-xs-10">
+                  $ 340234 23% <br />
+                  Bitcoin Price
+                </div>
+                <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                  <q-icon size="md" color="blue" name="downloading" />
+                </div>
+              </div>
+            </q-card-section>
+          </q-card>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="q-pa-md col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+          <q-card bordered>
+            <q-card-section>
+              <div class="row">
+                <div class="col-xl-10 col-lg-10 col-md-10 col-sm-10 col-xs-10">
+                  $ 340234 23% <br />
+                  Bitcoin Price
+                </div>
+                <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                  <q-icon size="md" color="blue" name="downloading" />
+                </div>
+              </div>
+            </q-card-section>
+          </q-card>
+        </div>
+        <div class="q-pa-md col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+          <q-card bordered>
+            <q-card-section>
+              <div class="row">
+                <div class="col-xl-10 col-lg-10 col-md-10 col-sm-10 col-xs-10">
+                  $ 340234 23% <br />
+                  Bitcoin Price
+                </div>
+                <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                  <q-icon size="md" color="blue" name="downloading" />
+                </div>
+              </div>
+            </q-card-section>
+          </q-card>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="q-pa-md col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+          <q-card bordered>
+            <q-card-section>
+              <div class="row">
+                <div class="col-xl-10 col-lg-10 col-md-10 col-sm-10 col-xs-10">
+                  $ 340234 23% <br />
+                  Bitcoin Price
+                </div>
+                <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                  <q-icon size="md" color="blue" name="downloading" />
+                </div>
+              </div>
+            </q-card-section>
+          </q-card>
+        </div>
+        <div class="q-pa-md col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+          <q-card bordered>
+            <q-card-section>
+              <div class="row">
+                <div class="col-xl-10 col-lg-10 col-md-10 col-sm-10 col-xs-10">
+                  $ 340234 23% <br />
+                  Bitcoin Price
+                </div>
+                <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                  <q-icon size="md" color="blue" name="downloading" />
+                </div>
+              </div>
+            </q-card-section>
+          </q-card>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="q-pa-md col-xl-10 col-lg-10 col-md-10 col-sm-12 col-xs-12">
+          <q-card bordered>
+            <q-card-section>
+              <div class="row">
+                <div class="col-xl-10 col-lg-10 col-md-10 col-sm-10 col-xs-10">
+                  $ 340234 23% <br />
+                  Bitcoin Price
+                </div>
+                <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                  <q-icon size="md" color="blue" name="downloading" />
+                </div>
+              </div>
+            </q-card-section>
+          </q-card>
+        </div>
+        <div class="q-pa-md col-xl-2 col-lg-2 col-md-2 col-sm-12 col-xs-12">
+          <q-card bordered>
+            <q-card-section>
+              <div class="row">
+                <div class="col-xl-10 col-lg-10 col-md-10 col-sm-10 col-xs-10">
+                  $ 340234 23% <br />
+                  Bitcoin Price
+                </div>
+                <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                  <q-icon size="md" color="blue" name="downloading" />
+                </div>
+              </div>
+            </q-card-section>
+          </q-card>
+        </div>
+      </div>
+
       <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="row">&nbsp;&nbsp;&nbsp;</div>
         <div class="row">&nbsp;&nbsp;&nbsp;</div>
@@ -251,11 +426,9 @@
 </template>
 
 <script>
-
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 export default {
-  
   data() {
     return {
       urlBase: "https://localhost:44370/api/prueba/",
@@ -269,6 +442,8 @@ export default {
       productoSeleccionado: {},
       imagenActualProducto: "",
       indiceImagenActualProducto: 0,
+      nombreUsuarios: [],
+      modelUsuarios: "Usuarios",
 
       item: {},
       latitud: 1.6236144612112966,
@@ -394,9 +569,36 @@ export default {
   },
 
   methods: {
+    cargarDatosUsuario() {
+      let usuarioAdministrador;
+      for (let i = 0; i < this.usuarios.length; i++) {
+        if (this.usuarios[i].idRol == 3) {
+          usuarioAdministrador = this.usuarios[i].usuario;
+        }
+      }
+      if (this.modelUsuarios !== usuarioAdministrador) {
+        //Si es cliente cargar los domicilios
+        //Si es empresa cargar los domicilios y productos
+        let usuario = this.modelUsuarios;
+        let rol = 0
+        for (let index = 0; index < (this.usuarios.length-1); index++) {
+          if(this.usuarios[index].usuario=== usuario){
+            rol = this.usuarios[index].idRol;
+          }
+        }
+        let rolString = this.ObtenerRol(rol);
+        if (rolString === "Cliente") {
+          this.ObtenerDomicilios(usuario);
+        } else if (rolString === "Empresa") {
+          this.ObtenerDomicilios(usuario);
+          this.ObtenerProductosPrueba(usuario);
+        }
+      }
+    },
+
     async ObtenerDomicilios(id) {
       try {
-        let idUsuario = parseInt(id); 
+        let idUsuario = parseInt(id);
         let url = this.urlBase + "ObtenerDomicilioUsuario";
         this.domicilios = await this.enviarPeticionRespuesta(
           url,
@@ -460,6 +662,10 @@ export default {
     async GetUsuarios() {
       let url = this.urlBase + "ObtenerUsuarios";
       this.usuarios = await this.enviarPeticionRespuesta(url, "GET");
+      console.log("Usuarios: ", this.usuarios);
+      for (let i = 0; i < this.usuarios.length; i++) {
+        this.nombreUsuarios.push(this.usuarios[i].usuario);
+      }
     },
 
     async ImagenAnterior() {
@@ -508,7 +714,6 @@ export default {
           /* const user2 = auth.currentUser; */
           // User is signed in, see docs for a list of available properties
           // https://firebase.google.com/docs/reference/js/firebase.User
-          
         } else {
           if (this.$route.path !== "/") {
             this.$router.replace("/");
