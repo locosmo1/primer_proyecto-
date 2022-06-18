@@ -14,6 +14,251 @@
         </div>
       </div>
 
+      <div class="row">
+        <div class="q-pa-md col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+          <q-card bordered>
+            <div class="row">
+              <div
+                class="q-pa-md col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12"
+              >
+                Rol del usuario:
+                {{ ObtenerRol(usuarioSeleccionado.idUsuario) }} <br />
+                IdUsuario: {{ usuarioSeleccionado.idUsuario }}, <br />
+                Usuario: {{ usuarioSeleccionado.usuario }}, <br />
+                Celular: {{ usuarioSeleccionado.celular }} <br />
+              </div>
+            </div>
+          </q-card>
+          <q-expansion-item
+            dark
+            dense
+            icon="explore"
+            expand-separator
+            style="border-radius: 30px"
+            expand-icon-class="text-white"
+            class="shadow-1 overflow-hidden"
+            caption="Domicilio(s)"
+            header-class="bg-blue-8 text-white"
+            v-if="ObtenerRol(usuarioSeleccionado.idRol) !== 'Administrador'"
+          >
+            <q-table
+              :columns="columnsDomicilio"
+              :data="domicilios"
+              row-key="idDomicilio"
+              :selected.sync="domiciliosSeleccionados"
+              selection="multiple"
+              no-data-label="Sin Domicilios Por favor seleccione un usuario"
+            />
+
+            Domicilios Seleccionados {{ domiciliosSeleccionados }}
+
+            <!-- Mostrar Mapa -->
+            <q-card>
+              <q-card-section>
+                <!-- api de google maps
+          AIzaSyCOe6XiKYkPA1q3u4v_SVZy5Pw9yIXOnVQ -->
+                <GmapMap
+                  :center="center"
+                  :zoom="14"
+                  map-type-id="terrain"
+                  style="width: 100%; height: 500px"
+                >
+                  <GmapMarker
+                    v-model="item"
+                    :key="index"
+                    v-for="(m, index) in markers"
+                    :position="m.position"
+                    :clickable="true"
+                    :draggable="true"
+                    @dragend="ActualizarCoordenadas($event.latLng)"
+                  />
+                </GmapMap>
+              </q-card-section>
+              <q-card-section>
+                Latitud Actual {{ latitud }}<br />
+                Longitud Actual {{ longitud }}<br />
+              </q-card-section>
+            </q-card>
+
+            <q-btn-dropdown
+              auto-close
+              color="blue-8"
+              rounded
+              no-caps
+              label="Opciones"
+            >
+              <q-list>
+                <q-item class="column">
+                  <q-btn
+                    class="glossy"
+                    color="blue-8"
+                    label="Añadir Nueva Direccion"
+                    @click="AgregarDomicilio()"
+                    outline
+                    rounded
+                    no-caps
+                  />
+                  <q-btn
+                    class="glossy"
+                    color="blue-8"
+                    label="Actualizar este Direccion"
+                    @click="ActualizarDomicilio()"
+                    outline
+                    rounded
+                    no-caps
+                  />
+                  <q-btn
+                    class="glossy"
+                    color="blue-8"
+                    label="Borrar Seleccionado"
+                    @click="BorrarDomicilio()"
+                    outline
+                    rounded
+                    no-caps
+                  />
+                  <q-btn
+                    class="glossy"
+                    color="blue-8"
+                    label="Borrar Todo"
+                    @click="BorrarTodosDomicilios()"
+                    outline
+                    rounded
+                    no-caps
+                  />
+                </q-item>
+              </q-list>
+            </q-btn-dropdown>
+          </q-expansion-item>
+
+          <!-- Obtener Productos -->
+          <q-expansion-item
+            dark
+            dense
+            icon="explore"
+            expand-separator
+            caption="Producto(s)"
+            style="border-radius: 30px"
+            expand-icon-class="text-white"
+            class="shadow-1 overflow-hidden"
+            header-class="bg-blue-8 text-white"
+            v-if="ObtenerRol(usuarioSeleccionado.idRol) === 'Empresa'"
+          >
+            <q-table
+              :data="productos"
+              :columns="columnsProducto"
+              selection="multiple"
+              row-key="idProducto"
+              :selected.sync="productosseleccionados"
+              @row-click="ClickProducto"
+              no-data-label="Sin Productos para mostrar"
+            />
+
+            Producto(s) seleccionado(s) {{ productosseleccionados }}
+
+            <!-- Dialogo para mostrar todo el contenido del producto con
+            sus imagenes -->
+            <q-dialog v-model="dialogoProducto">
+              <q-card bordered class="my-card">
+                <q-card bordered class="my-card">
+                  <!-- <q-img :src="productoSeleccionado.imagen" /> -->
+                  <q-img :src="imagenActualProducto" />
+                </q-card>
+
+                <div class="row">
+                  <div
+                    class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12"
+                  >
+                    <div class="text-center">
+                      <!-- Crear un boton para ir a la imagen anterior -->
+                      <q-btn
+                        class="glossy"
+                        color="blue-8"
+                        icon="arrow_back_ios"
+                        size="xs"
+                        @click="ImagenAnterior()"
+                      />
+                      <!-- Crear un boton para ir a la imagen anterior -->
+                      <q-btn
+                        class="glossy"
+                        color="blue-8"
+                        icon="arrow_forward_ios"
+                        size="xs"
+                        @click="ImagenSiguiente()"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <q-card-section>
+                  <div class="row no-wrap items-center">
+                    <div class="col text-h6 ellipsis">
+                      {{ productoSeleccionado.titulo }} <br />
+                      Categoria:
+                      {{ ObtenerCategoria(productoSeleccionado.idCategoria) }}
+                    </div>
+                  </div>
+                </q-card-section>
+
+                <q-card-section class="q-pt-none">
+                  <div class="text-subtitle1">
+                    Precio: {{ productoSeleccionado.precio }}
+                  </div>
+                  <div class="text-caption text-grey">
+                    <!-- Descripcion: {{ productoSeleccionado.descripcion }}<br /> -->
+                    Descripcion: Lorem ipsum dolor sit amet consectetur
+                    adipisicing elit. Iste repudiandae explicabo exercitationem
+                    magni. Sint necessitatibus repellat deserunt totam similique
+                    culpa sunt hic illum dignissimos voluptatem accusantium
+                    debitis, aperiam distinctio magni. Color:
+                    {{ productoSeleccionado.color }}
+                  </div>
+                </q-card-section>
+                <q-separator />
+              </q-card>
+            </q-dialog>
+
+            <div class="self-end">
+              <q-btn-dropdown
+                auto-close
+                color="blue-8"
+                rounded
+                no-caps
+                label="Opciones"
+              >
+                <q-list>
+                  <q-item class="column">
+                    <q-btn
+                      class="glossy"
+                      color="blue-8"
+                      label="Añadir Nuevo Producto"
+                      no-caps
+                    />
+                    <q-btn
+                      class="glossy"
+                      color="blue-8"
+                      label="Actualizar este Producto"
+                      no-caps
+                    />
+                    <q-btn
+                      class="glossy"
+                      color="blue-8"
+                      label="Borrar Seleccionado"
+                      no-caps
+                    />
+                    <q-btn
+                      class="glossy"
+                      color="blue-8"
+                      label="Borrar Todo"
+                      no-caps
+                    />
+                  </q-item>
+                </q-list>
+              </q-btn-dropdown>
+            </div>
+          </q-expansion-item>
+        </div>
+      </div>
+
       <!-- graphics than represent the data. -->
       <div class="row">
         <div class="q-pa-md col-xl-3 col-lg-3 col-md-3 col-sm-12 col-xs-12">
@@ -144,39 +389,6 @@
         </div>
       </div>
 
-      <div class="row">
-        <div class="q-pa-md col-xl-10 col-lg-10 col-md-10 col-sm-12 col-xs-12">
-          <q-card bordered>
-            <q-card-section>
-              <div class="row">
-                <div class="col-xl-10 col-lg-10 col-md-10 col-sm-10 col-xs-10">
-                  $ 340234 23% <br />
-                  Bitcoin Price
-                </div>
-                <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-xs-2">
-                  <q-icon size="md" color="blue" name="downloading" />
-                </div>
-              </div>
-            </q-card-section>
-          </q-card>
-        </div>
-        <div class="q-pa-md col-xl-2 col-lg-2 col-md-2 col-sm-12 col-xs-12">
-          <q-card bordered>
-            <q-card-section>
-              <div class="row">
-                <div class="col-xl-10 col-lg-10 col-md-10 col-sm-10 col-xs-10">
-                  $ 340234 23% <br />
-                  Bitcoin Price
-                </div>
-                <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-xs-2">
-                  <q-icon size="md" color="blue" name="downloading" />
-                </div>
-              </div>
-            </q-card-section>
-          </q-card>
-        </div>
-      </div>
-
       <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="row">&nbsp;&nbsp;&nbsp;</div>
         <div class="row">&nbsp;&nbsp;&nbsp;</div>
@@ -221,7 +433,7 @@
               :columns="columnsDomicilio"
               :data="domicilios"
               row-key="idDomicilio"
-              :selected.sync="selected"
+              :selected.sync="domiciliosSeleccionados"
               selection="multiple"
               no-data-label="Sin Domicilios para mostrar"
             />
@@ -312,7 +524,7 @@
               :columns="columnsProducto"
               selection="multiple"
               row-key="idProducto"
-              :selected.sync="selected"
+              :selected.sync="productosseleccionados"
               @row-click="ClickProducto"
               no-data-label="Sin Productos para mostrar"
             />
@@ -432,7 +644,8 @@ export default {
   data() {
     return {
       urlBase: "https://localhost:44370/api/prueba/",
-      selected: [],
+      productosseleccionados: [],
+      domiciliosSeleccionados: [],
       separator: "horizontal",
       usuarios: [],
       productos: [],
@@ -444,6 +657,7 @@ export default {
       indiceImagenActualProducto: 0,
       nombreUsuarios: [],
       modelUsuarios: "Usuarios",
+      usuarioSeleccionado: {},
 
       item: {},
       latitud: 1.6236144612112966,
@@ -569,29 +783,41 @@ export default {
   },
 
   methods: {
+    AgregarDomicilio() {
+      console.log("AgregarDomicilio");
+    },
+
+    ActualizarDomicilio() {
+      console.log("ActualizarDomicilio");
+    },
+
+    BorrarDomicilio() {
+      console.log("BorrarDomicilio");
+    },
+
+    BorrarTodosDomicilios() {
+      console.log("BorrarTodosDomicilios");
+    },
+
     cargarDatosUsuario() {
-      let usuarioAdministrador;
       for (let i = 0; i < this.usuarios.length; i++) {
-        if (this.usuarios[i].idRol == 3) {
-          usuarioAdministrador = this.usuarios[i].usuario;
+        if (this.usuarios[i].usuario == this.modelUsuarios) {
+          this.usuarioSeleccionado = this.usuarios[i];
+          break;
         }
       }
-      if (this.modelUsuarios !== usuarioAdministrador) {
-        //Si es cliente cargar los domicilios
-        //Si es empresa cargar los domicilios y productos
-        let usuario = this.modelUsuarios;
-        let rol = 0
-        for (let index = 0; index < (this.usuarios.length-1); index++) {
-          if(this.usuarios[index].usuario=== usuario){
-            rol = this.usuarios[index].idRol;
-          }
-        }
-        let rolString = this.ObtenerRol(rol);
-        if (rolString === "Cliente") {
-          this.ObtenerDomicilios(usuario);
-        } else if (rolString === "Empresa") {
-          this.ObtenerDomicilios(usuario);
-          this.ObtenerProductosPrueba(usuario);
+
+      let esAdministrador = this.usuarioSeleccionado.idRol === 3;
+      let idUsuario = this.usuarioSeleccionado.idUsuario;
+
+      if (!esAdministrador) {
+        if (this.usuarioSeleccionado.idRol == 1) {
+          //Si es cliente cargar los domicilios
+          this.ObtenerDomicilios(idUsuario);
+        } else if (this.usuarioSeleccionado.idRol == 2) {
+          //Si es empresa cargar los domicilios y los productos
+          this.ObtenerDomicilios(idUsuario);
+          this.ObtenerProductosPrueba(idUsuario);
         }
       }
     },
@@ -662,7 +888,6 @@ export default {
     async GetUsuarios() {
       let url = this.urlBase + "ObtenerUsuarios";
       this.usuarios = await this.enviarPeticionRespuesta(url, "GET");
-      console.log("Usuarios: ", this.usuarios);
       for (let i = 0; i < this.usuarios.length; i++) {
         this.nombreUsuarios.push(this.usuarios[i].usuario);
       }
