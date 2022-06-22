@@ -17,7 +17,11 @@
       <div class="row">
         <div class="q-pa-md col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
           <q-card bordered>
-            <div class="row">
+            <!-- Si el objeto no esta vacio entonces mostrar los datos del usuario -->
+            <div
+              class="row"
+              v-if="Object.keys(usuarioSeleccionado).length !== 0"
+            >
               <div
                 class="q-pa-md col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12"
               >
@@ -51,6 +55,15 @@
             />
 
             Domicilios Seleccionados {{ domiciliosSeleccionados }}
+
+            <q-select
+              color="blue-7"
+              v-model="modelCiudad"
+              :options="ciudadesDisponibles"
+              label="Seleccione la ciudad"
+              @input="cargarMapaUbicacion"
+            >
+            </q-select>
 
             <!-- Mostrar Mapa -->
             <q-card>
@@ -93,7 +106,7 @@
                     class="glossy"
                     color="blue-8"
                     label="Añadir Nueva Direccion"
-                    @click="AgregarDomicilio()"
+                    @click="dialogoDomicilio = true"
                     outline
                     rounded
                     no-caps
@@ -130,6 +143,67 @@
             </q-btn-dropdown>
           </q-expansion-item>
 
+          <q-dialog v-model="dialogoDomicilio">
+            <q-card class="entrar">
+              <!-- Boton de salir(X) -->
+              <div class="text-right">
+                <!-- crear un nuevo boton para cambiar los colores de la vista -->
+                <q-btn
+                  no-caps
+                  dense
+                  class="q-pa-xs"
+                  color="botones"
+                  label="X"
+                  @click="dialogoDomicilio = false"
+                  size="sm"
+                />
+              </div>
+
+              <div class="q-pa-md text-center text-white text-h6">
+                Registro <br />
+              </div>
+              <q-input
+                class="q-pa-md text-white"
+                v-model="nuevaCiudad"
+                label="Digite la ciudad"
+                color="white"
+                rounded
+                outlined
+                clearable
+                dense
+              >
+              </q-input>
+              <q-input
+                class="q-pa-md justify-center items-center content-center text-center text-white"
+                color="white"
+                rounded
+                outlined
+                v-model="nuevaDireccion"
+                label="Digite la direccion"
+                clearable
+                dense
+              >
+                <template v-slot:append>
+                  <q-icon class="cursor-pointer" />
+                </template>
+              </q-input>
+
+              <div class="row"></div>
+              <div class="row"></div>
+              <div class="column q-pa-md text-center text-black text-h6">
+                <q-btn
+                  dense
+                  no-caps
+                  class="text-center q-pa-xs"
+                  color="info"
+                  label="Enviar"
+                  icon="people_alt"
+                  @click="AgregarDomicilio()"
+                />
+              </div>
+            </q-card>
+          </q-dialog>
+
           <!-- Obtener Productos -->
           <q-expansion-item
             dark
@@ -148,12 +222,12 @@
               :columns="columnsProducto"
               selection="multiple"
               row-key="idProducto"
-              :selected.sync="productosseleccionados"
+              :selected.sync="productosSeleccionados"
               @row-click="ClickProducto"
               no-data-label="Sin Productos para mostrar"
             />
 
-            Producto(s) seleccionado(s) {{ productosseleccionados }}
+            Producto(s) seleccionado(s) {{ productosSeleccionados }}
 
             <!-- Dialogo para mostrar todo el contenido del producto con
             sus imagenes -->
@@ -394,243 +468,6 @@
         <div class="row">&nbsp;&nbsp;&nbsp;</div>
         <div class="row">&nbsp;&nbsp;&nbsp;</div>
         <div class="row">&nbsp;&nbsp;&nbsp;</div>
-
-        <q-expansion-item
-          group
-          label=""
-          icon="explore"
-          expand-separator
-          style="border-radius: 30px"
-          class="shadow-1 overflow-hidden"
-          :caption="ObtenerRol(task.idRol)"
-          v-for="(task, index) in this.usuarios"
-          :key="index"
-        >
-          <q-card>
-            <q-card-section>
-              IdUsuario: {{ task.idUsuario }}, <br />
-              Usuario: {{ task.usuario }}, <br />
-              Contraseña: {{ task.contraseña }}, <br />
-              Celular: {{ task.celular }} <br />
-            </q-card-section>
-          </q-card>
-
-          <!-- Obtener Domicilios -->
-          <q-expansion-item
-            dark
-            dense
-            icon="explore"
-            expand-separator
-            style="border-radius: 30px"
-            expand-icon-class="text-white"
-            class="shadow-1 overflow-hidden"
-            caption="Domicilio(s)"
-            header-class="bg-blue-8 text-white"
-            @click="ObtenerDomicilios(task.idUsuario)"
-            v-if="ObtenerRol(task.idRol) !== 'Administrador'"
-          >
-            <q-table
-              :columns="columnsDomicilio"
-              :data="domicilios"
-              row-key="idDomicilio"
-              :selected.sync="domiciliosSeleccionados"
-              selection="multiple"
-              no-data-label="Sin Domicilios para mostrar"
-            />
-
-            <!-- Mostrar Mapa -->
-            <q-card>
-              <q-card-section>
-                <!-- api de google maps
-          AIzaSyCOe6XiKYkPA1q3u4v_SVZy5Pw9yIXOnVQ -->
-                <GmapMap
-                  :center="center"
-                  :zoom="14"
-                  map-type-id="terrain"
-                  style="width: 100%; height: 500px"
-                >
-                  <GmapMarker
-                    v-model="item"
-                    :key="index"
-                    v-for="(m, index) in markers"
-                    :position="m.position"
-                    :clickable="true"
-                    :draggable="true"
-                    @dragend="ActualizarCoordenadas($event.latLng)"
-                  />
-                </GmapMap>
-              </q-card-section>
-              <q-card-section>
-                Latitud Actual {{ latitud }}<br />
-                Longitud Actual {{ longitud }}<br />
-              </q-card-section>
-            </q-card>
-
-            <q-btn-dropdown
-              auto-close
-              color="blue-8"
-              rounded
-              no-caps
-              label="Opciones"
-            >
-              <q-list>
-                <q-item class="column">
-                  <q-btn
-                    class="glossy"
-                    color="blue-8"
-                    label="Añadir Nueva Direccion"
-                    no-caps
-                  />
-                  <q-btn
-                    class="glossy"
-                    color="blue-8"
-                    label="Actualizar este Direccion"
-                    no-caps
-                  />
-                  <q-btn
-                    class="glossy"
-                    color="blue-8"
-                    label="Borrar Seleccionado"
-                    no-caps
-                  />
-                  <q-btn
-                    class="glossy"
-                    color="blue-8"
-                    label="Borrar Todo"
-                    no-caps
-                  />
-                </q-item>
-              </q-list>
-            </q-btn-dropdown>
-          </q-expansion-item>
-
-          <!-- Obtener Productos -->
-          <q-expansion-item
-            dark
-            dense
-            icon="explore"
-            expand-separator
-            caption="Producto(s)"
-            style="border-radius: 30px"
-            expand-icon-class="text-white"
-            class="shadow-1 overflow-hidden"
-            header-class="bg-blue-8 text-white"
-            @row-click="ObtenerProductosPrueba(task.idUsuario)"
-            @click="ObtenerProductosPrueba(task.idUsuario)"
-            v-if="ObtenerRol(task.idRol) === 'Empresa'"
-          >
-            <q-table
-              :data="productos"
-              :columns="columnsProducto"
-              selection="multiple"
-              row-key="idProducto"
-              :selected.sync="productosseleccionados"
-              @row-click="ClickProducto"
-              no-data-label="Sin Productos para mostrar"
-            />
-
-            <!-- Dialogo para mostrar todo el contenido del producto con
-            sus imagenes -->
-            <q-dialog v-model="dialogoProducto">
-              <q-card bordered class="my-card">
-                <q-card bordered class="my-card">
-                  <!-- <q-img :src="productoSeleccionado.imagen" /> -->
-                  <q-img :src="imagenActualProducto" />
-                </q-card>
-
-                <div class="row">
-                  <div
-                    class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12"
-                  >
-                    <div class="text-center">
-                      <!-- Crear un boton para ir a la imagen anterior -->
-                      <q-btn
-                        class="glossy"
-                        color="blue-8"
-                        icon="arrow_back_ios"
-                        size="xs"
-                        @click="ImagenAnterior()"
-                      />
-                      <!-- Crear un boton para ir a la imagen anterior -->
-                      <q-btn
-                        class="glossy"
-                        color="blue-8"
-                        icon="arrow_forward_ios"
-                        size="xs"
-                        @click="ImagenSiguiente()"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <q-card-section>
-                  <div class="row no-wrap items-center">
-                    <div class="col text-h6 ellipsis">
-                      {{ productoSeleccionado.titulo }} <br />
-                      Categoria:
-                      {{ ObtenerCategoria(productoSeleccionado.idCategoria) }}
-                    </div>
-                  </div>
-                </q-card-section>
-
-                <q-card-section class="q-pt-none">
-                  <div class="text-subtitle1">
-                    Precio: {{ productoSeleccionado.precio }}
-                  </div>
-                  <div class="text-caption text-grey">
-                    <!-- Descripcion: {{ productoSeleccionado.descripcion }}<br /> -->
-                    Descripcion: Lorem ipsum dolor sit amet consectetur
-                    adipisicing elit. Iste repudiandae explicabo exercitationem
-                    magni. Sint necessitatibus repellat deserunt totam similique
-                    culpa sunt hic illum dignissimos voluptatem accusantium
-                    debitis, aperiam distinctio magni. Color:
-                    {{ productoSeleccionado.color }}
-                  </div>
-                </q-card-section>
-                <q-separator />
-              </q-card>
-            </q-dialog>
-
-            <div class="self-end">
-              <q-btn-dropdown
-                auto-close
-                color="blue-8"
-                rounded
-                no-caps
-                label="Opciones"
-              >
-                <q-list>
-                  <q-item class="column">
-                    <q-btn
-                      class="glossy"
-                      color="blue-8"
-                      label="Añadir Nuevo Producto"
-                      no-caps
-                    />
-                    <q-btn
-                      class="glossy"
-                      color="blue-8"
-                      label="Actualizar este Producto"
-                      no-caps
-                    />
-                    <q-btn
-                      class="glossy"
-                      color="blue-8"
-                      label="Borrar Seleccionado"
-                      no-caps
-                    />
-                    <q-btn
-                      class="glossy"
-                      color="blue-8"
-                      label="Borrar Todo"
-                      no-caps
-                    />
-                  </q-item>
-                </q-list>
-              </q-btn-dropdown>
-            </div>
-          </q-expansion-item>
-        </q-expansion-item>
       </div>
     </div>
     <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-xs-12"></div>
@@ -643,21 +480,36 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 export default {
   data() {
     return {
-      urlBase: "https://localhost:44370/api/prueba/",
-      productosseleccionados: [],
-      domiciliosSeleccionados: [],
+      urlBase: "https://localhost:44370/api/Prueba/",
+      urlBaseDomicilio: "https://localhost:44370/api/Domicilio/",
+      urlBaseProducto: "https://localhost:44370/api/Producto/",
+
       separator: "horizontal",
-      usuarios: [],
-      productos: [],
-      domicilios: [],
+
       imagenes: [],
-      dialogoProducto: false,
-      productoSeleccionado: {},
       imagenActualProducto: "",
+
+      domicilios: [],
+      domiciliosSeleccionados: [],
+      dialogoProducto: false,
+      dialogoDomicilio: false,
+      nuevoDomicilio: {},
+
+      productos: [],
+      productosSeleccionados: [],
+      productoSeleccionado: {},
       indiceImagenActualProducto: 0,
+
+      usuarios: [],
       nombreUsuarios: [],
       modelUsuarios: "Usuarios",
       usuarioSeleccionado: {},
+
+      nuevaCiudad: "",
+      nuevaDireccion: "",
+
+      ciudadesDisponibles: ["Bogota", "Medellin", "Cali", "Barranquilla"],
+      modelCiudad: "",
 
       item: {},
       latitud: 1.6236144612112966,
@@ -784,7 +636,18 @@ export default {
 
   methods: {
     AgregarDomicilio() {
-      console.log("AgregarDomicilio");
+      let nuevoDomicilio = {
+        idDomicilio: 1,
+        ciudad: this.nuevaCiudad,
+        direccion: this.nuevaDireccion,
+        idUsuario: this.usuarioSeleccionado.idUsuario,
+        latitud: this.latitud,
+        longitud: this.longitud,
+      }; //idDomicilio, ciudad, direccion, idUsuario, idUbicacion, latitud, longitud
+      //console.log(nuevoDomicilio);
+      let url = this.urlBaseDomicilio + "crearDomicilio";
+      this.enviarPeticion(url, "POST", nuevoDomicilio);
+      this.dialogoDomicilio = false;
     },
 
     ActualizarDomicilio() {
@@ -797,6 +660,109 @@ export default {
 
     BorrarTodosDomicilios() {
       console.log("BorrarTodosDomicilios");
+    },
+
+    async enviarPeticion(url, method, body) {
+      let opcion = body === "" ? false : true;
+      if (opcion) {
+        fetch(url, {
+          method: method,
+          body: JSON.stringify(body),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      } else {
+        fetch(url, {
+          method: method,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      }
+    },
+
+    cargarMapaUbicacion() {
+      let ciudad = this.modelCiudad;
+      let latitud, longitud;
+      switch (ciudad) {
+        case "Bogota":
+          latitud = 4.665984005374667;
+          longitud = -74.11201953238661;
+          this.center = {
+            lat: latitud,
+            lng: longitud,
+          };
+          this.markers = [
+            {
+              position: {
+                lat: latitud,
+                lng: longitud,
+              },
+              title: "Bogota",
+            },
+          ];
+          this.latitud = latitud;
+          this.longitud = longitud;
+          break;
+        case "Medellin":
+          latitud = 6.24381223144814;
+          longitud = -75.56822986305791;
+          this.center = {
+            lat: latitud,
+            lng: longitud,
+          };
+          this.markers = [
+            {
+              position: {
+                lat: latitud,
+                lng: longitud,
+              },
+              title: "Bogota",
+            },
+          ];
+          this.latitud = latitud;
+          this.longitud = longitud;
+          break;
+        case "Cali":
+          latitud = 3.404300027947404;
+          longitud = -76.52189083073294;
+          this.center = {
+            lat: latitud,
+            lng: longitud,
+          };
+          this.markers = [
+            {
+              position: {
+                lat: latitud,
+                lng: longitud,
+              },
+              title: "Bogota",
+            },
+          ];
+          this.latitud = latitud;
+          this.longitud = longitud;
+          break;
+        case "Barranquilla":
+          latitud = 10.97601594837661;
+          longitud = -74.80522932533702;
+          this.center = {
+            lat: latitud,
+            lng: longitud,
+          };
+          this.markers = [
+            {
+              position: {
+                lat: latitud,
+                lng: longitud,
+              },
+              title: "Bogota",
+            },
+          ];
+          this.latitud = latitud;
+          this.longitud = longitud;
+          break;
+      }
     },
 
     cargarDatosUsuario() {
