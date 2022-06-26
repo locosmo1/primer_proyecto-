@@ -2,6 +2,7 @@
   <div class="row">
     <div class="col-xl-0 col-lg-0 col-md-0 col-sm-0 col-xs-0"></div>
     <div class="q-pa-md col-xl-11 col-lg-11 col-md-11 col-sm-12 col-xs-12">
+      <!-- Seleccionar usuarios por medio de su usuario o correo -->
       <div class="row">
         <div class="q-pa-md col-xl-3 col-lg-3 col-md-3 col-sm-12 col-xs-12">
           <q-select
@@ -17,7 +18,8 @@
       <div class="row">
         <div class="q-pa-md col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
           <q-card bordered>
-            <!-- Si el objeto no esta vacio entonces mostrar los datos del usuario -->
+            <!-- Si el objeto no esta vacio entonces
+            mostrar los datos del usuario -->
             <div
               class="row"
               v-if="Object.keys(usuarioSeleccionado).length !== 0"
@@ -33,6 +35,8 @@
               </div>
             </div>
           </q-card>
+
+          <!-- Mostrar los Domicilios de los usuarios -->
           <q-expansion-item
             dark
             dense
@@ -45,6 +49,7 @@
             header-class="bg-blue-8 text-white"
             v-if="ObtenerRol(usuarioSeleccionado.idRol) !== 'Administrador'"
           >
+            <!-- Mostrar los Domicilios de los usuarios dentro de una tabla -->
             <q-table
               :columns="columnsDomicilio"
               :data="domicilios"
@@ -54,45 +59,8 @@
               no-data-label="Sin Domicilios Por favor seleccione un usuario"
             />
 
-            Domicilios Seleccionados {{ domiciliosSeleccionados }}
-
-            <q-select
-              color="blue-7"
-              v-model="modelCiudad"
-              :options="ciudadesDisponibles"
-              label="Seleccione la ciudad"
-              @input="cargarMapaUbicacion"
-            >
-            </q-select>
-
-            <!-- Mostrar Mapa -->
-            <q-card>
-              <q-card-section>
-                <!-- api de google maps
-          AIzaSyCOe6XiKYkPA1q3u4v_SVZy5Pw9yIXOnVQ -->
-                <GmapMap
-                  :center="center"
-                  :zoom="14"
-                  map-type-id="terrain"
-                  style="width: 100%; height: 500px"
-                >
-                  <GmapMarker
-                    v-model="item"
-                    :key="index"
-                    v-for="(m, index) in markers"
-                    :position="m.position"
-                    :clickable="true"
-                    :draggable="true"
-                    @dragend="ActualizarCoordenadas($event.latLng)"
-                  />
-                </GmapMap>
-              </q-card-section>
-              <q-card-section>
-                Latitud Actual {{ latitud }}<br />
-                Longitud Actual {{ longitud }}<br />
-              </q-card-section>
-            </q-card>
-
+            <!-- Domicilios Seleccionados {{ domiciliosSeleccionados }}<br/> -->
+            <!-- Boton para seleccionar las opciones de los domicilios -->
             <q-btn-dropdown
               auto-close
               color="blue-8"
@@ -100,6 +68,7 @@
               no-caps
               label="Opciones"
             >
+              <!-- Lista para representar los botones CRUD -->
               <q-list>
                 <q-item class="column">
                   <q-btn
@@ -107,16 +76,14 @@
                     color="blue-8"
                     label="Añadir Nueva Direccion"
                     @click="dialogoDomicilio = true"
-                    outline
                     rounded
                     no-caps
                   />
                   <q-btn
                     class="glossy"
                     color="blue-8"
-                    label="Actualizar este Direccion"
+                    label="Actualizar esta Direccion"
                     @click="ActualizarDomicilio()"
-                    outline
                     rounded
                     no-caps
                   />
@@ -125,7 +92,6 @@
                     color="blue-8"
                     label="Borrar Seleccionado"
                     @click="BorrarDomicilio()"
-                    outline
                     rounded
                     no-caps
                   />
@@ -134,7 +100,6 @@
                     color="blue-8"
                     label="Borrar Todo"
                     @click="BorrarTodosDomicilios()"
-                    outline
                     rounded
                     no-caps
                   />
@@ -143,6 +108,7 @@
             </q-btn-dropdown>
           </q-expansion-item>
 
+          <!-- Ventana para modificar el domicilio del usuario con mapa -->
           <q-dialog v-model="dialogoDomicilio">
             <q-card class="entrar">
               <!-- Boton de salir(X) -->
@@ -152,30 +118,53 @@
                   no-caps
                   dense
                   class="q-pa-xs"
-                  color="botones"
+                  color="black"
                   label="X"
                   @click="dialogoDomicilio = false"
                   size="sm"
                 />
               </div>
-
-              <div class="q-pa-md text-center text-white text-h6">
-                Registro <br />
-              </div>
-              <q-input
-                class="q-pa-md text-white"
-                v-model="nuevaCiudad"
-                label="Digite la ciudad"
-                color="white"
-                rounded
-                outlined
-                clearable
-                dense
+              <q-select
+                class="q-pa-md"
+                color="blue-7"
+                v-model="modelCiudad"
+                :options="ciudadesDisponibles"
+                label="Seleccione la ciudad"
+                @input="cargarMapaUbicacion"
               >
-              </q-input>
+              </q-select>
+
+              <!-- Mostrar Mapa -->
+              <q-card>
+                <q-card-section>
+                  <!-- api de google maps
+                  AIzaSyCOe6XiKYkPA1q3u4v_SVZy5Pw9yIXOnVQ -->
+                  <GmapMap
+                    :center="center"
+                    :zoom="14"
+                    map-type-id="terrain"
+                    style="width: 700px; height: 500px"
+                  >
+                    <GmapMarker
+                      v-model="item"
+                      :key="index"
+                      v-for="(m, index) in markers"
+                      :position="m.position"
+                      :clickable="true"
+                      :draggable="true"
+                      @dragend="ActualizarCoordenadas($event.latLng)"
+                    />
+                  </GmapMap>
+                </q-card-section>
+                <q-card-section>
+                  Latitud Actual {{ latitud }}<br />
+                  Longitud Actual {{ longitud }}<br />
+                </q-card-section>
+              </q-card>
+
               <q-input
                 class="q-pa-md justify-center items-center content-center text-center text-white"
-                color="white"
+                color="black"
                 rounded
                 outlined
                 v-model="nuevaDireccion"
@@ -204,7 +193,7 @@
             </q-card>
           </q-dialog>
 
-          <!-- Obtener Productos -->
+          <!-- Mostrar los Productos de las empresas -->
           <q-expansion-item
             dark
             dense
@@ -217,6 +206,7 @@
             header-class="bg-blue-8 text-white"
             v-if="ObtenerRol(usuarioSeleccionado.idRol) === 'Empresa'"
           >
+            <!-- Mostrar los Productos de las empresas en una tabla -->
             <q-table
               :data="productos"
               :columns="columnsProducto"
@@ -230,7 +220,7 @@
             Producto(s) seleccionado(s) {{ productosSeleccionados }}
 
             <!-- Dialogo para mostrar todo el contenido del producto con
-            sus imagenes -->
+            sus detalles -->
             <q-dialog v-model="dialogoProducto">
               <q-card bordered class="my-card">
                 <q-card bordered class="my-card">
@@ -291,6 +281,7 @@
               </q-card>
             </q-dialog>
 
+            <!-- Opciones para modificar el producto -->
             <div class="self-end">
               <q-btn-dropdown
                 auto-close
@@ -299,6 +290,8 @@
                 no-caps
                 label="Opciones"
               >
+
+              <!-- Lista para modificar el producto por medio del crud -->
                 <q-list>
                   <q-item class="column">
                     <q-btn
@@ -306,24 +299,28 @@
                       color="blue-8"
                       label="Añadir Nuevo Producto"
                       no-caps
+                      rounded
                     />
                     <q-btn
                       class="glossy"
                       color="blue-8"
                       label="Actualizar este Producto"
                       no-caps
+                      rounded
                     />
                     <q-btn
                       class="glossy"
                       color="blue-8"
                       label="Borrar Seleccionado"
                       no-caps
+                      rounded
                     />
                     <q-btn
                       class="glossy"
                       color="blue-8"
                       label="Borrar Todo"
                       no-caps
+                      rounded
                     />
                   </q-item>
                 </q-list>
@@ -476,6 +473,8 @@
 
 <script>
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+
+/* import {map} from src="https://maps.googleapis.com/maps/api/js?key=MY_API_KEY&callback=initMap"; */
 
 export default {
   data() {
@@ -682,6 +681,63 @@ export default {
       }
     },
 
+    cargarLatitudLongitud(latitud, longitud, ciudad) {
+      this.center = {
+        lat: latitud,
+        lng: longitud,
+      };
+      this.markers = [
+        {
+          position: {
+            lat: latitud,
+            lng: longitud,
+          },
+          title: ciudad,
+        },
+      ];
+      this.latitud = latitud;
+      this.longitud = longitud;
+    },
+
+    geocodedAddress() {
+      var self = this;
+      let geocoder = new google.maps.Geocoder();
+      let theLocations = this.locations;
+
+      return Promise.all(
+        _.map(theLocations, (addr) => {
+          var geocoder = new google.maps.Geocoder();
+
+          var locationss = {
+            lat: parseFloat(addr.lat),
+            lng: parseFloat(addr.lng),
+          };
+
+          // var sampleLocation = { lat: 1.39, lng: 103.8 };
+
+          return new Promise(function (resolve, reject) {
+            geocoder.geocode(
+              { location: locationss },
+              function (results, status) {
+                if (status === "OK") {
+                  if (results[0]) {
+                    return results[0].formatted_address;
+                  } else {
+                    console.log(status);
+                    window.alert("No results found");
+                    return null;
+                  }
+                }
+              }
+            );
+          });
+        })
+      ).then((data) => {
+        console.log(data);
+        this.formatedAddresses = data;
+      });
+    },
+
     cargarMapaUbicacion() {
       let ciudad = this.modelCiudad;
       let latitud, longitud;
@@ -689,78 +745,22 @@ export default {
         case "Bogota":
           latitud = 4.665984005374667;
           longitud = -74.11201953238661;
-          this.center = {
-            lat: latitud,
-            lng: longitud,
-          };
-          this.markers = [
-            {
-              position: {
-                lat: latitud,
-                lng: longitud,
-              },
-              title: "Bogota",
-            },
-          ];
-          this.latitud = latitud;
-          this.longitud = longitud;
+          this.cargarLatitudLongitud(latitud, longitud, "Bogota");
           break;
         case "Medellin":
           latitud = 6.24381223144814;
           longitud = -75.56822986305791;
-          this.center = {
-            lat: latitud,
-            lng: longitud,
-          };
-          this.markers = [
-            {
-              position: {
-                lat: latitud,
-                lng: longitud,
-              },
-              title: "Bogota",
-            },
-          ];
-          this.latitud = latitud;
-          this.longitud = longitud;
+          this.cargarLatitudLongitud(latitud, longitud, "Medellin");
           break;
         case "Cali":
           latitud = 3.404300027947404;
           longitud = -76.52189083073294;
-          this.center = {
-            lat: latitud,
-            lng: longitud,
-          };
-          this.markers = [
-            {
-              position: {
-                lat: latitud,
-                lng: longitud,
-              },
-              title: "Bogota",
-            },
-          ];
-          this.latitud = latitud;
-          this.longitud = longitud;
+          this.cargarLatitudLongitud(latitud, longitud, "Cali");
           break;
         case "Barranquilla":
           latitud = 10.97601594837661;
           longitud = -74.80522932533702;
-          this.center = {
-            lat: latitud,
-            lng: longitud,
-          };
-          this.markers = [
-            {
-              position: {
-                lat: latitud,
-                lng: longitud,
-              },
-              title: "Bogota",
-            },
-          ];
-          this.latitud = latitud;
-          this.longitud = longitud;
+          this.cargarLatitudLongitud(latitud, longitud, "Barranquilla");
           break;
       }
     },
