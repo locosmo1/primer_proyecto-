@@ -75,7 +75,7 @@
                     class="glossy"
                     color="blue-8"
                     label="Añadir Nueva Direccion"
-                    @click="dialogoDomicilio = true"
+                    @click="(dialogoDomicilio = true), (crear = true)"
                     rounded
                     no-caps
                   />
@@ -83,7 +83,7 @@
                     class="glossy"
                     color="blue-8"
                     label="Actualizar esta Direccion"
-                    @click="ActualizarDomicilio()"
+                    @click="dialogoDomicilio = true, crear = false"
                     rounded
                     no-caps
                   />
@@ -187,7 +187,7 @@
                   color="info"
                   label="Enviar"
                   icon="people_alt"
-                  @click="AgregarDomicilio()"
+                  @click="AgregarEditarDomicilio()"
                 />
               </div>
             </q-card>
@@ -290,8 +290,7 @@
                 no-caps
                 label="Opciones"
               >
-
-              <!-- Lista para modificar el producto por medio del crud -->
+                <!-- Lista para modificar el producto por medio del crud -->
                 <q-list>
                   <q-item class="column">
                     <q-btn
@@ -331,7 +330,7 @@
       </div>
 
       <!-- graphics than represent the data. -->
-      <div class="row">
+      <!-- <div class="row">
         <div class="q-pa-md col-xl-3 col-lg-3 col-md-3 col-sm-12 col-xs-12">
           <q-card bordered>
             <q-card-section>
@@ -392,9 +391,9 @@
             </q-card-section>
           </q-card>
         </div>
-      </div>
+      </div> -->
 
-      <div class="row">
+      <!-- <div class="row">
         <div class="q-pa-md col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
           <q-card bordered>
             <q-card-section>
@@ -425,9 +424,9 @@
             </q-card-section>
           </q-card>
         </div>
-      </div>
+      </div> -->
 
-      <div class="row">
+      <!-- <div class="row">
         <div class="q-pa-md col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
           <q-card bordered>
             <q-card-section>
@@ -458,7 +457,7 @@
             </q-card-section>
           </q-card>
         </div>
-      </div>
+      </div> -->
 
       <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="row">&nbsp;&nbsp;&nbsp;</div>
@@ -509,6 +508,8 @@ export default {
 
       ciudadesDisponibles: ["Bogota", "Medellin", "Cali", "Barranquilla"],
       modelCiudad: "",
+
+      crear: true,
 
       item: {},
       latitud: 1.6236144612112966,
@@ -634,6 +635,14 @@ export default {
   },
 
   methods: {
+    AgregarEditarDomicilio() {
+      if (this.crear) {
+        this.AgregarDomicilio();
+      } else {
+        this.ActualizarDomicilio();
+      }
+    },
+
     AgregarDomicilio() {
       let nuevoDomicilio = {
         idDomicilio: 1,
@@ -649,8 +658,27 @@ export default {
       this.dialogoDomicilio = false;
     },
 
-    ActualizarDomicilio() {
-      console.log("ActualizarDomicilio");
+    async ActualizarDomicilio() {
+      let url1 = this.urlBaseDomicilio;
+      let url2 = this.urlBaseDomicilio + "ObtenerIdUbicacion";
+      if (this.domiciliosSeleccionados.length == 1) {
+        let domicilio = this.domiciliosSeleccionados[0];
+        let idUbicacionn = await this.enviarPeticionRespuesta(
+          url2,
+          "POST",
+          domicilio.idDomicilio
+        );
+        let nuevoDomicilio = {
+          idDomicilio: domicilio.idDomicilio,
+          ciudad: domicilio.ciudad,
+          direccion: domicilio.direccion,
+          idUsuario: this.usuarioSeleccionado.idUsuario,
+          idUbicacion: idUbicacionn,
+        };
+        this.enviarPeticion(url1, "PUT", nuevoDomicilio);
+      } else {
+        console.log("Debes seleccionar un solo domicilio");
+      }
     },
 
     BorrarDomicilio() {
@@ -659,26 +687,6 @@ export default {
 
     BorrarTodosDomicilios() {
       console.log("BorrarTodosDomicilios");
-    },
-
-    async enviarPeticion(url, method, body) {
-      let opcion = body === "" ? false : true;
-      if (opcion) {
-        fetch(url, {
-          method: method,
-          body: JSON.stringify(body),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-      } else {
-        fetch(url, {
-          method: method,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-      }
     },
 
     cargarLatitudLongitud(latitud, longitud, ciudad) {
@@ -815,29 +823,6 @@ export default {
       }
     },
 
-    async enviarPeticionRespuesta(url, method, body) {
-      let opcion = body === "" ? false : true;
-      let informacion;
-      if (opcion) {
-        informacion = await fetch(url, {
-          method: method,
-          body: JSON.stringify(body),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-      } else {
-        informacion = await fetch(url, {
-          method: method,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-      }
-      const data = await informacion.json();
-      return data;
-    },
-
     async CargarImagenes() {
       let url =
         "https://localhost:44370/api/Imagenes/ObtenerImagenesProducto/" +
@@ -893,6 +878,49 @@ export default {
       this.imagenActualProducto = this.productoSeleccionado.imagen;
       this.CargarImagenes();
       this.dialogoProducto = true;
+    },
+
+    async enviarPeticion(url, method, body) {
+      let opcion = body === "" ? false : true;
+      if (opcion) {
+        fetch(url, {
+          method: method,
+          body: JSON.stringify(body),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      } else {
+        fetch(url, {
+          method: method,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      }
+    },
+
+    async enviarPeticionRespuesta(url, method, body) {
+      let opcion = body === "" ? false : true;
+      let informacion;
+      if (opcion) {
+        informacion = await fetch(url, {
+          method: method,
+          body: JSON.stringify(body),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      } else {
+        informacion = await fetch(url, {
+          method: method,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      }
+      const data = await informacion.json();
+      return data;
     },
 
     UsuarioAccedioCorrectamente() {
