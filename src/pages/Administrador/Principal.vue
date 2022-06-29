@@ -83,7 +83,7 @@
                     class="glossy"
                     color="blue-8"
                     label="Actualizar esta Direccion"
-                    @click="dialogoDomicilio = true, crear = false"
+                    @click="(dialogoDomicilio = true), (crear = false)"
                     rounded
                     no-caps
                   />
@@ -659,23 +659,24 @@ export default {
     },
 
     async ActualizarDomicilio() {
-      let url1 = this.urlBaseDomicilio;
-      let url2 = this.urlBaseDomicilio + "ObtenerIdUbicacion";
+      let url = this.urlBaseDomicilio + "ObtenerIdUbicacion";
       if (this.domiciliosSeleccionados.length == 1) {
-        let domicilio = this.domiciliosSeleccionados[0];
         let idUbicacionn = await this.enviarPeticionRespuesta(
-          url2,
+          url,
           "POST",
-          domicilio.idDomicilio
+          this.domiciliosSeleccionados[0].idDomicilio
         );
         let nuevoDomicilio = {
-          idDomicilio: domicilio.idDomicilio,
-          ciudad: domicilio.ciudad,
-          direccion: domicilio.direccion,
+          idDomicilio: this.domiciliosSeleccionados[0].idDomicilio,
+          ciudad: this.modelCiudad,
+          direccion: this.nuevaDireccion,
           idUsuario: this.usuarioSeleccionado.idUsuario,
           idUbicacion: idUbicacionn,
+          latitud: this.latitud,
+          longitud: this.longitud,
         };
-        this.enviarPeticion(url1, "PUT", nuevoDomicilio);
+        console.log({nuevoDomicilio});
+        this.enviarPeticion(this.urlBaseDomicilio, "PUT", nuevoDomicilio);
       } else {
         console.log("Debes seleccionar un solo domicilio");
       }
