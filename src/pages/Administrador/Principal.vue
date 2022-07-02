@@ -646,7 +646,7 @@ export default {
     AgregarDomicilio() {
       let nuevoDomicilio = {
         idDomicilio: 1,
-        ciudad: this.nuevaCiudad,
+        ciudad: this.modelCiudad,
         direccion: this.nuevaDireccion,
         idUsuario: this.usuarioSeleccionado.idUsuario,
         latitud: this.latitud,
@@ -675,15 +675,33 @@ export default {
           latitud: this.latitud,
           longitud: this.longitud,
         };
-        console.log({nuevoDomicilio});
         this.enviarPeticion(this.urlBaseDomicilio, "PUT", nuevoDomicilio);
+        this.dialogoDomicilio = false;
       } else {
         console.log("Debes seleccionar un solo domicilio");
       }
     },
 
-    BorrarDomicilio() {
-      console.log("BorrarDomicilio");
+    async BorrarDomicilio() {
+      let url = this.urlBaseDomicilio + "ObtenerIdUbicacion";
+      let idDomicilio = this.domiciliosSeleccionados[0].idDomicilio;
+      let idUbicacionn = await this.enviarPeticionRespuesta(
+        url,
+        "POST",
+        idDomicilio
+      );
+
+      let domicilio = {
+        idDomicilio: idDomicilio,
+        ciudad: this.modelCiudad,
+        direccion: this.nuevaDireccion,
+        idUsuario: this.usuarioSeleccionado.idUsuario,
+        idUbicacion: idUbicacionn,
+        latitud: this.latitud,
+        longitud: this.longitud,
+      };
+      let url2 = this.urlBaseDomicilio + "EliminarDomicilioUbicacion";
+      this.enviarPeticion(url2, "DELETE", domicilio);
     },
 
     BorrarTodosDomicilios() {
