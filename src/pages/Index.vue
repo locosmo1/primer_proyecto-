@@ -34,12 +34,6 @@
               name="cart"
               label="MODA"
             />
-            <q-tab
-              @click="Vender()"
-              class="text-black"
-              name="end_buy"
-              label="VENDER"
-            />
             <q-tab class="text-black" name="end_buy" label="AYUDA / PQR" />
           </q-tabs>
         </div>
@@ -526,10 +520,6 @@ export default {
         this.total_compra -= this.comprados[index].precio;
         this.comprados[index].unidades = valor;
       }
-    },
-
-    Vender() {
-      this.$router.replace({ path: "NewProduct" });
     },
 
     retornarPrecioFormateado(precio) {

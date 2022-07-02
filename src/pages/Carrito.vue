@@ -23,6 +23,7 @@
           <q-tab class="text-blue" name="carrito" label="Carrito" />
           <q-tab class="text-blue" name="guardados" label="Guardados" />
         </q-tabs>
+        <div v-if="(comprados.length = 0)">Sin productos en el carrito</div>
       </q-card>
       <div class="col-xl-1 col-lg-2 col-md-1 col-sm-1 col-xs-0"></div>
       <!-- 2 -->
@@ -35,7 +36,7 @@
       transition-next="scale"
       class="text-black"
     >
-      <q-tab-panel name="carrito">
+      <q-tab-panel v-if="comprados.length > 0" name="carrito">
         <div class="row">
           <div class="col-xl-1 col-lg-2 col-md-1 col-sm-1 col-xs-0"></div>
 
@@ -53,11 +54,7 @@
               </div>
 
               <div
-                class="
-                  text-h6
-                  col-xl-7 col-lg-7 col-md-7 col-sm-7 col-xs-7
-                  text-bold
-                "
+                class="text-h6 col-xl-7 col-lg-7 col-md-7 col-sm-7 col-xs-7 text-bold"
               >
                 &nbsp;&nbsp;&nbsp;&nbsp; {{ task.titulo }}
                 <div class="row">
@@ -99,14 +96,7 @@
                     </q-input>
                     <div class="row">
                       <div
-                        class="
-                          col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12
-                          self-center
-                          justify-center
-                          items-center
-                          content-center
-                          text-center
-                        "
+                        class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12 self-center justify-center items-center content-center text-center"
                       >
                         <q-btn
                           @click="CantidadDecrease(task)"
@@ -118,14 +108,7 @@
                         />
                       </div>
                       <div
-                        class="
-                          col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12
-                          self-center
-                          justify-center
-                          items-center
-                          content-center
-                          text-center
-                        "
+                        class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12 self-center justify-center items-center content-center text-center"
                       >
                         <q-btn
                           @click="CantidadPlus(task)"
@@ -139,10 +122,7 @@
                     </div>
                     <div class="row">
                       <div
-                        class="
-                          col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12
-                          text-center
-                        "
+                        class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center"
                       >
                         &nbsp;&nbsp;&nbsp;&nbsp;{{ task.cantidad }} disponibles
                       </div>
@@ -177,7 +157,7 @@
               bordered
               class="row items-start justify-center q-pa-md"
               v-for="(task, index) in this.comprados"
-              :key="index" 
+              :key="index"
             >
               <div class="col-2">
                 <q-img :src="task.imagen" />
@@ -298,11 +278,7 @@
             rounded
             v-for="(task, index) in comprados"
             :key="index"
-            class="
-              col-xl-2 col-lg-2 col-md-4 col-sm-6 col-xs-12
-              grid-item1
-              q-pa-md
-            "
+            class="col-xl-2 col-lg-2 col-md-4 col-sm-6 col-xs-12 grid-item1 q-pa-md"
           >
             <div>
               <div>
@@ -369,7 +345,7 @@ import firebase from "firebase/compat/app";
 import "firebase/compat/storage";
 
 export default {
-  data() { 
+  data() {
     return {
       nombre: "stiwar",
       pais: "Colombia",
@@ -463,7 +439,12 @@ export default {
 
         let productos = await data.json();
         this.comprados = this.eliminarRepetidos(productos);
-        this.$set(this.comprados, this.ordenarMetodoBorbuja(this.comprados, 1));
+        if (this.comprados.length > 0) {
+          this.$set(
+            this.comprados,
+            this.ordenarMetodoBorbuja(this.comprados, 1)
+          );
+        }
       } catch (error) {
         console.error("Error: " + error);
       }
@@ -488,30 +469,33 @@ export default {
 
         let carrito = await data.json();
 
-        let relacion = this.unirArreglo(carrito);
+        if (carrito.length > 0) {
+          let relacion = this.unirArreglo(carrito);
 
-        let arreglo = this.contarUnidadesArreglo(relacion);
+          let arreglo = this.contarUnidadesArreglo(relacion);
 
-        let cantidades = this.eliminarIdsRepetidos(arreglo);
+          let cantidades = this.eliminarIdsRepetidos(arreglo);
 
-        /* Object.assign(
+          /* Object.assign(
           this.Cantidades,
           this.ordenarMetodoBorbuja(cantidades, 2)
         ); */
-        this.Cantidades = Object.assign(
-          {},
-          this.Cantidades,
-          this.ordenarMetodoBorbuja(cantidades, 2)
-        );
-
-        for (let index = 0; index < this.comprados.length; index++) {
-          //this.comprados[index].unidades = this.Cantidades[index].cantidad;
-          this.$set(
-            this.comprados[index],
-            "unidades",
-            this.Cantidades[index].cantidad
+          this.Cantidades = Object.assign(
+            {},
+            this.Cantidades,
+            this.ordenarMetodoBorbuja(cantidades, 2)
           );
+
+          for (let index = 0; index < this.comprados.length; index++) {
+            //this.comprados[index].unidades = this.Cantidades[index].cantidad;
+            this.$set(
+              this.comprados[index],
+              "unidades",
+              this.Cantidades[index].cantidad
+            );
+          }
         }
+
         /* console.log(this.comprados);
         console.log(this.Cantidades); */
       } catch (error) {
