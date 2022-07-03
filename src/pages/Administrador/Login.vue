@@ -328,7 +328,7 @@ export default {
       modalRegistro: false,
       ispassword: true,
       contraseñaCifrada: "",
-      urlBase: "https://localhost:44370/api/prueba/",
+      urlBase: "https://localhost:44370/api/Usuario/",
       editedItem: {
         correoElectronico: "",
         contraseña: "",
@@ -349,7 +349,7 @@ export default {
       this.modalRegistro = false;
       let respuesta;
 
-      let url = this.urlBase + "guardarUsuario";
+      let url = this.urlBase + "GuardarUsuario";
 
       const usuario = {
         idUsuario: 0,
@@ -377,7 +377,6 @@ export default {
         console.log("error en fetch", error);
       }
 
-      console.log("contraseña: ", this.pass);
       let contraseñaCifrada = await this.obtenerContraseñaCifrada(this.pass);
       console.log({ contraseñaCifrada });
 
@@ -407,7 +406,7 @@ export default {
 
     async obtenerContraseñaCifrada(pass) {
       //Obtener contraseña cifrada
-      let url = "https://localhost:44370/api/prueba/obtenerContraseña";
+      let url = "https://localhost:44370/api/Cliente/obtenerContraseña";
 
       const informacion = await fetch(url, {
         method: "POST",
@@ -449,7 +448,7 @@ export default {
             contraseña: this.pass,
           };
           let respuesta = await this.enviarPeticionRespuesta(
-            "https://localhost:44370/api/prueba/iniciarSesion",
+            "https://localhost:44370/api/Sesion/IniciarSesion",
             "POST",
             usuario
           );
@@ -594,7 +593,7 @@ export default {
       });
     },
 
-    ingresarConApi() {
+    /* ingresarConApi() {
       //enviar datos con el metodo PUT de fetch
       let data;
       var url = "https://localhost:44370/api/prueba/loginCliente";
@@ -620,7 +619,7 @@ export default {
             console.log("Usuario o contraseña incorrectos");
           }
         });
-    },
+    }, */
   },
 };
 </script>

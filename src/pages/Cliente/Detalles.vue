@@ -251,7 +251,7 @@ export default {
             cantidad: this.cantidad,
             id_Producto: this.producto_recibido,
           };
-          let url = "https://localhost:44370/api/prueba/agregarCarrito";
+          let url = "https://localhost:44370/api/Carrito/AgregarCarrito";
 
           await fetch(url, {
             method: "POST",
@@ -284,7 +284,7 @@ export default {
 
       try {
         let data;
-        let url = "https://localhost:44370/api/prueba/producto";
+        let url = "https://localhost:44370/api/producto/ObtenerProducto";
 
         this.res = await fetch(url, {
           method: "POST",
@@ -317,7 +317,7 @@ export default {
     async obtenerImagenes() {
       try {
         var data;
-        let url = "https://localhost:44370/api/prueba/imagenes";
+        let url = "https://localhost:44370/api/Imagenes/ObtenerImagenes";
 
         this.res = await fetch(url, {
           method: "POST",
@@ -344,7 +344,6 @@ export default {
     comprar(id) {
       //Cuando damos clic en comprar añadir a la lista de productos del carrito el dueño es el cliente que ah iniciado sesion
       //imagen, titulo, precio, color, cantidad, descripcion
-      console.log("Hola dimos clic en comprar");
       let indice = undefined;
       let unidades = 1;
       let i = 0;

@@ -481,6 +481,7 @@ export default {
       urlBase: "https://localhost:44370/api/Prueba/",
       urlBaseDomicilio: "https://localhost:44370/api/Domicilio/",
       urlBaseProducto: "https://localhost:44370/api/Producto/",
+      urlBaseUsuario: "https://localhost:44370/api/Usuario/",
 
       separator: "horizontal",
 
@@ -708,7 +709,7 @@ export default {
       console.log("BorrarTodosDomicilios");
     },
 
-    cargarLatitudLongitud(latitud, longitud, ciudad) {
+    CargarLatitudLongitud(latitud, longitud, ciudad) {
       this.center = {
         lat: latitud,
         lng: longitud,
@@ -772,22 +773,22 @@ export default {
         case "Bogota":
           latitud = 4.665984005374667;
           longitud = -74.11201953238661;
-          this.cargarLatitudLongitud(latitud, longitud, "Bogota");
+          this.CargarLatitudLongitud(latitud, longitud, "Bogota");
           break;
         case "Medellin":
           latitud = 6.24381223144814;
           longitud = -75.56822986305791;
-          this.cargarLatitudLongitud(latitud, longitud, "Medellin");
+          this.CargarLatitudLongitud(latitud, longitud, "Medellin");
           break;
         case "Cali":
           latitud = 3.404300027947404;
           longitud = -76.52189083073294;
-          this.cargarLatitudLongitud(latitud, longitud, "Cali");
+          this.CargarLatitudLongitud(latitud, longitud, "Cali");
           break;
         case "Barranquilla":
           latitud = 10.97601594837661;
           longitud = -74.80522932533702;
-          this.cargarLatitudLongitud(latitud, longitud, "Barranquilla");
+          this.CargarLatitudLongitud(latitud, longitud, "Barranquilla");
           break;
       }
     },
@@ -818,7 +819,7 @@ export default {
     async ObtenerDomicilios(id) {
       try {
         let idUsuario = parseInt(id);
-        let url = this.urlBase + "ObtenerDomicilioUsuario";
+        let url = this.urlBaseDomicilio + "ObtenerDomicilioUsuario";
         this.domicilios = await this.enviarPeticionRespuesta(
           url,
           "POST",
@@ -856,7 +857,7 @@ export default {
 
     //Obtener todos los usuarios con todas sus propiedades
     async GetUsuarios() {
-      let url = this.urlBase + "ObtenerUsuarios";
+      let url = this.urlBaseUsuario + "ObtenerUsuarios";
       this.usuarios = await this.enviarPeticionRespuesta(url, "GET");
       for (let i = 0; i < this.usuarios.length; i++) {
         this.nombreUsuarios.push(this.usuarios[i].usuario);

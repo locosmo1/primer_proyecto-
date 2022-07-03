@@ -49,22 +49,18 @@
               bordered
               v-for="(task, index) in tasks"
               :key="index"
-              class="
-                col-xl-2 col-lg-2 col-md-4 col-sm-6 col-xs-12
-                grid-item1
-                q-pa-md
-              "
+              class="col-xl-2 col-lg-2 col-md-4 col-sm-6 col-xs-12 grid-item1 q-pa-md"
               ><!-- grid-item1 -->
               <div>
                 <!-- class="my-content" -->
                 <div @click="VerDetalles(index)">
                   <!-- class="pointerproduct" -->
                   <!-- @click="VerDetalles(index)" -->
-                  <q-img :src="agregar_imagen_lista(index)" />
+                  <q-img :src="AgregarImagenLista(index)" />
                   <q-card-section>
                     <div class="justify-around">
                       <div class="text-h6">
-                        {{ retornarPrecioFormateado(task.precio) }}
+                        {{ RetornarPrecioFormateado(task.precio) }}
                       </div>
                       <div class="text-h6">{{ task.titulo }}</div>
                     </div>
@@ -77,7 +73,7 @@
                   <div class="row">
                     <div class="col-auto">
                       <q-btn
-                        @click="comprar(index)"
+                        @click="AgregarCarrito(index)"
                         class="glossy"
                         dark
                         rounded
@@ -138,7 +134,7 @@ export default {
       editedItem: {
         id: 0,
         imagen: "",
-        precio : 0,
+        precio: 0,
       },
       pagina: 0,
       ultimo: "",
@@ -174,9 +170,8 @@ export default {
     };
   },
   created() {
-    this.usuarioAccedioCorrectamente();
-    this.iniciar_data();
-    this.obtenerImagenes();
+    this.UsuarioAccedioCorrectamente();
+    this.IniciarData();
     this.matMenu = matMenu;
   },
 
@@ -202,7 +197,6 @@ export default {
       this.editedItem.precio = this.tasks[index].precio;
       this.url_image = this.tasks[index].imagen;
       this.buscar = this.tasks[index].titulo;
-      this.obtenerImagenes();
       //this.$router.replace({ path: "detalles" });
       //Enviar todo el producto en cuestion
       this.$router.push({
@@ -212,51 +206,13 @@ export default {
       /* this.tab = "detalles"; */
     },
 
-    anadirTarea() {
-      if (
-        this.editedItem.titulo !== "" &&
-        this.editedItem.precio != "" &&
-        this.url_image != ""
-      ) {
-        let precio_v = parseInt(this.editedItem.precio);
-        const data = {
-          Id: this.tasks.length + 1,
-          urlImagen: this.url_image,
-          nombre: this.editedItem.titulo,
-          precio: precio_v,
-        };
+    
 
-        fetch("https://localhost:44370/api/prueba", {
-          method: "POST", // or 'PUT'
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        })
-          .then((response) => response) //.json()
-          .then((data) => {
-            /* console.log("Success:", data); */
-          })
-          .catch((error) => {
-            console.error("Error EN FETCH:", error);
-          });
-
-        let nueva = {
-          titulo: this.editedItem.titulo,
-          precio: precio_v,
-          imagen: this.url_image,
-        };
-        this.tasks.push(nueva);
-        this.editar = false;
-      }
-      this.tab = "consultar";
-    },
-
-    iniciar_data() {
+    IniciarData() {
       //Necesitamos el id, precio, titulo
       let arreglo = [];
       axios
-        .get("https://localhost:44370/api/prueba", {
+        .get("https://localhost:44370/api/Producto", {
           responseType: "json",
         })
         .then(function (res) {
@@ -282,118 +238,13 @@ export default {
       this.tasks = arreglo;
     },
 
-    editarItem() {
-      let precio_v;
-      let new_item;
+    
 
-      precio_v = parseInt(this.editedItem.precio);
-      new_item = {
-        titulo: this.editedItem.titulo,
-        precio: precio_v,
-        imagen: this.url_image,
-      };
-      Object.assign(this.tasks[this.indice_editar], new_item);
-      let indice = this.indice_editar + 1;
+    
 
-      const data = {
-        Id: indice,
-        urlImagen: this.url_image,
-        nombre: this.editedItem.titulo,
-        precio: precio_v,
-      };
-      console.log(data);
-
-      fetch("https://localhost:44370/api/prueba", {
-        method: "PUT", // or 'PUT'
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      })
-        .then((response) => response) //.json()
-        .then((data) => {
-          console.log("Success:", data);
-        })
-        .catch((error) => {
-          console.error("Error EN FETCH:", error);
-        });
-      this.tab = "consultar";
-    },
-
-    borrar_item(id) {
-      let newId = id + 1;
-
-      fetch("https://localhost:44370/api/prueba/" + newId, {
-        method: "DELETE",
-      })
-        .then((data) => data) //.json()
-        .then((respuesta) => {
-          console.log(respuesta);
-        })
-        .catch((error) => console.log("Error: " + error));
-
-      this.tasks.splice(id, 1);
-    },
-
-    async obtenerImagenes() {
-      this.tamano = 14;
-      this.pagina = 1;
-      if (this.ultimo === this.buscar) {
-        //this.pagina = this.pagina + 1;
-        this.ultimo = this.buscar;
-      }
-      const Url =
-        "https://api.pexels.com/v1/search?query=" +
-        this.buscar +
-        "&per_page=14&page=" +
-        this.pagina;
-      const apikey = "563492ad6f917000010000017248196f0f5f40ec82d8a0b3a18955a7";
-
-      const res = await fetch(Url, {
-        method: "GET",
-        headers: {
-          Accept: "application/json",
-          Authorization: apikey,
-        },
-      });
-      const respuesta = await res.json();
-
-      this.fotos = this.vaciar_arreglo(this.fotos);
-
-      respuesta.photos.forEach((element) => {
-        this.fotos.push(element.src.landscape);
-      });
-    },
-
-    async mas_Imagenes() {
-      console.log("Mas imagenes");
-      this.tamano = this.tamano + 14;
-      this.pagina = this.pagina + 1;
-      const Url =
-        "https://api.pexels.com/v1/search?query=" +
-        this.buscar +
-        "&per_page=14&page=" +
-        this.pagina;
-      const apikey = "563492ad6f917000010000017248196f0f5f40ec82d8a0b3a18955a7";
-
-      const res = await fetch(Url, {
-        method: "GET",
-        headers: {
-          Accept: "application/json",
-          Authorization: apikey,
-        },
-      });
-      const respuesta = await res.json();
-
-      respuesta.photos.forEach((element) => {
-        this.fotos.push(element.src.landscape);
-      });
-    },
-
-    comprar(id) {
+    AgregarCarrito(id) {
       //Cuando damos clic en comprar añadir a la lista de productos del carrito el dueño es el cliente que ah iniciado sesion
       //imagen, titulo, precio, color, cantidad, descripcion
-      console.log("Hola dimos clic en comprar");
       let indice = undefined;
       let unidades = 1;
       let i = 0;
@@ -448,16 +299,16 @@ export default {
       }
     },
 
-    agregar_indice(id) {
+    /* AgregarIndice(id) {
       this.tab = "edit";
       this.indice_editar = id;
       let titulo = this.tasks[this.indice_editar].titulo;
 
       this.buscar = titulo;
       this.obtenerImagenes();
-    },
+    }, */
 
-    encontrar_indice(producto, arreglo) {
+    EncontrarIndice(producto, arreglo) {
       let x, indice;
       for (x = 0; x < arreglo.length; x++) {
         if (arreglo[x].titulo == producto.titulo) {
@@ -467,46 +318,46 @@ export default {
       return indice;
     },
 
-    vaciar_arreglo(arreglo) {
+    VaciarArreglo(arreglo) {
       for (let i = arreglo.length; i > 0; i--) {
         arreglo.pop();
       }
       return arreglo;
     },
 
-    objetos_iguales(obj1, obj2) {
+    ObjetosIguales(obj1, obj2) {
       return obj1.titulo === obj2.titulo && obj1.precio === obj2.precio;
     },
 
-    async agregar_imagen_editar(id) {
+    async AgregarImagenEditar(id) {
       this.url_image = this.fotos[id - 1];
     },
 
-    retornar_Imagen(n) {
+    RetornarImagen(n) {
       return this.fotos[n - 1];
     },
 
-    agregar_imagen_lista(id) {
+    AgregarImagenLista(id) {
       return this.tasks[id].imagen;
     },
 
-    obtener() {
+    Obtener() {
       if (this.j < 8 && this.card == true) {
         Object.assign(this.j, this.j++);
       }
     },
 
-    AddEdit() {
+    AnadirEditar() {
       this.card = true;
     },
 
-    eliminar_producto(id) {
+    EliminarProducto(id) {
       this.total_compra -=
         this.comprados[id].precio * this.comprados[id].unidades;
       this.comprados.splice(id, 1);
     },
 
-    aumentar_cantidad(index) {
+    AumentarCantidad(index) {
       let valor = this.comprados[index].unidades + 1;
       let valor2 = parseInt(this.total_compra);
       let valor3 = parseInt(this.comprados[index].precio);
@@ -514,7 +365,7 @@ export default {
       this.comprados[index].unidades = valor;
     },
 
-    disminuir_cantidad(index) {
+    DisminuirCantidad(index) {
       let valor = this.comprados[index].unidades - 1;
       if (valor >= 1) {
         this.total_compra -= this.comprados[index].precio;
@@ -522,7 +373,7 @@ export default {
       }
     },
 
-    retornarPrecioFormateado(precio) {
+    RetornarPrecioFormateado(precio) {
       //convertir el entero a string
 
       const formatterPeso = new Intl.NumberFormat("es-CO", {
@@ -533,7 +384,7 @@ export default {
       return formatterPeso.format(precio);
     },
 
-    usuarioAccedioCorrectamente() {
+    UsuarioAccedioCorrectamente() {
       //const auth = getAuth();
 
       onAuthStateChanged(this.$store.state.auth, (user) => {
@@ -549,6 +400,157 @@ export default {
         }
       });
     },
+
+  /* AñadirProducto() {
+      if (
+        this.editedItem.titulo !== "" &&
+        this.editedItem.precio != "" &&
+        this.url_image != ""
+      ) {
+        let precio_v = parseInt(this.editedItem.precio);
+        const data = {
+          Id: this.tasks.length + 1,
+          urlImagen: this.url_image,
+          nombre: this.editedItem.titulo,
+          precio: precio_v,
+        };
+
+        fetch("https://localhost:44370/api/prueba", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        })
+          .then((response) => response)
+          .then((data) => {
+          })
+          .catch((error) => {
+            console.error("Error EN FETCH:", error);
+          });
+
+        let nueva = {
+          titulo: this.editedItem.titulo,
+          precio: precio_v,
+          imagen: this.url_image,
+        };
+        this.tasks.push(nueva);
+        this.editar = false;
+      }
+      this.tab = "consultar";
+    }, */
+
+
+    /* EditarProducto() {
+      let precio_v;
+      let new_item;
+
+      precio_v = parseInt(this.editedItem.precio);
+      new_item = {
+        titulo: this.editedItem.titulo,
+        precio: precio_v,
+        imagen: this.url_image,
+      };
+      Object.assign(this.tasks[this.indice_editar], new_item);
+      let indice = this.indice_editar + 1;
+
+      const data = {
+        Id: indice,
+        urlImagen: this.url_image,
+        nombre: this.editedItem.titulo,
+        precio: precio_v,
+      };
+      console.log(data);
+
+      fetch("https://localhost:44370/api/prueba", {
+        method: "PUT", // or 'PUT'
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      })
+        .then((response) => response) //.json()
+        .then((data) => {
+          console.log("Success:", data);
+        })
+        .catch((error) => {
+          console.error("Error EN FETCH:", error);
+        });
+      this.tab = "consultar";
+    }, */
+
+
+    /* BorrarProducto(id) {
+      let newId = id + 1;
+
+      fetch("https://localhost:44370/api/prueba/" + newId, {
+        method: "DELETE",
+      })
+        .then((data) => data) //.json()
+        .then((respuesta) => {
+          console.log(respuesta);
+        })
+        .catch((error) => console.log("Error: " + error));
+
+      this.tasks.splice(id, 1);
+    }, */
+
+    /* async ObtenerImagenes() {
+      this.tamano = 14;
+      this.pagina = 1;
+      if (this.ultimo === this.buscar) {
+        //this.pagina = this.pagina + 1;
+        this.ultimo = this.buscar;
+      }
+      const Url =
+        "https://api.pexels.com/v1/search?query=" +
+        this.buscar +
+        "&per_page=14&page=" +
+        this.pagina;
+      const apikey = "563492ad6f917000010000017248196f0f5f40ec82d8a0b3a18955a7";
+
+      const res = await fetch(Url, {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          Authorization: apikey,
+        },
+      });
+      const respuesta = await res.json();
+
+      this.fotos = this.vaciar_arreglo(this.fotos);
+
+      respuesta.photos.forEach((element) => {
+        this.fotos.push(element.src.landscape);
+      });
+    }, */
+
+    /* async MasImagenes() {
+      console.log("Mas imagenes");
+      this.tamano = this.tamano + 14;
+      this.pagina = this.pagina + 1;
+      const Url =
+        "https://api.pexels.com/v1/search?query=" +
+        this.buscar +
+        "&per_page=14&page=" +
+        this.pagina;
+      const apikey = "563492ad6f917000010000017248196f0f5f40ec82d8a0b3a18955a7";
+
+      const res = await fetch(Url, {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          Authorization: apikey,
+        },
+      });
+      const respuesta = await res.json();
+
+      respuesta.photos.forEach((element) => {
+        this.fotos.push(element.src.landscape);
+      });
+    }, */
+
+
   },
 };
 </script>
@@ -636,22 +638,22 @@ body {
 </style>
 
 <!--  <div class="q-pa-md row items-start q-gutter-md"> -->
-          <!-- justify-start wrap fit inline -->
-          <!-- <q-card
+<!-- justify-start wrap fit inline -->
+<!-- <q-card
               style="width: 450px; max-width: 80vw"
               v-for="j in this.tamano"
               :key="j"
               class="my-card"
             > -->
-          <!-- <q-card-section>
+<!-- <q-card-section>
                 <q-img :src="retornar_Imagen(j)" />
               </q-card-section> -->
 
-          <!--  <q-card-section> -->
-          <!-- <div class="row items-stretch content-start q-pa-md">  -->
-          <!-- fit row inline no-wrap justify-start items-start content-start -->
+<!--  <q-card-section> -->
+<!-- <div class="row items-stretch content-start q-pa-md">  -->
+<!-- fit row inline no-wrap justify-start items-start content-start -->
 
-          <!-- <div class="row q-pa-md  items-start q-gutter-md">
+<!-- <div class="row q-pa-md  items-start q-gutter-md">
               <div class="col-4 q-mb-md">
                 <div v-if="j == 2">
                   {{ Object.assign(j, (j += 2)) }}
@@ -670,8 +672,8 @@ body {
                 <q-img :src="retornar_Imagen(j + 2)" />
               </div>
             </div> -->
-          <!-- </q-card-section> -->
+<!-- </q-card-section> -->
 
-          <!-- <q-separator /> -->
-          <!-- </q-card> -->
-          <!-- </div> -->
+<!-- <q-separator /> -->
+<!-- </q-card> -->
+<!-- </div> -->

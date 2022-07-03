@@ -422,7 +422,7 @@ export default {
       //Obtener los productos de la lista de compras de un cliente predeterminado
       try {
         let data;
-        let url = "https://localhost:44370/api/prueba/obtenerProductos";
+        let url = "https://localhost:44370/api/Producto/ObtenerProductos";
 
         this.res = await fetch(url, {
           method: "POST",
@@ -452,7 +452,7 @@ export default {
       //Obtener las cantidades de cada uno de los productos del carrito
       try {
         let data;
-        let url = "https://localhost:44370/api/prueba/obtenerCarrito";
+        let url = "https://localhost:44370/api/Carrito/ObtenerCarrito";
 
         this.res = await fetch(url, {
           method: "POST",
