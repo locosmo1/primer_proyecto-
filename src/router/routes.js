@@ -4,7 +4,7 @@ const routes = [
     path: '/',
     component: () => import('layouts/initialLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/Login.vue') } //pages/Index.vue
+      { path: '', component: () => import('pages/Administrador/Login.vue') } //pages/Index.vue
     ]
   },
 
@@ -12,7 +12,7 @@ const routes = [
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: 'index', component: () => import('pages/Index.vue') } //pages/Index.vue
+      { path: 'index', component: () => import('pages/Cliente/Index.vue') } //pages/Index.vue
     ]
   },
 
@@ -20,7 +20,7 @@ const routes = [
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: 'detalles', name: 'detalles', component: () => import('pages/Detalles.vue') }
+      { path: 'detalles', name: 'detalles', component: () => import('pages/Cliente/Detalles.vue') }
     ]
   },
 
@@ -28,7 +28,7 @@ const routes = [
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: 'carrito', component: () => import('pages/Carrito.vue') }
+      { path: 'carrito', component: () => import('pages/Cliente/Carrito.vue') }
     ]
   },
 
@@ -36,7 +36,7 @@ const routes = [
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: 'NewProduct', component: () => import('pages/NewProduct.vue') }
+      { path: 'NewProduct', component: () => import('pages/Empresa/NewProduct.vue') }
     ]
   },
 
@@ -44,7 +44,7 @@ const routes = [
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: 'EditProduct', component: () => import('pages/EditProduct.vue') }
+      { path: 'EditProduct', component: () => import('pages/Empresa/EditProduct.vue') }
     ]
   },
 
@@ -52,7 +52,7 @@ const routes = [
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: 'compras', component: () => import('pages/Compras.vue') }
+      { path: 'compras', component: () => import('pages/Cliente/Compras.vue') }
     ]
   },
 
@@ -60,7 +60,7 @@ const routes = [
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: 'Supermercado', component: () => import('pages/Supermercado.vue') }
+      { path: 'Supermercado', component: () => import('pages/Cliente/Supermercado.vue') }
     ]
   },
 
@@ -68,7 +68,7 @@ const routes = [
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: 'Moda', component: () => import('pages/Moda.vue') }
+      { path: 'Moda', component: () => import('pages/Cliente/Moda.vue') }
     ]
   },
 
@@ -76,7 +76,7 @@ const routes = [
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: 'Ofertas', component: () => import('pages/Ofertas.vue') }
+      { path: 'Ofertas', component: () => import('pages/Cliente/Ofertas.vue') }
     ]
   },
 
@@ -84,7 +84,7 @@ const routes = [
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: 'RegistroCliente', component: () => import('pages/RegistroCliente.vue') }
+      { path: 'RegistroCliente', component: () => import('pages/Cliente/RegistroCliente.vue') }
     ]
   },
 
@@ -92,7 +92,7 @@ const routes = [
     path: '/',
     component: () => import('layouts/AdminLayout.vue'),
     children: [
-      { path: 'Publicaciones', component: () => import('pages/Publicaciones.vue') }
+      { path: 'Publicaciones', component: () => import('pages/Empresa/Publicaciones.vue') }
     ]
   },
 
@@ -108,7 +108,7 @@ const routes = [
   // but you can also remove it
   {
     path: '*',
-    component: () => import('pages/Error404.vue')
+    component: () => import('pages/Administrador/Error404.vue')
   },
 ]
 
