@@ -10,7 +10,7 @@
             v-model="modelUsuarios"
             :options="nombreUsuarios"
             label="Seleccione un usuario"
-            @input="cargarDatosUsuario"
+            @input="CargarDatosUsuario"
           />
         </div>
       </div>
@@ -130,7 +130,7 @@
                 v-model="modelCiudad"
                 :options="ciudadesDisponibles"
                 label="Seleccione la ciudad"
-                @input="cargarMapaUbicacion"
+                @input="CargarMapaUbicacion"
               >
               </q-select>
 
@@ -727,7 +727,7 @@ export default {
       this.longitud = longitud;
     },
 
-    geocodedAddress() {
+    GeocodedAddress() {
       var self = this;
       let geocoder = new google.maps.Geocoder();
       let theLocations = this.locations;
@@ -766,7 +766,7 @@ export default {
       });
     },
 
-    cargarMapaUbicacion() {
+    CargarMapaUbicacion() {
       let ciudad = this.modelCiudad;
       let latitud, longitud;
       switch (ciudad) {
@@ -793,7 +793,7 @@ export default {
       }
     },
 
-    cargarDatosUsuario() {
+    CargarDatosUsuario() {
       for (let i = 0; i < this.usuarios.length; i++) {
         if (this.usuarios[i].usuario == this.modelUsuarios) {
           this.usuarioSeleccionado = this.usuarios[i];

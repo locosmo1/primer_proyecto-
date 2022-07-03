@@ -20,7 +20,7 @@
             dense
             class="q-pa-xs"
             color="botones"
-            @click="showAllCookies()"
+            @click="ShowAllCookies()"
             icon="account_circle"
           />
         </div>
@@ -128,7 +128,7 @@
                   class="q-pa-xs"
                   color="botones"
                   label="Olvide mi contraseña"
-                  @click="ingresarConCorreo()"
+                  @click="IngresarConCorreo()"
                   icon="lock_open"
                 />
               </div>
@@ -155,7 +155,7 @@
                     class="text-center q-pa-xs"
                     color="info"
                     label="Entrar"
-                    @click="ingresarConCorreo()"
+                    @click="IngresarConCorreo()"
                     icon="login"
                   />
                 </div>
@@ -254,7 +254,7 @@
                           class="text-center q-pa-xs"
                           color="info"
                           label="Registrarme"
-                          @click="registro()"
+                          @click="Registro()"
                           icon="people_alt"
                         />
                       </div>
@@ -338,13 +338,13 @@ export default {
   },
   created() {
     this.$store.dispatch("iniciarFirebaseAction");
-    if (this.usuarioAccedioCorrectamente()) {
+    if (this.UsuarioAccedioCorrectamente()) {
       this.$router.push("/Index");
     }
   },
 
   methods: {
-    async registro() {
+    async Registro() {
       //cerrar el modal
       this.modalRegistro = false;
       let respuesta;
@@ -404,7 +404,7 @@ export default {
       }
     },
 
-    async obtenerContraseñaCifrada(pass) {
+    async ObtenerContraseñaCifrada(pass) {
       //Obtener contraseña cifrada
       let url = "https://localhost:44370/api/Cliente/obtenerContraseña";
 
@@ -420,7 +420,7 @@ export default {
       return contraseñaCifrada;
     },
 
-    async ingresarConCorreo() {
+    async IngresarConCorreo() {
       let contraseñaCifrada = await this.obtenerContraseñaCifrada(this.pass);
 
       const auth = this.$store.state.auth;
@@ -478,7 +478,7 @@ export default {
       this.pass = "";
     },
 
-    async enviarPeticion(url, method, body) {
+    async EnviarPeticion(url, method, body) {
       let opcion = body === "" ? false : true;
       if (opcion) {
         fetch(url, {
@@ -498,7 +498,7 @@ export default {
       }
     },
 
-    async enviarPeticionRespuesta(url, method, body) {
+    async EnviarPeticionRespuesta(url, method, body) {
       let opcion = body === "" ? false : true;
       let informacion;
       if (opcion) {
@@ -554,7 +554,7 @@ export default {
       this.ingresarConApi();
     },
 
-    cerrarSesion() {
+    CerrarSesion() {
       signOut(this.$store.state.auth)
         .then(() => {
           //this.Response.Cookies.Delete("session");
@@ -566,7 +566,7 @@ export default {
         });
     },
 
-    usuarioAccedioCorrectamente() {
+    UsuarioAccedioCorrectamente() {
       //const auth = getAuth();
       let accedio = false;
       onAuthStateChanged(this.$store.state.auth, (user) => {
@@ -578,14 +578,14 @@ export default {
       return accedio;
     },
 
-    showAllCookies() {
+    ShowAllCookies() {
       const cookies = process.env.SERVER
         ? Cookies.parseSSR(ssrContext)
         : Cookies.getAll(); // otherwise we're on client
       console.log(process.env.SERVER);
     },
 
-    showNotif() {
+    ShowNotif() {
       const $q = useQuasar();
       $q.notify({
         message: "Mensaje push",
@@ -593,7 +593,7 @@ export default {
       });
     },
 
-    /* ingresarConApi() {
+    /* IngresarConApi() {
       //enviar datos con el metodo PUT de fetch
       let data;
       var url = "https://localhost:44370/api/prueba/loginCliente";

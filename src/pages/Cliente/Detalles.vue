@@ -35,8 +35,8 @@
               <q-img
                 width="100%"
                 height="200px"
-                @click="agregarImagenEditar(index - 1)"
-                :src="retornar_Imagen(index - 1)"
+                @click="AgregarImagenEditar(index-1)"
+                :src="RetornarImagen(index - 1)"
               />
             </div>
 
@@ -165,7 +165,7 @@
           dark
           rounded
           icon="shopping_cart"
-          @click="comprar()"
+          @click="Comprar()"
           color="blue-7"
           label="Comprar ahora"
         />
@@ -174,7 +174,7 @@
           dark
           rounded
           icon="shopping_cart"
-          @click="agregarCarrito()"
+          @click="AgregarCarrito()"
           color="blue-7"
           label="Agregar al carrito"
         />
@@ -212,7 +212,7 @@ export default {
     };
   },
   created() {
-    this.usuarioAccedioCorrectamente();
+    this.UsuarioAccedioCorrectamente();
     this.producto_recibido = this.$route.query.producto;
     console.log("Producto recibido", this.producto_recibido);
     this.url_image = this.producto_recibido.imagen;
@@ -220,11 +220,11 @@ export default {
   },
 
   mounted() {
-    this.obtenerImagenes();
+    this.ObtenerImagenes();
   },
 
   methods: {
-    usuarioAccedioCorrectamente() {
+    UsuarioAccedioCorrectamente() {
       //const auth = getAuth();
 
       onAuthStateChanged(this.$store.state.auth, (user) => {
@@ -238,13 +238,13 @@ export default {
       });
     },
 
-    async agregarCarrito() {
+    async AgregarCarrito() {
       //Crear un arreglo para recibir los datos del producto
       //para llenar el carrito necesitamos el
       //id del producto,
       //el id del cliente,
       //cantidad de productos que vamos a llevar
-      if (this.inicioSesion()) {
+      if (this.InicioSesion()) {
         try {
           let data;
           let carrito = {
@@ -274,11 +274,11 @@ export default {
       }
     },
 
-    inicioSesion() {
+    InicioSesion() {
       return true;
     },
 
-    async iniciar_data() {
+    async IniciarData() {
       //Iniciar los datos con la informacion del producto y de sus respectivas imagenes
       //Necesito el id del producto
 
@@ -306,15 +306,15 @@ export default {
       }
     },
 
-    agregarImagenEditar(id) {
+    AgregarImagenEditar(id) {
       this.url_image = this.direcciones[id];
     },
 
-    retornar_Imagen(index) {
+    RetornarImagen(index) {
       return this.direcciones[index];
     },
 
-    async obtenerImagenes() {
+    async ObtenerImagenes() {
       try {
         var data;
         let url = "https://localhost:44370/api/Imagenes/ObtenerImagenes";
@@ -341,7 +341,7 @@ export default {
       //this.$set(this.direcciones, await data.json());
     },
 
-    comprar(id) {
+    Comprar(id) {
       //Cuando damos clic en comprar añadir a la lista de productos del carrito el dueño es el cliente que ah iniciado sesion
       //imagen, titulo, precio, color, cantidad, descripcion
       let indice = undefined;

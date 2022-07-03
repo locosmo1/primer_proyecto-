@@ -91,7 +91,7 @@
                   :position="m.position"
                   :clickable="true"
                   :draggable="true"
-                  @dragend="actualizarCoordenadas($event.latLng)"
+                  @dragend="ActualizarCoordenadas($event.latLng)"
                 />
               </GmapMap>
             </q-card-section>
@@ -102,7 +102,7 @@
           <q-card>
             <q-card-section>
               <q-btn
-                @click="guardarUsuario()"
+                @click="GuardarUsuario()"
                 class="glossy"
                 dark
                 rounded
@@ -185,12 +185,12 @@ export default {
   },
 
   methods: {
-    actualizarCoordenadas(evnt) {
+    ActualizarCoordenadas(evnt) {
       this.latitud = evnt.lat();
       this.longitud = evnt.lng();
     },
 
-    registroConFirebase() {
+    RegistroConFirebase() {
       //const auth = getAuth();
       createUserWithEmailAndPassword(
         this.$store.state.auth,
@@ -209,11 +209,11 @@ export default {
         });
     },
 
-    async guardarUsuario() {
+    async GuardarUsuario() {
       //guardar usuario con nombre, apellido, contraseña
       //celular, correo electronico
 
-      this.registroConFirebase();
+      this.RegistroConFirebase();
 
       /* var respuesta;
 

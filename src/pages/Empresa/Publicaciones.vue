@@ -34,7 +34,7 @@
               class="col-xl-10 col-lg-10 col-md-10 col-sm-12 col-xs-12 q-pa-md"
             >
               <!-- imagen del producto -->
-              <q-img :src="agregar_imagen_lista(index)" />
+              <q-img :src="AgregarImagenLista(index)" />
             </div>
             <div class="col-xl-2 col-lg-2 col-md-2 col-sm-12 col-xs-12 q-pa-md">
               <!-- datos del producto -->
@@ -55,7 +55,7 @@
           "
         >
           &nbsp;&nbsp;Precio
-          {{ retornarPrecioFormateado(task.precio) }}
+          {{ RetornarPrecioFormateado(task.precio) }}
           <div class="column">
             <q-btn
               class="glossy"
@@ -139,7 +139,7 @@ export default {
 
   created() {
     this.UsuarioAccedioCorrectamente();
-    this.iniciar_data();
+    this.IniciarData();
   },
 
   data() {
@@ -151,15 +151,15 @@ export default {
   },
 
   methods: {
-    agregar_imagen_lista(id) {
+    AgregarImagenLista(id) {
       return this.tasks[id].imagen;
     },
 
-    iniciar_data() {
+    IniciarData() {
       //Necesitamos el id, precio, titulo
       let arreglo = [];
       axios
-        .get("https://localhost:44370/api/prueba", {
+        .get("https://localhost:44370/api/Producto", {
           responseType: "json",
         })
         .then(function (res) {
@@ -186,7 +186,7 @@ export default {
       console.log(this.tasks);
     },
 
-    retornarPrecioFormateado(precio) {
+    RetornarPrecioFormateado(precio) {
       //convertir el entero a string
 
       const formatterPeso = new Intl.NumberFormat("es-CO", {

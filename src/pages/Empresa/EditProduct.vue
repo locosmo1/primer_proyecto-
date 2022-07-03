@@ -81,7 +81,7 @@
           <q-separator />
 
           <q-btn
-            @click="editarItem()"
+            @click="EditarItem()"
             class="glossy"
             dark
             rounded
@@ -125,7 +125,7 @@ export default {
   },
   created() {},
   methods: {
-    editarItem() {
+    EditarItem() {
       let precio_v;
       let new_item;
 

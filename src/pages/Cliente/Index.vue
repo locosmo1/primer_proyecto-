@@ -238,10 +238,6 @@ export default {
       this.tasks = arreglo;
     },
 
-    
-
-    
-
     AgregarCarrito(id) {
       //Cuando damos clic en comprar añadir a la lista de productos del carrito el dueño es el cliente que ah iniciado sesion
       //imagen, titulo, precio, color, cantidad, descripcion

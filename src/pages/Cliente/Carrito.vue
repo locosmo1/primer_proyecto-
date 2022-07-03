@@ -90,7 +90,7 @@
                       :dense="true"
                       :size="'xl'"
                       rounded
-                      @blur="corregirUnidades(index, task.unidades)"
+                      @blur="CorregirUnidades(index, task.unidades)"
                       v-model="task.unidades"
                     >
                     </q-input>
@@ -136,8 +136,8 @@
 
               <div class="col-1 self-center text-h5 text-bold">
                 &nbsp;{{
-                  obtenerPrecioFormateado(
-                    obtenerPrecioFinal(task.unidades, task.precio)
+                  ObtenerPrecioFormateado(
+                    ObtenerPrecioFinal(task.unidades, task.precio)
                   )
                 }}
               </div>
@@ -196,7 +196,7 @@
               </div>
 
               <div class="col-1 self-center text-h5 text-bold">
-                &nbsp; {{ obtenerPrecioFinal(task.unidades, task.precio) }}
+                &nbsp; {{ ObtenerPrecioFinal(task.unidades, task.precio) }}
               </div>
             </q-card>
           </div>
@@ -224,10 +224,10 @@
           <q-card bordered class="col-4">
             <div class="text-h6 text-center">
               Costo del envío
-              {{ obtenerPrecioFormateado(obtenerCostoEnvio()) }}
+              {{ ObtenerPrecioFormateado(ObtenerCostoEnvio()) }}
             </div>
             <div class="text-bold text-h5 text-center text-wrap">
-              Total con envío {{ obtenerPrecioFormateado(obtenerTotal()) }}
+              Total con envío {{ ObtenerPrecioFormateado(ObtenerTotal()) }}
             </div>
 
             <!-- Espacio Intermedio -->
@@ -283,13 +283,13 @@
             <div>
               <div>
                 <q-card bordered>
-                  <q-img :src="obtener_imagen(index)" />
+                  <q-img :src="ObtenerImagen(index)" />
                 </q-card>
 
                 <q-card-section>
                   <div class="justify-around">
                     <div class="text-h6">
-                      {{ obtenerPrecioFormateado(task.precio) }}
+                      {{ ObtenerPrecioFormateado(task.precio) }}
                     </div>
                     <div class="text-h6">{{ task.titulo }}</div>
                   </div>
@@ -414,11 +414,11 @@ export default {
   methods: {
     //.cantidad = stock disponible
     //.unidades = unidades que el cliente quiere comprar
-    obtener_imagen(index) {
+    ObtenerImagen(index) {
       return this.comprados[index].imagen;
     },
 
-    async obtenerProductos() {
+    async ObtenerProductos() {
       //Obtener los productos de la lista de compras de un cliente predeterminado
       try {
         let data;
@@ -503,7 +503,7 @@ export default {
       }
     },
 
-    ordenarMetodoBorbuja(arregloFinal, orden) {
+    OrdenarMetodoBorbuja(arregloFinal, orden) {
       var length = arregloFinal.length;
       for (var i = 0; i < length; i++) {
         for (var j = 0; j < length - i - 1; j++) {
@@ -525,7 +525,7 @@ export default {
       return arregloFinal;
     },
 
-    unirArreglo(carrito) {
+    UnirArreglo(carrito) {
       let relacion = [];
       let index = 0;
 
@@ -539,7 +539,7 @@ export default {
       return relacion;
     },
 
-    contarUnidadesArreglo(relacion) {
+    ContarUnidadesArreglo(relacion) {
       let index = 0,
         index2 = 0;
       let indexinterno = 0;
@@ -566,7 +566,7 @@ export default {
     },
 
     //Crear un nuevo arreglo donde no se repita el id
-    eliminarIdsRepetidos(arreglo) {
+    EliminarIdsRepetidos(arreglo) {
       let arreglo2 = [];
       for (let index = 0; index < arreglo.length; index++) {
         let id = arreglo[index].id;
@@ -589,7 +589,7 @@ export default {
     },
 
     //Metodo para eliminar elementos repetidos en un arreglo
-    eliminarRepetidos(arreglo) {
+    EliminarRepetidos(arreglo) {
       let nuevo = [];
       let contador = 0;
       let contador2 = 0;
@@ -618,7 +618,7 @@ export default {
       return nuevo;
     },
 
-    objetos_Iguales(obj1, obj2) {
+    Objetos_Iguales(obj1, obj2) {
       return (
         obj1.titulo === obj2.titulo &&
         obj1.precio === obj2.precio &&
@@ -648,7 +648,7 @@ export default {
 
     //Corregir para que solo lo haga mientras el numero digitado
     //sea menor al numero disponible de productos
-    obtenerCostoEnvio() {
+    ObtenerCostoEnvio() {
       //.cantidad = stock disponible
       //.unidades = unidades que el cliente quiere comprar
       let unidadesTotales = 0;
@@ -658,7 +658,7 @@ export default {
       return unidadesTotales * 10000;
     },
 
-    obtenerTotal() {
+    ObtenerTotal() {
       let total = 0;
       for (let index = 0; index < this.comprados.length; index++) {
         total +=
@@ -670,7 +670,7 @@ export default {
     },
 
     //Retornar un string con los numeros formateados de 3 en 3
-    obtenerPrecioFormateado(precio) {
+    ObtenerPrecioFormateado(precio) {
       //convertir el entero a string
       let integer = 0;
       const formatterPeso = new Intl.NumberFormat("es-CO", {
@@ -686,11 +686,11 @@ export default {
       return integer;
     },
 
-    obtenerPrecioFinal(unidades, precio) {
+    ObtenerPrecioFinal(unidades, precio) {
       return unidades !== undefined ? parseInt(unidades) * parseInt(precio) : 0;
     },
 
-    corregirUnidades(index, unidades) {
+    CorregirUnidades(index, unidades) {
       if (unidades > this.comprados[index].cantidad) {
         this.$set(
           this.comprados[index],

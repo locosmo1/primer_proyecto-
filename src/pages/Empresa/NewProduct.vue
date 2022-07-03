@@ -82,7 +82,7 @@
                 multiple
                 accept="image/*"
                 class="input-file"
-                @change="iniciarCarga($event)"
+                @change="IniciarCarga($event)"
               />
               <p>
                 {{ mensaje }}
@@ -110,7 +110,7 @@
                       color="blue-7"
                       label="x"
                       size="xs"
-                      @click="eliminarImagen(index)"
+                      @click="EliminarImagen(index)"
                     />
                   </q-img>
                 </q-card>
@@ -120,7 +120,7 @@
           <!-- pintar las imagenes cargadas -->
 
           <q-btn
-            @click="anadirTarea()"
+            @click="AñadirTarea()"
             class="glossy"
             dark
             rounded
@@ -190,16 +190,16 @@ export default {
   },
 
   methods: {
-    eliminarImagen(index) {
+    EliminarImagen(index) {
       this.urlImagen.splice(index, 1);
     },
 
-    iniciarCarga(evento) {
+    IniciarCarga(evento) {
       this.files = evento.target.files;
       this.pintarImagenes();
     },
 
-    pintarImagenes() {
+    PintarImagenes() {
       for (let index = 0; index < this.files.length; index++) {
         if (this.imagenCumpleRequisitos(index)) {
           const reader = new FileReader();
@@ -211,7 +211,7 @@ export default {
       }
     },
 
-    pintarImagen(index) {
+    PintarImagen(index) {
       if (this.imagenCumpleRequisitos(index)) {
         const reader = new FileReader();
         reader.readAsDataURL(this.files[index]);
@@ -224,7 +224,7 @@ export default {
     //Este metodo es para saber si una imagen es valida
     //la imagen debe tener una anchura de 1200px y una altura de 600px
     //Su peso debe ser mayor a 60kb y menor a 2mbs
-    imagenCumpleRequisitos(index) {
+    ImagenCumpleRequisitos(index) {
       let imagen = this.files[index];
       let valido = false;
       let tamanoMaximo = 3100000; //3 mbs
@@ -237,7 +237,7 @@ export default {
       return valido;
     },
 
-    async subirImagenes() {
+    async SubirImagenes() {
       const storage = getStorage();
 
       let nuevo = [];
@@ -310,7 +310,7 @@ export default {
       }
     },
 
-    async añadirImagenApi(downloadURL, tamano) {
+    async AnadirImagenApi(downloadURL, tamano) {
       console.log("Añadiendo imagen a la api");
       let imagen = {
         direccion: downloadURL,
@@ -344,7 +344,7 @@ export default {
       }
     },
 
-    crearProducto() {
+    CrearProducto() {
       console.log("Creando producto");
       this.editedItem.titulo = "Teclado";
       this.editedItem.descripcion = "Teclado Twerty";
@@ -384,7 +384,7 @@ export default {
         });
     },
 
-    iniciarFirebase() {
+    IniciarFirebase() {
       const firebaseConfig = {
         apiKey: "AIzaSyCzVaDxudQnk2wzAe4m8pF5BtdgGKVsxso",
         authDomain: "buy-online-7b548.firebaseapp.com",
@@ -397,7 +397,7 @@ export default {
       const app = initializeApp(firebaseConfig);
     },
 
-    async anadirTarea() {
+    async AñadirTarea() {
       this.subirImagenes();
       //Enlazar la url de cada imagen con el id del usuario que ah ingresado
       //Este enlace debe ser llamado mediante la api fetch
