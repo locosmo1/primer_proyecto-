@@ -29,7 +29,7 @@
       >
         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-xs-12 q-pa-md">
           <!-- imagen y datos del producto -->
-          <div class="row"> 
+          <div class="row">
             <div
               class="col-xl-10 col-lg-10 col-md-10 col-sm-12 col-xs-12 q-pa-md"
             >
@@ -48,11 +48,7 @@
         </div>
 
         <div
-          class="
-            col-xl-2 col-lg-2 col-md-2 col-sm-12 col-xs-12
-            q-pa-md
-            text-bold
-          "
+          class="col-xl-2 col-lg-2 col-md-2 col-sm-12 col-xs-12 q-pa-md text-bold"
         >
           &nbsp;&nbsp;Precio
           {{ RetornarPrecioFormateado(task.precio) }}
@@ -68,31 +64,19 @@
         </div>
 
         <div
-          class="
-            col-xl-2 col-lg-2 col-md-2 col-sm-12 col-xs-12
-            q-pa-md
-            text-bold
-          "
+          class="col-xl-2 col-lg-2 col-md-2 col-sm-12 col-xs-12 q-pa-md text-bold"
         >
           Premium
         </div>
 
         <div
-          class="
-            col-xl-2 col-lg-2 col-md-2 col-sm-12 col-xs-12
-            q-pa-md
-            text-bold
-          "
+          class="col-xl-2 col-lg-2 col-md-2 col-sm-12 col-xs-12 q-pa-md text-bold"
         >
           Envio gratis
         </div>
         <!-- datos del vendedor -->
         <div
-          class="
-            col-xl-2 col-lg-2 col-md-2 col-sm-12 col-xs-12
-            q-pa-md
-            text-center
-          "
+          class="col-xl-2 col-lg-2 col-md-2 col-sm-12 col-xs-12 q-pa-md text-center"
         >
           <q-circular-progress
             show-value
@@ -114,9 +98,7 @@
                 <q-item to="/EditProduct" clickable v-close-popup>
                   Editar
                 </q-item>
-                <q-item clickable v-close-popup>
-                  Eliminar
-                </q-item>
+                <q-item clickable v-close-popup> Eliminar </q-item>
                 <q-separator />
                 <q-separator />
               </q-list>
@@ -197,18 +179,12 @@ export default {
       return formatterPeso.format(precio);
     },
 
-
     UsuarioAccedioCorrectamente() {
       //const auth = getAuth();
 
       onAuthStateChanged(this.$store.state.auth, (user) => {
         if (user) {
-          const uid = user.uid;
-          console.log("usuario autenticado uid: ", uid);
-          /* const user2 = auth.currentUser; */
-          // User is signed in, see docs for a list of available properties
-          // https://firebase.google.com/docs/reference/js/firebase.User
-          
+          this.ObtenerUsuarioActual();
         } else {
           if (this.$route.path !== "/") {
             this.$router.replace("/");
@@ -216,9 +192,41 @@ export default {
         }
       });
     },
+
+    async ObtenerUsuarioActual() {
+      let url = "https://localhost:44370/api/Usuario/ObtenerUsuarioActual";
+      let usuarioActual = await this.EnviarPeticionRespuesta(url, "GET");
+      if (usuarioActual.idRol !== 2) {
+        if (this.$route.path !== "/") {
+          this.$router.replace("/");
+        }
+      }
+    },
+
+    async EnviarPeticionRespuesta(url, method, body) {
+      let opcion = body === "" ? false : true;
+      let informacion;
+      if (opcion) {
+        informacion = await fetch(url, {
+          method: method,
+          body: JSON.stringify(body),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      } else {
+        informacion = await fetch(url, {
+          method: method,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      }
+      const data = await informacion.json();
+      return data;
+    },
   },
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

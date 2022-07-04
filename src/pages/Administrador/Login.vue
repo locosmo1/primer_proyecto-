@@ -53,22 +53,10 @@
         <div class="row">
           <div class="col-xl-2 col-lg-2 col-md-2 col-sm-0 col-xs-0"></div>
           <div
-            class="
-              col-xl-8 col-lg-8 col-md-8 col-sm-12 col-xs-12
-              justify-center
-              items-center
-              content-center
-              text-center
-            "
+            class="col-xl-8 col-lg-8 col-md-8 col-sm-12 col-xs-12 justify-center items-center content-center text-center"
           >
             <q-input
-              class="
-                q-pa-xs
-                justify-center
-                items-center
-                content-center
-                text-center
-              "
+              class="q-pa-xs justify-center items-center content-center text-center"
               color="white"
               rounded
               outlined
@@ -101,10 +89,7 @@
           <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 col-xs-12">
             <div class="row">
               <div
-                class="
-                  col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12
-                  text-blue text-left
-                "
+                class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12 text-blue text-left"
               >
                 <q-item-section>
                   <q-item-label>Recordarme</q-item-label>
@@ -117,10 +102,7 @@
                 </q-item-section>
               </div>
               <div
-                class="
-                  col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12
-                  text-right
-                "
+                class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12 text-right"
               >
                 <q-btn
                   no-caps
@@ -206,13 +188,7 @@
                       >
                       </q-input>
                       <q-input
-                        class="
-                          q-pa-md
-                          justify-center
-                          items-center
-                          content-center
-                          text-center text-white
-                        "
+                        class="q-pa-md justify-center items-center content-center text-center text-white"
                         color="white"
                         rounded
                         outlined
@@ -289,9 +265,6 @@
   </div>
 </template>
 
-
-
-
 <script>
 /* import { initializeApp } from "firebase/app"; */
 
@@ -339,7 +312,8 @@ export default {
   created() {
     this.$store.dispatch("iniciarFirebaseAction");
     if (this.UsuarioAccedioCorrectamente()) {
-      this.$router.push("/Index");
+      //Averiguar si es Administrador, Empresa o Cliente
+      this.InicioSesionRol();
     }
   },
 
@@ -421,7 +395,7 @@ export default {
     },
 
     async IngresarConCorreo() {
-      let contraseñaCifrada = await this.obtenerContraseñaCifrada(this.pass);
+      let contraseñaCifrada = await this.ObtenerContraseñaCifrada(this.pass);
 
       const auth = this.$store.state.auth;
       let promesa;
@@ -443,39 +417,40 @@ export default {
       } finally {
         if (promesa !== undefined) {
           //Diferenciar entre Cliente y Empresa
-          let usuario = {
-            usuario: this.user,
-            contraseña: this.pass,
-          };
-          let respuesta = await this.enviarPeticionRespuesta(
-            "https://localhost:44370/api/Sesion/IniciarSesion",
-            "POST",
-            usuario
-          );
-
-          /**
-           * ? if the response is 1 then it is a client
-           * ? else if it is 2 is a company
-           * ? else if it is 3 then it is a admin
-           * ? else if it is 4 then it is a employee */
-
-          if (respuesta === 1) {
-            console.log("Login as Client");
-            this.$router.replace({ path: "/Index" }).catch(() => {});
-          } else if (respuesta === 2) {
-            console.log("Login as Company");
-            this.$router.replace({ path: "/Publicaciones" }).catch(() => {});
-          } else if (respuesta === 3) {
-            console.log("Login as Admin");
-            this.$router.replace({ path: "/Principal" }).catch(() => {});
-          } else if (respuesta === 4) {
-            console.log("Page Employee In construction");
-            //this.$router.replace({ path: "/Index" }).catch(() => {});
-          }
+          this.InicioSesionRol();
         }
       }
+    },
+
+    async InicioSesionRol() {
+      let usuario = {
+        usuario: this.user,
+        contraseña: this.pass,
+      };
+      let respuesta = await this.EnviarPeticionRespuesta(
+        "https://localhost:44370/api/Sesion/IniciarSesion",
+        "POST",
+        usuario
+      );
+
+      /**
+       * ? if the response is 1 then it is a client
+       * ? else if it is 2 is a company
+       * ? else if it is 3 then it is a admin
+       * ? else if it is 4 then it is a employee */
+
       this.user = "";
       this.pass = "";
+
+      if (respuesta === 1) {
+        this.$router.replace({ path: "/Index" }).catch(() => {});
+      } else if (respuesta === 2) {
+        this.$router.replace({ path: "/Publicaciones" }).catch(() => {});
+      } else if (respuesta === 3) {
+        this.$router.replace({ path: "/Principal" }).catch(() => {});
+      } else if (respuesta === 4) {
+        //this.$router.replace({ path: "/Index" }).catch(() => {});
+      }
     },
 
     async EnviarPeticion(url, method, body) {

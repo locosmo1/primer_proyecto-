@@ -338,11 +338,9 @@
 //Object.assign SE UTILIZA CUANDO SE ASIGNAN VALORES SIMPLES
 //this.$set SE UTILIZA CUANDO SE ASIGNAN VALORES COMPLEJOS EN ARREGLOS
 
-import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore/lite";
-import { getAuth } from "firebase/auth";
-import firebase from "firebase/compat/app";
+
 import "firebase/compat/storage";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 export default {
   data() {
@@ -408,12 +406,61 @@ export default {
     };
   },
   created() {
+    this.UsuarioAccedioCorrectamente();
     this.tab = "carrito";
-    this.obtenerProductos();
+    this.ObtenerProductos();
   },
   methods: {
     //.cantidad = stock disponible
     //.unidades = unidades que el cliente quiere comprar
+
+    UsuarioAccedioCorrectamente() {
+      //const auth = getAuth();
+
+      onAuthStateChanged(this.$store.state.auth, (user) => {
+        if (user) {
+          this.ObtenerUsuarioActual();
+        } else {
+          if (this.$route.path !== "/") {
+            this.$router.replace("/");
+          }
+        }
+      });
+    },
+
+    async ObtenerUsuarioActual() {
+      let url = "https://localhost:44370/api/Usuario/ObtenerUsuarioActual";
+      let usuarioActual = await this.EnviarPeticionRespuesta(url, "GET");
+      if (usuarioActual.idRol !== 1) {
+        if (this.$route.path !== "/") {
+          this.$router.replace("/");
+        }
+      }
+    },
+
+    async EnviarPeticionRespuesta(url, method, body) {
+      let opcion = body === "" ? false : true;
+      let informacion;
+      if (opcion) {
+        informacion = await fetch(url, {
+          method: method,
+          body: JSON.stringify(body),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      } else {
+        informacion = await fetch(url, {
+          method: method,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      }
+      const data = await informacion.json();
+      return data;
+    },
+
     ObtenerImagen(index) {
       return this.comprados[index].imagen;
     },
@@ -438,11 +485,11 @@ export default {
           });
 
         let productos = await data.json();
-        this.comprados = this.eliminarRepetidos(productos);
+        this.comprados = this.EliminarRepetidos(productos);
         if (this.comprados.length > 0) {
           this.$set(
             this.comprados,
-            this.ordenarMetodoBorbuja(this.comprados, 1)
+            this.OrdenarMetodoBorbuja(this.comprados, 1)
           );
         }
       } catch (error) {
@@ -470,11 +517,11 @@ export default {
         let carrito = await data.json();
 
         if (carrito.length > 0) {
-          let relacion = this.unirArreglo(carrito);
+          let relacion = this.UnirArreglo(carrito);
 
-          let arreglo = this.contarUnidadesArreglo(relacion);
+          let arreglo = this.ContarUnidadesArreglo(relacion);
 
-          let cantidades = this.eliminarIdsRepetidos(arreglo);
+          let cantidades = this.EliminarIdsRepetidos(arreglo);
 
           /* Object.assign(
           this.Cantidades,
@@ -483,7 +530,7 @@ export default {
           this.Cantidades = Object.assign(
             {},
             this.Cantidades,
-            this.ordenarMetodoBorbuja(cantidades, 2)
+            this.OrdenarMetodoBorbuja(cantidades, 2)
           );
 
           for (let index = 0; index < this.comprados.length; index++) {
@@ -665,7 +712,7 @@ export default {
           parseInt(this.comprados[index].precio) *
           this.comprados[index].unidades;
       }
-      total += this.obtenerCostoEnvio();
+      total += this.ObtenerCostoEnvio();
       return total;
     },
 

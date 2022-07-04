@@ -1,39 +1,161 @@
 <template>
   <q-card bordered class="row">
-    <div class="col-xl-9 col-lg-9 col-md-9 col-sm-12 col-xs-12">
-      <!-- 9 -->
-
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+      {{this.$q.screen.width}}
       <div class="row">
+        <div class="col-xl-9 col-lg-9 col-md-9 col-sm-9 col-xs-9">
+          <div class="row">
+            <div
+              class="col-xl-3 col-lg-3 col-md-3 col-sm-0 col-xs-0 q-pa-md justify-center items-center content-center"
+              v-if="this.$q.screen.width>=1027"
+            >
+              <q-card
+                bordered
+                class="column"
+                v-for="index in tamano"
+                :key="index"
+              >
+                <div width="100px" height="100px">
+                  <div>
+                    <q-img
+                      width="100%"
+                      height="200px"
+                      @click="AgregarImagenEditar(index - 1)"
+                      :src="RetornarImagen(index - 1)"
+                    />
+                  </div>
+                  <q-separator />
+                </div>
+              </q-card>
+            </div>
+            <q-card
+              bordered
+              class="col-xl-9 col-lg-9 col-md-9 col-sm-12 col-xs-12 q-pa-md justify-center items-center content-center"
+            >
+              <div class="justify-center items-center content-center">
+                <q-img height="800px" width="100%" :src="url_image" />
+              </div>
+            </q-card>
+          </div>
+        </div>
+
         <q-card
           bordered
-          class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12 q-pa-md justify-center items-center content-center"
+          class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col-xs-12 q-pa-md"
         >
-          <q-img height="600px" width="100%" :src="url_image" />
-        </q-card>
-      </div>
+          <h5>
+            {{ producto_recibido.titulo }} <br />
+            {{ RetornarPrecioFormateado(producto_recibido.precio) }}
+          </h5>
+          <div>
+            <p>Hasta 36 cuotas</p>
+          </div>
+          <div>
+            <p>Con tu VISA terminada en 8682</p>
+          </div>
+          <div class="InfoTargeta text-subtitle1">
+            Llega gratis entre el martes y el viernes 17 de diciembre
+          </div>
+          <div class="">Beneficio de mercado puntos</div>
+          <br />
+          <div>
+            <q-btn-dropdown no-caps color="info" label="Escoja el color">
+              <q-list>
+                <q-item clickable v-close-popup>
+                  <q-item-section>
+                    <q-item-label>Blanco</q-item-label>
+                  </q-item-section>
+                </q-item>
 
-      <div class="row items-start q-pa-md">
-        <!-- my-content (task, index) in tamano-->
-        <q-card
-          rounded
-          v-for="index in tamano"
-          :key="index"
-          class="col-xl-2 col-lg-2 col-md-4 col-sm-6 col-xs-12 grid-item1 q-pa-md"
-        >
-          <div width="100px" height="100px">
-            <div>
-              <q-img
-                width="100%"
-                height="200px"
-                @click="AgregarImagenEditar(index - 1)"
-                :src="RetornarImagen(index - 1)"
-              />
+                <q-item clickable v-close-popup>
+                  <q-item-section>
+                    <q-item-label>Negro</q-item-label>
+                  </q-item-section>
+                </q-item>
+
+                <q-item clickable v-close-popup>
+                  <q-item-section>
+                    <q-item-label>Azul</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-btn-dropdown>
+          </div>
+          <br />
+          <div class="row">
+            <div class="col-6">
+              <q-field rounded color="info" filled hint="" :dense="dense">
+                <template class="bg-blue-2" v-slot:control>
+                  <div class="self-center full-width no-outline" tabindex="0">
+                    Digite la cantidad <br />
+                    {{ producto_recibido.cantidad }} unidades disponibles
+                  </div>
+                </template>
+              </q-field>
             </div>
 
-            <q-separator />
+            <div class="col-6">
+              <q-input
+                color="info"
+                v-model="cantidad"
+                filled
+                rounded
+                style="max-width: 200px"
+              />
+              <div class="row">
+                <div
+                  class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12 self-center justify-center items-center content-center text-center"
+                >
+                  <q-btn
+                    @click="CantidadDecrease()"
+                    class="glossy"
+                    color="info"
+                    rounded
+                    label="-"
+                    :size="'sm'"
+                  />
+                </div>
+                <div
+                  class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12 self-center justify-center items-center content-center text-center"
+                >
+                  <q-btn
+                    @click="CantidadPlus()"
+                    class="glossy"
+                    rounded
+                    color="info"
+                    label="+"
+                    :size="'sm'"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <br />
+
+          <div class="text-center">
+            <q-btn
+              class="glossy"
+              dark
+              rounded
+              icon="shopping_cart"
+              @click="Comprar()"
+              color="blue-7"
+              label="Comprar ahora"
+            />
+            <q-btn
+              class="glossy"
+              dark
+              rounded
+              icon="shopping_cart"
+              @click="AgregarCarrito()"
+              color="blue-7"
+              label="Agregar al carrito"
+            />
           </div>
         </q-card>
       </div>
+
       <q-card class="row q-pa-md">
         <div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-xs-12">
           <div class="q-pa-lg text-subtitle1">
@@ -52,122 +174,6 @@
         </div>
       </q-card>
     </div>
-
-    <q-card
-      bordered
-      class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col-xs-12 q-pa-md"
-    >
-      <h5>
-        {{ producto_recibido.titulo }} <br />
-        $ {{ producto_recibido.precio }}
-      </h5>
-      <div>
-        <p>Hasta 36 cuotas</p>
-      </div>
-      <div>
-        <p>Con tu VISA terminada en 8682</p>
-      </div>
-      <div class="InfoTargeta">
-        Llega gratis entre el martes y el viernes 17 de diciembre
-      </div>
-      <div class="">Beneficio de mercado puntos</div>
-      <br />
-      <div>
-        <q-btn-dropdown no-caps color="info" label="Escoja el color">
-          <q-list>
-            <q-item clickable v-close-popup>
-              <q-item-section>
-                <q-item-label>Blanco</q-item-label>
-              </q-item-section>
-            </q-item>
-
-            <q-item clickable v-close-popup>
-              <q-item-section>
-                <q-item-label>Negro</q-item-label>
-              </q-item-section>
-            </q-item>
-
-            <q-item clickable v-close-popup>
-              <q-item-section>
-                <q-item-label>Azul</q-item-label>
-              </q-item-section>
-            </q-item>
-          </q-list>
-        </q-btn-dropdown>
-      </div>
-      <br />
-      <div class="row">
-        <div class="col-6">
-          <q-field rounded color="info" filled hint="" :dense="dense">
-            <template class="bg-blue-2" v-slot:control>
-              <div class="self-center full-width no-outline" tabindex="0">
-                Digite la cantidad <br />
-                {{ producto_recibido.cantidad }} unidades disponibles
-              </div>
-            </template>
-          </q-field>
-        </div>
-
-        <div class="col-6">
-          <q-input
-            color="info"
-            v-model="cantidad"
-            filled
-            rounded
-            style="max-width: 200px"
-          />
-          <div class="row">
-            <div
-              class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12 self-center justify-center items-center content-center text-center"
-            >
-              <q-btn
-                @click="CantidadDecrease()"
-                class="glossy"
-                color="info"
-                rounded
-                label="-"
-                :size="'sm'"
-              />
-            </div>
-            <div
-              class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12 self-center justify-center items-center content-center text-center"
-            >
-              <q-btn
-                @click="CantidadPlus()"
-                class="glossy"
-                rounded
-                color="info"
-                label="+"
-                :size="'sm'"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <br />
-
-      <div class="text-center">
-        <q-btn
-          class="glossy"
-          dark
-          rounded
-          icon="shopping_cart"
-          @click="Comprar()"
-          color="blue-7"
-          label="Comprar ahora"
-        />
-        <q-btn
-          class="glossy"
-          dark
-          rounded
-          icon="shopping_cart"
-          @click="AgregarCarrito()"
-          color="blue-7"
-          label="Agregar al carrito"
-        />
-      </div>
-    </q-card>
   </q-card>
 </template>
 
@@ -197,12 +203,12 @@ export default {
       opciones: ["1", "2", "3", "4"],
       dense: false,
       denseOpts: false,
+      tamanoImagenPrincipal: 1000,
     };
   },
   created() {
     this.UsuarioAccedioCorrectamente();
     this.producto_recibido = this.$route.query.producto;
-    console.log("Producto recibido", this.producto_recibido);
     this.url_image = this.producto_recibido.imagen;
     this.idProductoRecibido = this.producto_recibido.id;
   },
@@ -212,6 +218,17 @@ export default {
   },
 
   methods: {
+    RetornarPrecioFormateado(precio) {
+      //convertir el entero a string
+
+      const formatterPeso = new Intl.NumberFormat("es-CO", {
+        style: "currency",
+        currency: "COP",
+        minimumFractionDigits: 0,
+      });
+      return formatterPeso.format(precio);
+    },
+
     UsuarioAccedioCorrectamente() {
       //const auth = getAuth();
 

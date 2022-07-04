@@ -56,7 +56,18 @@
                 <div @click="VerDetalles(index)">
                   <!-- class="pointerproduct" -->
                   <!-- @click="VerDetalles(index)" -->
-                  <q-img :src="AgregarImagenLista(index)" />
+
+                  <div width="100px" height="100px">
+                    <div>
+                      <q-img
+                        width="100%"
+                        height="250px"
+                        :src="AgregarImagenLista(index)"
+                      />
+                    </div>
+                    <q-separator />
+                  </div>
+
                   <q-card-section>
                     <div class="justify-around">
                       <div class="text-h6">
@@ -200,13 +211,11 @@ export default {
       //this.$router.replace({ path: "detalles" });
       //Enviar todo el producto en cuestion
       this.$router.push({
-        path: "detalles",
+        path: "detalles1",
         query: { producto: this.tasks[index] },
       });
       /* this.tab = "detalles"; */
     },
-
-    
 
     IniciarData() {
       //Necesitamos el id, precio, titulo
@@ -397,7 +406,7 @@ export default {
       });
     },
 
-  /* AñadirProducto() {
+    /* AñadirProducto() {
       if (
         this.editedItem.titulo !== "" &&
         this.editedItem.precio != "" &&
@@ -436,7 +445,6 @@ export default {
       this.tab = "consultar";
     }, */
 
-
     /* EditarProducto() {
       let precio_v;
       let new_item;
@@ -474,7 +482,6 @@ export default {
         });
       this.tab = "consultar";
     }, */
-
 
     /* BorrarProducto(id) {
       let newId = id + 1;
@@ -545,8 +552,6 @@ export default {
         this.fotos.push(element.src.landscape);
       });
     }, */
-
-
   },
 };
 </script>

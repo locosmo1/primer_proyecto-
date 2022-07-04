@@ -269,11 +269,7 @@
                   </div>
                   <div class="text-caption text-grey">
                     <!-- Descripcion: {{ productoSeleccionado.descripcion }}<br /> -->
-                    Descripcion: Lorem ipsum dolor sit amet consectetur
-                    adipisicing elit. Iste repudiandae explicabo exercitationem
-                    magni. Sint necessitatibus repellat deserunt totam similique
-                    culpa sunt hic illum dignissimos voluptatem accusantium
-                    debitis, aperiam distinctio magni. Color:
+                    Descripcion: {{ productoSeleccionado.descripcion }} Color:
                     {{ productoSeleccionado.color }}
                   </div>
                 </q-card-section>
@@ -820,7 +816,7 @@ export default {
       try {
         let idUsuario = parseInt(id);
         let url = this.urlBaseDomicilio + "ObtenerDomicilioUsuario";
-        this.domicilios = await this.enviarPeticionRespuesta(
+        this.domicilios = await this.EnviarPeticionRespuesta(
           url,
           "POST",
           idUsuario
@@ -852,13 +848,13 @@ export default {
 
     async ObtenerProductosPrueba(idEmpresa) {
       let url = "https://localhost:44370/api/Producto/" + idEmpresa;
-      this.productos = await this.enviarPeticionRespuesta(url, "GET");
+      this.productos = await this.EnviarPeticionRespuesta(url, "GET");
     },
 
     //Obtener todos los usuarios con todas sus propiedades
     async GetUsuarios() {
       let url = this.urlBaseUsuario + "ObtenerUsuarios";
-      this.usuarios = await this.enviarPeticionRespuesta(url, "GET");
+      this.usuarios = await this.EnviarPeticionRespuesta(url, "GET");
       for (let i = 0; i < this.usuarios.length; i++) {
         this.nombreUsuarios.push(this.usuarios[i].usuario);
       }
@@ -900,7 +896,7 @@ export default {
       this.dialogoProducto = true;
     },
 
-    async enviarPeticion(url, method, body) {
+    async EnviarPeticion(url, method, body) {
       let opcion = body === "" ? false : true;
       if (opcion) {
         fetch(url, {
@@ -920,7 +916,7 @@ export default {
       }
     },
 
-    async enviarPeticionRespuesta(url, method, body) {
+    async EnviarPeticionRespuesta(url, method, body) {
       let opcion = body === "" ? false : true;
       let informacion;
       if (opcion) {
@@ -943,22 +939,31 @@ export default {
       return data;
     },
 
-    UsuarioAccedioCorrectamente() {
+    async UsuarioAccedioCorrectamente() {
       //const auth = getAuth();
 
       onAuthStateChanged(this.$store.state.auth, (user) => {
         if (user) {
-          const uid = user.uid;
-          console.log("usuario autenticado uid: ", uid);
-          /* const user2 = auth.currentUser; */
-          // User is signed in, see docs for a list of available properties
-          // https://firebase.google.com/docs/reference/js/firebase.User
+          //Dejar entrar si esta autenticado solamente como administrador
+          //Consultar a usuarioActual desde el backend para saber si es
+          //administrador
+          this.ObtenerUsuarioActual();
         } else {
           if (this.$route.path !== "/") {
             this.$router.replace("/");
           }
         }
       });
+    },
+
+    async ObtenerUsuarioActual() {
+      let url = "https://localhost:44370/api/Usuario/ObtenerUsuarioActual";
+      let usuarioActual = await this.EnviarPeticionRespuesta(url, "GET");
+      if (usuarioActual.idRol !== 3) {
+        if (this.$route.path !== "/") {
+          this.$router.replace("/");
+        }
+      }
     },
 
     ObtenerCategoria(id) {

@@ -37,6 +37,14 @@ const routes = [
     ],
   },
 
+  {
+    path: "/",
+    component: () => import("layouts/MainLayout.vue"),
+    children: [
+      { path: "detalles1", component: () => import("pages/Cliente/Detalles1.vue") },
+    ],
+  },
+
 
   {
     path: "/",
