@@ -459,7 +459,7 @@ export default {
   },
 
   created(){
-    this.$store.dispatch("iniciarFirebaseAction");//Inicar Firebase
+    this.$store.dispatch("iniciarFirebaseAction");//Iniciar Firebase
   },
 
   methods: {

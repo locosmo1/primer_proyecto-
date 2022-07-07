@@ -1,14 +1,14 @@
 <template>
   <q-card bordered class="row">
     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
-      {{this.$q.screen.width}}
       <div class="row">
-        <div class="col-xl-9 col-lg-9 col-md-9 col-sm-9 col-xs-9">
+        <div class="col-xl-9 col-lg-9 col-md-9 col-sm-12 col-xs-12">
           <div class="row">
             <div
               class="col-xl-3 col-lg-3 col-md-3 col-sm-0 col-xs-0 q-pa-md justify-center items-center content-center"
-              v-if="this.$q.screen.width>=1027"
+              v-if="this.$q.screen.width >= 1027"
             >
+              <!-- v-if="this.$q.screen.width>=1027" -->
               <q-card
                 bordered
                 class="column"
@@ -32,8 +32,43 @@
               bordered
               class="col-xl-9 col-lg-9 col-md-9 col-sm-12 col-xs-12 q-pa-md justify-center items-center content-center"
             >
-              <div class="justify-center items-center content-center">
-                <q-img height="800px" width="100%" :src="url_image" />
+              <!-- <q-card-section v-if="this.$q.screen.width <= 1027">
+                <q-btn
+                  fab
+                  color="blue-5"
+                  icon="place"
+                  class="absolute"
+                  style="top: 0; right: +96%; transform: translateX(0%);
+                  transform: translateY(+780%);"
+                />
+              </q-card-section> -->
+
+              <div class="row">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                  <q-img height="800px" width="100%" :src="url_image"> </q-img>
+
+                  <q-card-section v-if="this.$q.screen.width <= 1027">
+                    <q-btn
+                      fab
+                      color="blue-5"
+                      icon="chevron_left"
+                      class="absolute"
+                      style="
+                        top: 0;
+                        right: +94%;
+                        transform: translateX(0%);
+                        transform: translateY(-700%);
+                      "
+                    />
+                    <q-btn
+                      fab
+                      color="blue-7"
+                      icon="chevron_right"
+                      class="absolute"
+                      style="top: 0pt; right: 0px; transform: translateY(-700%)"
+                    />
+                  </q-card-section>
+                </div>
               </div>
             </q-card>
           </div>

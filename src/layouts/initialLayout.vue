@@ -14,9 +14,6 @@ import { onAuthStateChanged } from "firebase/auth";
 export default {
   created() {
     this.$store.dispatch("iniciarFirebaseAction");
-    if (this.usuarioAccedioCorrectamente()) {
-      /* this.$router.push("/Index"); */
-    }
   },
   data() {
     return {};

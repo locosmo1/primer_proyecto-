@@ -165,7 +165,6 @@ export default {
           console.log("Error en axios: " + err);
         });
       this.tasks = arreglo;
-      console.log(this.tasks);
     },
 
     RetornarPrecioFormateado(precio) {

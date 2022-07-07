@@ -311,13 +311,90 @@ export default {
   },
   created() {
     this.$store.dispatch("iniciarFirebaseAction");
-    if (this.UsuarioAccedioCorrectamente()) {
+    if (this.UsuarioAccedio()) {
+      console.log("alguien ya esta logueado correctamente");
       //Averiguar si es Administrador, Empresa o Cliente
-      this.InicioSesionRol();
+      //this.IngresoUsuarioActual();
+    } else {
+      console.log("Nadie se a logueado");
     }
   },
 
   methods: {
+    UsuarioAccedio() {
+      //const auth = getAuth();
+      let accedio = false;
+      onAuthStateChanged(this.$store.state.auth, (user) => {
+        if (user) {
+          const uid = user.uid;
+          accedio = true;
+        }
+      });
+      return accedio;
+    },
+
+    /* async IngresoUsuarioActual() {
+      let url = "https://localhost:44370/api/Usuario/ObtenerUsuarioActual";
+      let usuarioActual = await this.EnviarPeticionRespuesta(url, "GET");
+
+      console.log("Entro en usuario actual rol");
+
+      if (usuarioActual.idRol === 1) {
+        if (this.$route.path !== "/Index") {
+          this.$router.replace({ path: "/Index" }).catch(() => {});
+        }
+      } else if (usuarioActual.idRol === 2) {
+        if (this.$route.path !== "/Publicaciones") {
+          this.$router.replace({ path: "/Publicaciones" }).catch(() => {});
+        }
+      } else if (usuarioActual.idRol === 3) {
+        if (this.$route.path !== "/Principal") {
+          this.$router.replace({ path: "/Principal" }).catch(() => {});
+        }
+      } else if (usuarioActual.idRol === 4) {
+        //this.$router.replace({ path: "/Index" }).catch(() => {});
+      }
+    }, */
+
+    async InicioSesionRol() {
+      let usuario = {
+        usuario: this.user,
+        contraseña: this.pass,
+      };
+      let respuesta = await this.EnviarPeticionRespuesta(
+        "https://localhost:44370/api/Sesion/IniciarSesion",
+        "POST",
+        usuario
+      );
+
+      /**
+       * ? if the response is 1 then it is a client
+       * ? else if it is 2 is a company
+       * ? else if it is 3 then it is a admin
+       * ? else if it is 4 then it is a employee */
+
+      this.user = "";
+      this.pass = "";
+
+      console.log("Entro en rol respuesta: ", respuesta);
+
+      if (respuesta === 1) {
+        if (this.$route.path !== "/Index") {
+          this.$router.replace({ path: "/Index" }).catch(() => {});
+        }
+      } else if (respuesta === 2) {
+        if (this.$route.path !== "/Publicaciones") {
+          this.$router.replace({ path: "/Publicaciones" }).catch(() => {});
+        }
+      } else if (respuesta === 3) {
+        if (this.$route.path !== "/Principal") {
+          this.$router.replace({ path: "/Principal" }).catch(() => {});
+        }
+      } else if (respuesta === 4) {
+        //this.$router.replace({ path: "/Index" }).catch(() => {});
+      }
+    },
+
     async Registro() {
       //cerrar el modal
       this.modalRegistro = false;
@@ -422,37 +499,6 @@ export default {
       }
     },
 
-    async InicioSesionRol() {
-      let usuario = {
-        usuario: this.user,
-        contraseña: this.pass,
-      };
-      let respuesta = await this.EnviarPeticionRespuesta(
-        "https://localhost:44370/api/Sesion/IniciarSesion",
-        "POST",
-        usuario
-      );
-
-      /**
-       * ? if the response is 1 then it is a client
-       * ? else if it is 2 is a company
-       * ? else if it is 3 then it is a admin
-       * ? else if it is 4 then it is a employee */
-
-      this.user = "";
-      this.pass = "";
-
-      if (respuesta === 1) {
-        this.$router.replace({ path: "/Index" }).catch(() => {});
-      } else if (respuesta === 2) {
-        this.$router.replace({ path: "/Publicaciones" }).catch(() => {});
-      } else if (respuesta === 3) {
-        this.$router.replace({ path: "/Principal" }).catch(() => {});
-      } else if (respuesta === 4) {
-        //this.$router.replace({ path: "/Index" }).catch(() => {});
-      }
-    },
-
     async EnviarPeticion(url, method, body) {
       let opcion = body === "" ? false : true;
       if (opcion) {
@@ -496,7 +542,34 @@ export default {
       return data;
     },
 
-    async loginGoogle() {
+    CerrarSesion() {
+      signOut(this.$store.state.auth)
+        .then(() => {
+          //this.Response.Cookies.Delete("session");
+          console.log("Sesion cerrada");
+        })
+        .catch((error) => {
+          // An error happened.
+          console.log(error);
+        });
+    },
+
+    ShowAllCookies() {
+      const cookies = process.env.SERVER
+        ? Cookies.parseSSR(ssrContext)
+        : Cookies.getAll(); // otherwise we're on client
+      console.log(process.env.SERVER);
+    },
+
+    ShowNotif() {
+      const $q = useQuasar();
+      $q.notify({
+        message: "Mensaje push",
+        color: "blue-6",
+      });
+    },
+
+    /* async loginGoogle() {
       const auth = this.$store.state.auth;
       let firebase = this.$store.state.app;
       const provider = new GoogleAuthProvider();
@@ -527,46 +600,7 @@ export default {
         }
       }
       this.ingresarConApi();
-    },
-
-    CerrarSesion() {
-      signOut(this.$store.state.auth)
-        .then(() => {
-          //this.Response.Cookies.Delete("session");
-          console.log("Sesion cerrada");
-        })
-        .catch((error) => {
-          // An error happened.
-          console.log(error);
-        });
-    },
-
-    UsuarioAccedioCorrectamente() {
-      //const auth = getAuth();
-      let accedio = false;
-      onAuthStateChanged(this.$store.state.auth, (user) => {
-        if (user) {
-          const uid = user.uid;
-          accedio = true;
-        }
-      });
-      return accedio;
-    },
-
-    ShowAllCookies() {
-      const cookies = process.env.SERVER
-        ? Cookies.parseSSR(ssrContext)
-        : Cookies.getAll(); // otherwise we're on client
-      console.log(process.env.SERVER);
-    },
-
-    ShowNotif() {
-      const $q = useQuasar();
-      $q.notify({
-        message: "Mensaje push",
-        color: "blue-6",
-      });
-    },
+    }, */
 
     /* IngresarConApi() {
       //enviar datos con el metodo PUT de fetch

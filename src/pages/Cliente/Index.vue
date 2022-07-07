@@ -399,6 +399,7 @@ export default {
           // https://firebase.google.com/docs/reference/js/firebase.User
           const uid = user.uid;
         } else {
+          console.log("Devolver a pagina de inicio")
           if (this.$route.path !== "/") {
             this.$router.replace("/");
           }

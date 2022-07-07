@@ -237,6 +237,39 @@ export default {
       return valido;
     },
 
+    async ObtenerUsuarioActual() {
+      let url = "https://localhost:44370/api/Usuario/ObtenerUsuarioActual";
+      let usuarioActual = await this.EnviarPeticionRespuesta(url, "GET");
+      if (usuarioActual.idRol !== 2) {
+        if (this.$route.path !== "/") {
+          this.$router.replace("/");
+        }
+      }
+    },
+
+    async EnviarPeticionRespuesta(url, method, body) {
+      let opcion = body === "" ? false : true;
+      let informacion;
+      if (opcion) {
+        informacion = await fetch(url, {
+          method: method,
+          body: JSON.stringify(body),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      } else {
+        informacion = await fetch(url, {
+          method: method,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      }
+      const data = await informacion.json();
+      return data;
+    },
+
     async SubirImagenes() {
       const storage = getStorage();
 
@@ -248,7 +281,10 @@ export default {
         }
       }
 
-      let direccionNube = "images/" + "0/";
+      let usuarioActual =  await this.ObtenerUsuarioActual();
+      let idUsuario = usuarioActual.idUsuario;
+
+      let direccionNube = "images/" + idUsuario +"/";
       let indice = 1;
 
       for (let index = 0; index < nuevo.length; index++) {

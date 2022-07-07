@@ -428,7 +428,7 @@ export default {
       });
     },
 
-    async ObtenerUsuarioActual() {
+    async ObtenerUsuarioActual() { 
       let url = "https://localhost:44370/api/Usuario/ObtenerUsuarioActual";
       let usuarioActual = await this.EnviarPeticionRespuesta(url, "GET");
       if (usuarioActual.idRol !== 1) {
