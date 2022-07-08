@@ -40,9 +40,9 @@ export default new Vuex.Store({
     editar: false,
     indice_editar: undefined,
 
-    urlBackendRemota : "http://mercado.somee.com:80/",
+    urlBackendRemota : "https://mercado.somee.com/",
     urlBackendLocal: "https://localhost:44370/",
-    urlBackendElegida: "http://mercado.somee.com:80/",
+    urlBackendElegida: "https://mercado.somee.com/",
   },
 
   mutations: {
