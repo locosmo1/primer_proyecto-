@@ -217,7 +217,7 @@ export default {
 
       /* var respuesta;
 
-      let url = "https://localhost:44370/api/prueba/cliente";
+      let url = this.$store.state.urlBackendElegida + "api/prueba/cliente"
 
       const cliente = {
         nombre: this.editedItem.nombre,
@@ -245,7 +245,7 @@ export default {
       } */
 
       //enviar datos del domicilio por metodo post
-      /* let url2 = "https://localhost:44370/api/prueba/domicilio";
+      /* let url2 = this.$store.state.urlBackendElegida + "api/prueba/domicilio"
 
       const domicilio = {
         ciudad: "Florencia",

@@ -210,6 +210,8 @@ export default {
       this.buscar = this.tasks[index].titulo;
       //this.$router.replace({ path: "detalles" });
       //Enviar todo el producto en cuestion
+      //No sirve  por que al compartir el enlace queda todo en null
+      //Se debe cambiar
       this.$router.push({
         path: "detalles1",
         query: { producto: this.tasks[index] },
@@ -220,8 +222,9 @@ export default {
     IniciarData() {
       //Necesitamos el id, precio, titulo
       let arreglo = [];
+      let url = this.$store.state.urlBackendElegida + "api/Producto";
       axios
-        .get("https://localhost:44370/api/Producto", {
+        .get(url, {
           responseType: "json",
         })
         .then(function (res) {
@@ -352,15 +355,15 @@ export default {
       }
     },
 
-    AnadirEditar() {
+    /* AnadirEditar() {
       this.card = true;
-    },
+    }, */
 
-    EliminarProducto(id) {
+    /* EliminarProducto(id) {
       this.total_compra -=
         this.comprados[id].precio * this.comprados[id].unidades;
       this.comprados.splice(id, 1);
-    },
+    }, */
 
     AumentarCantidad(index) {
       let valor = this.comprados[index].unidades + 1;
@@ -391,20 +394,21 @@ export default {
 
     UsuarioAccedioCorrectamente() {
       //const auth = getAuth();
-
+      let accedio = false;
       onAuthStateChanged(this.$store.state.auth, (user) => {
         if (user) {
           /* const user2 = auth.currentUser; */
           // User is signed in, see docs for a list of available properties
           // https://firebase.google.com/docs/reference/js/firebase.User
           const uid = user.uid;
+          accedio = true;
         } else {
-          console.log("Devolver a pagina de inicio")
           if (this.$route.path !== "/") {
             this.$router.replace("/");
           }
         }
       });
+      return accedio;
     },
 
     /* AñadirProducto() {

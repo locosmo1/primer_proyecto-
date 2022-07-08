@@ -300,7 +300,7 @@ export default {
       }
     },
 
-    iniciarFirebase() {
+    /* iniciarFirebase() {
       const firebaseConfig = {
         apiKey: "AIzaSyCzVaDxudQnk2wzAe4m8pF5BtdgGKVsxso",
         authDomain: "buy-online-7b548.firebaseapp.com",
@@ -311,7 +311,7 @@ export default {
         measurementId: "G-M27HCV275E",
       };
       const app = initializeApp(firebaseConfig);
-    },
+    }, */
 
     subirCorreoContraseñaFirebase() {
       const auth = getAuth();

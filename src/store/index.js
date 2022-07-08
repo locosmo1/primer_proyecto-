@@ -1,47 +1,3 @@
-/* import Vue from "vue";
-import Vuex from "vuex";
-import * as VueGoogleMaps from "vue2-google-maps";
-
-import { createLogger } from "vue-logger-plugin";
-
-Vue.use(VueGoogleMaps, {
-  load: {
-    key: "AIzaSyCOe6XiKYkPA1q3u4v_SVZy5Pw9yIXOnVQ",
-  },
-}); */
-
-// import example from './module-example'
-
-//Vue.use(Vuex);
-
-/*
- * If not building with SSR mode, you can
- * directly export the Store instantiation;
- *
- * The function below can be async too; either use
- * async/await or return a Promise which resolves
- * with the Store instance.
- */
-
-/* export default function ({ ssrContext }) {
-  const Store = new Vuex.Store({
-    modules: {
-      // example
-    },
-    strict: process.env.DEBUGGING
-  })
-
-  return Store
-}
- */
-
-/* const debug = process.env.NODE_ENV !== "production";
-
-export default new Vuex.Store({
-  modules: {},
-  strict: process.env.DEBUGGING
-}); */
-
 import Vue from "vue";
 import Vuex from "vuex";
 
@@ -76,9 +32,6 @@ export default new Vuex.Store({
     provider: {},
     app: {},
     conectado: false,
-    nombre: "Jhon",
-    apellido: "Stiwar",
-    amigos: ["ana", "caballo"],
     comprados: [],
     total_compra: 0,
     amigo: null,
@@ -86,7 +39,12 @@ export default new Vuex.Store({
     dialogProductos: false,
     editar: false,
     indice_editar: undefined,
+
+    urlBackendRemota : "http://mercado.somee.com:80/",
+    urlBackendLocal: "https://localhost:44370/",
+    urlBackendElegida: "http://mercado.somee.com:80/",
   },
+
   mutations: {
     //Se utilizan metodos que son asincronicos NO APIS
     add_amigo(state) {
@@ -142,6 +100,7 @@ export default new Vuex.Store({
       console.log("Persistencia modificada");
     },
   },
+
   actions: {
     //Metodos globales Se utitilizan metodos que son asyncronicos Consulta de APIS
     add_amigo_Action(context) {
@@ -154,6 +113,7 @@ export default new Vuex.Store({
       context.commit("modificarPersistencia");
     },
   },
+  
   getters: {
     //Obtener datos globales
     dialogo(state) {

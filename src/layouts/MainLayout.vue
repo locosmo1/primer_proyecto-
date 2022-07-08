@@ -386,16 +386,17 @@ export default {
       this.leftDrawerOpen = this.leftDrawerOpen ? false : true;
       return this.leftDrawerOpen;
     },
+
     IrCarrito() {
       this.$router.replace({ path: "carrito" });
     },
+
     IrHome() {
       this.$router.replace({ path: "/" });
     },
   },
 };
 </script>
-
 
 <style scoped>
 * {

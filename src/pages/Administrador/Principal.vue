@@ -474,11 +474,6 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 export default {
   data() {
     return {
-      urlBase: "https://localhost:44370/api/Prueba/",
-      urlBaseDomicilio: "https://localhost:44370/api/Domicilio/",
-      urlBaseProducto: "https://localhost:44370/api/Producto/",
-      urlBaseUsuario: "https://localhost:44370/api/Usuario/",
-
       separator: "horizontal",
 
       imagenes: [],
@@ -650,13 +645,16 @@ export default {
         longitud: this.longitud,
       }; //idDomicilio, ciudad, direccion, idUsuario, idUbicacion, latitud, longitud
       //console.log(nuevoDomicilio);
-      let url = this.urlBaseDomicilio + "crearDomicilio";
+      let url =
+        this.$store.state.urlBackendElegida + "api/Domicilio/crearDomicilio";
       this.enviarPeticion(url, "POST", nuevoDomicilio);
       this.dialogoDomicilio = false;
     },
 
     async ActualizarDomicilio() {
-      let url = this.urlBaseDomicilio + "ObtenerIdUbicacion";
+      let url =
+        this.$store.state.urlBackendElegida +
+        "api/Domicilio/ObtenerIdUbicacion";
       if (this.domiciliosSeleccionados.length == 1) {
         let idUbicacionn = await this.enviarPeticionRespuesta(
           url,
@@ -680,7 +678,10 @@ export default {
     },
 
     async BorrarDomicilio() {
-      let url = this.urlBaseDomicilio + "ObtenerIdUbicacion";
+      let url =
+        this.$store.state.urlBackendElegida +
+        "api/Domicilio/ObtenerIdUbicacion";
+
       let idDomicilio = this.domiciliosSeleccionados[0].idDomicilio;
       let idUbicacionn = await this.enviarPeticionRespuesta(
         url,
@@ -697,7 +698,9 @@ export default {
         latitud: this.latitud,
         longitud: this.longitud,
       };
-      let url2 = this.urlBaseDomicilio + "EliminarDomicilioUbicacion";
+      let url2 =
+        this.$store.state.urlBackendElegida +
+        "api/Domicilio/EliminarDomicilioUbicacion";
       this.enviarPeticion(url2, "DELETE", domicilio);
     },
 
@@ -807,7 +810,7 @@ export default {
         } else if (this.usuarioSeleccionado.idRol == 2) {
           //Si es empresa cargar los domicilios y los productos
           this.ObtenerDomicilios(idUsuario);
-          this.ObtenerProductosPrueba(idUsuario);
+          this.ObtenerProductos(idUsuario);
         }
       }
     },
@@ -815,7 +818,9 @@ export default {
     async ObtenerDomicilios(id) {
       try {
         let idUsuario = parseInt(id);
-        let url = this.urlBaseDomicilio + "ObtenerDomicilioUsuario";
+        let url =
+          this.$store.state.urlBackendElegida +
+          "api/Domicilio/ObtenerDomicilioUsuario";
         this.domicilios = await this.EnviarPeticionRespuesta(
           url,
           "POST",
@@ -841,19 +846,20 @@ export default {
 
     async CargarImagenes() {
       let url =
-        "https://localhost:44370/api/Imagenes/ObtenerImagenesProducto/" +
+        this.$store.state.urlBackendElegida +
+        "api/Imagenes/ObtenerImagenesProducto/" +
         this.productoSeleccionado.idProducto;
-      this.imagenes = await this.enviarPeticionRespuesta(url, "GET");
+      this.imagenes = await this.EnviarPeticionRespuesta(url, "GET");
     },
 
-    async ObtenerProductosPrueba(idEmpresa) {
-      let url = "https://localhost:44370/api/Producto/" + idEmpresa;
+    async ObtenerProductos(idEmpresa) {
+      let url = this.$store.state.urlBackendElegida + "api/Producto/" + idEmpresa;
       this.productos = await this.EnviarPeticionRespuesta(url, "GET");
     },
 
     //Obtener todos los usuarios con todas sus propiedades
     async GetUsuarios() {
-      let url = this.urlBaseUsuario + "ObtenerUsuarios";
+      let url = this.$store.state.urlBackendElegida + "api/Usuario/ObtenerUsuarios"
       this.usuarios = await this.EnviarPeticionRespuesta(url, "GET");
       for (let i = 0; i < this.usuarios.length; i++) {
         this.nombreUsuarios.push(this.usuarios[i].usuario);
@@ -957,7 +963,7 @@ export default {
     },
 
     async ObtenerUsuarioActual() {
-      let url = "https://localhost:44370/api/Usuario/ObtenerUsuarioActual";
+      let url = this.$store.state.urlBackendElegida + "api/Usuario/ObtenerUsuarioActual"
       let usuarioActual = await this.EnviarPeticionRespuesta(url, "GET");
       if (usuarioActual.idRol !== 3) {
         if (this.$route.path !== "/") {

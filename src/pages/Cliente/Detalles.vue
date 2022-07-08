@@ -197,12 +197,12 @@ export default {
       opciones: ["1", "2", "3", "4"],
       dense: false,
       denseOpts: false,
+      tamanoImagenPrincipal: 1000,
     };
   },
   created() {
     this.UsuarioAccedioCorrectamente();
     this.producto_recibido = this.$route.query.producto;
-    console.log("Producto recibido", this.producto_recibido);
     this.url_image = this.producto_recibido.imagen;
     this.idProductoRecibido = this.producto_recibido.id;
   },
@@ -212,6 +212,17 @@ export default {
   },
 
   methods: {
+    RetornarPrecioFormateado(precio) {
+      //convertir el entero a string
+
+      const formatterPeso = new Intl.NumberFormat("es-CO", {
+        style: "currency",
+        currency: "COP",
+        minimumFractionDigits: 0,
+      });
+      return formatterPeso.format(precio);
+    },
+
     UsuarioAccedioCorrectamente() {
       //const auth = getAuth();
 
@@ -239,7 +250,7 @@ export default {
             cantidad: this.cantidad,
             id_Producto: this.producto_recibido,
           };
-          let url = "https://localhost:44370/api/Carrito/AgregarCarrito";
+          let url = this.$store.state.urlBackendElegida + "api/Carrito/AgregarCarrito";
 
           await fetch(url, {
             method: "POST",
@@ -272,7 +283,7 @@ export default {
 
       try {
         let data;
-        let url = "https://localhost:44370/api/producto/ObtenerProducto";
+        let url = this.$store.state.urlBackendElegida + "api/producto/ObtenerProducto";
 
         this.res = await fetch(url, {
           method: "POST",
@@ -305,7 +316,7 @@ export default {
     async ObtenerImagenes() {
       try {
         var data;
-        let url = "https://localhost:44370/api/Imagenes/ObtenerImagenes";
+        let url = this.$store.state.urlBackendElegida + "api/Imagenes/ObtenerImagenes";
 
         this.res = await fetch(url, {
           method: "POST",

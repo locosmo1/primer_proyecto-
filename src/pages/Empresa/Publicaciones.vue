@@ -140,8 +140,11 @@ export default {
     IniciarData() {
       //Necesitamos el id, precio, titulo
       let arreglo = [];
+
+      let url = this.$store.state.urlBackendElegida + "api/Producto";
+
       axios
-        .get("https://localhost:44370/api/Producto", {
+        .get(url, {
           responseType: "json",
         })
         .then(function (res) {
@@ -193,7 +196,8 @@ export default {
     },
 
     async ObtenerUsuarioActual() {
-      let url = "https://localhost:44370/api/Usuario/ObtenerUsuarioActual";
+      let url = this.$store.state.urlBackendElegida + "api/Usuario/ObtenerUsuarioActual"
+
       let usuarioActual = await this.EnviarPeticionRespuesta(url, "GET");
       if (usuarioActual.idRol !== 2) {
         if (this.$route.path !== "/") {

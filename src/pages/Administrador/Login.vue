@@ -301,7 +301,6 @@ export default {
       modalRegistro: false,
       ispassword: true,
       contraseñaCifrada: "",
-      urlBase: "https://localhost:44370/api/Usuario/",
       editedItem: {
         correoElectronico: "",
         contraseña: "",
@@ -312,11 +311,8 @@ export default {
   created() {
     this.$store.dispatch("iniciarFirebaseAction");
     if (this.UsuarioAccedio()) {
-      console.log("alguien ya esta logueado correctamente");
       //Averiguar si es Administrador, Empresa o Cliente
       //this.IngresoUsuarioActual();
-    } else {
-      console.log("Nadie se a logueado");
     }
   },
 
@@ -334,7 +330,7 @@ export default {
     },
 
     /* async IngresoUsuarioActual() {
-      let url = "https://localhost:44370/api/Usuario/ObtenerUsuarioActual";
+      let url = this.$store.state.urlBackendElegida + "api/Usuario/ObtenerUsuarioActual"
       let usuarioActual = await this.EnviarPeticionRespuesta(url, "GET");
 
       console.log("Entro en usuario actual rol");
@@ -361,11 +357,9 @@ export default {
         usuario: this.user,
         contraseña: this.pass,
       };
-      let respuesta = await this.EnviarPeticionRespuesta(
-        "https://localhost:44370/api/Sesion/IniciarSesion",
-        "POST",
-        usuario
-      );
+      let url =
+        this.$store.state.urlBackendElegida + "api/Sesion/IniciarSesion";
+      let respuesta = await this.EnviarPeticionRespuesta(url, "POST", usuario);
 
       /**
        * ? if the response is 1 then it is a client
@@ -400,7 +394,7 @@ export default {
       this.modalRegistro = false;
       let respuesta;
 
-      let url = this.urlBase + "GuardarUsuario";
+      let url = this.$store.state.urlBackendElegida + "api/Usuario/GuardarUsuario"
 
       const usuario = {
         idUsuario: 0,
@@ -457,7 +451,9 @@ export default {
 
     async ObtenerContraseñaCifrada(pass) {
       //Obtener contraseña cifrada
-      let url = "https://localhost:44370/api/Cliente/obtenerContraseña";
+      //let url = "https://localhost:44370/api/Cliente/obtenerContraseña";
+      let url =
+        this.$store.state.urlBackendElegida + "api/Cliente/obtenerContraseña";
 
       const informacion = await fetch(url, {
         method: "POST",
@@ -605,7 +601,7 @@ export default {
     /* IngresarConApi() {
       //enviar datos con el metodo PUT de fetch
       let data;
-      var url = "https://localhost:44370/api/prueba/loginCliente";
+      let url = this.$store.state.urlBackendElegida + "api/prueba/loginCliente"
       let cliente = {
         correoElectronico: this.user, //gaitan2266@hotmail.com
         contraseña: this.pass, //54784946

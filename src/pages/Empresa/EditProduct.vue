@@ -144,9 +144,10 @@ export default {
         nombre: this.editedItem.titulo,
         precio: precio_v,
       };
-      console.log(data);
 
-      fetch("https://localhost:44370/api/prueba", {
+      let url = this.$store.state.urlBackendElegida + "api/prueba"
+
+      fetch(url, {
         method: "PUT", // or 'PUT'
         headers: {
           "Content-Type": "application/json",

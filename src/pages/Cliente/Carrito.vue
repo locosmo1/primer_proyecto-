@@ -338,7 +338,6 @@
 //Object.assign SE UTILIZA CUANDO SE ASIGNAN VALORES SIMPLES
 //this.$set SE UTILIZA CUANDO SE ASIGNAN VALORES COMPLEJOS EN ARREGLOS
 
-
 import "firebase/compat/storage";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
@@ -428,8 +427,10 @@ export default {
       });
     },
 
-    async ObtenerUsuarioActual() { 
-      let url = "https://localhost:44370/api/Usuario/ObtenerUsuarioActual";
+    async ObtenerUsuarioActual() {
+      let url =
+        this.$store.state.urlBackendElegida +
+        "api/Usuario/ObtenerUsuarioActual";
       let usuarioActual = await this.EnviarPeticionRespuesta(url, "GET");
       if (usuarioActual.idRol !== 1) {
         if (this.$route.path !== "/") {
@@ -469,7 +470,7 @@ export default {
       //Obtener los productos de la lista de compras de un cliente predeterminado
       try {
         let data;
-        let url = "https://localhost:44370/api/Producto/ObtenerProductos";
+        let url = this.$store.state.urlBackendElegida + "api/Producto/ObtenerProductos"
 
         this.res = await fetch(url, {
           method: "POST",
@@ -499,7 +500,7 @@ export default {
       //Obtener las cantidades de cada uno de los productos del carrito
       try {
         let data;
-        let url = "https://localhost:44370/api/Carrito/ObtenerCarrito";
+        let url = this.$store.state.urlBackendElegida + "api/Carrito/ObtenerCarrito"
 
         this.res = await fetch(url, {
           method: "POST",

@@ -460,7 +460,7 @@ export default {
 
   created(){
     this.$store.dispatch("iniciarFirebaseAction");//Iniciar Firebase
-  },
+  }, 
 
   methods: {
     IrHome() {
@@ -470,7 +470,6 @@ export default {
       signOut(this.$store.state.auth)
         .then(() => {
           //this.Response.Cookies.Delete("session");
-          console.log("Sesion cerrada");
         })
         .catch((error) => {
           // An error happened.

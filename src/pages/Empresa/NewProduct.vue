@@ -238,7 +238,8 @@ export default {
     },
 
     async ObtenerUsuarioActual() {
-      let url = "https://localhost:44370/api/Usuario/ObtenerUsuarioActual";
+      let url = this.$store.state.urlBackendElegida + "api/Usuario/ObtenerUsuarioActual";
+
       let usuarioActual = await this.EnviarPeticionRespuesta(url, "GET");
       if (usuarioActual.idRol !== 2) {
         if (this.$route.path !== "/") {
@@ -353,8 +354,9 @@ export default {
       };
       try {
         if (this.indice > 0) {
-          let url2 = "https://localhost:44370/api/prueba/recibirImagen";
-          fetch(url2, {
+          let url = this.$store.state.urlBackendElegida + "api/prueba/recibirImagen"
+
+          fetch(url, {
             method: "POST", // or 'PUT'
             headers: {
               "Content-Type": "application/json",
@@ -402,7 +404,7 @@ export default {
       //Quitar la primera imagen del array
       //this.urlDescarga.shift();
 
-      let url = "https://localhost:44370/api/prueba/CreateProducto";
+      let url = this.$store.state.urlBackendElegida + "api/prueba/CreateProducto"
 
       fetch(url, {
         method: "POST", // or 'PUT'
@@ -420,7 +422,7 @@ export default {
         });
     },
 
-    IniciarFirebase() {
+    /* IniciarFirebase() {
       const firebaseConfig = {
         apiKey: "AIzaSyCzVaDxudQnk2wzAe4m8pF5BtdgGKVsxso",
         authDomain: "buy-online-7b548.firebaseapp.com",
@@ -431,7 +433,7 @@ export default {
         measurementId: "G-M27HCV275E",
       };
       const app = initializeApp(firebaseConfig);
-    },
+    }, */
 
     async AñadirTarea() {
       this.subirImagenes();

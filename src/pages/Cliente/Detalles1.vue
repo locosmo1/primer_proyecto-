@@ -291,7 +291,7 @@ export default {
             cantidad: this.cantidad,
             id_Producto: this.producto_recibido,
           };
-          let url = "https://localhost:44370/api/Carrito/AgregarCarrito";
+          let url = this.$store.state.urlBackendElegida + "api/Carrito/AgregarCarrito";
 
           await fetch(url, {
             method: "POST",
@@ -324,7 +324,7 @@ export default {
 
       try {
         let data;
-        let url = "https://localhost:44370/api/producto/ObtenerProducto";
+        let url = this.$store.state.urlBackendElegida + "api/producto/ObtenerProducto";
 
         this.res = await fetch(url, {
           method: "POST",
@@ -357,7 +357,7 @@ export default {
     async ObtenerImagenes() {
       try {
         var data;
-        let url = "https://localhost:44370/api/Imagenes/ObtenerImagenes";
+        let url = this.$store.state.urlBackendElegida + "api/Imagenes/ObtenerImagenes";
 
         this.res = await fetch(url, {
           method: "POST",
