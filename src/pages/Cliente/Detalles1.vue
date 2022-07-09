@@ -289,29 +289,61 @@ export default {
           let data;
           let carrito = {
             cantidad: this.cantidad,
-            id_Producto: this.producto_recibido,
+            idProducto: this.producto_recibido.id,
           };
-          let url = this.$store.state.urlBackendElegida + "api/Carrito/AgregarCarrito";
+          let url =
+            this.$store.state.urlBackendElegida + "api/Carrito/AgregarCarrito";
 
-          await fetch(url, {
-            method: "POST",
-            body: JSON.stringify(carrito),
-            headers: {
-              "Content-Type": "application/json",
-            },
-          })
-            .then((res) => (data = res))
-            .catch((error) => console.error("Error en la matriz:", error))
-            .then(function (response) {
-              //console.log(response);
-              //Object.assign(this.producto, response);
-            });
+          this.EnviarPeticion(url, "POST", carrito);
         } catch (error) {
           console.error("Error: " + error);
         }
       } else {
         //Entrar a la pagina index
       }
+    },
+
+    async EnviarPeticion(url, method, body) {
+      let opcion = body === "" ? false : true;
+      if (opcion) {
+        fetch(url, {
+          method: method,
+          body: JSON.stringify(body),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      } else {
+        fetch(url, {
+          method: method,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      }
+    },
+
+    async EnviarPeticionRespuesta(url, method, body) {
+      let opcion = body === "" ? false : true;
+      let informacion;
+      if (opcion) {
+        informacion = await fetch(url, {
+          method: method,
+          body: JSON.stringify(body),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      } else {
+        informacion = await fetch(url, {
+          method: method,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      }
+      const data = await informacion.json();
+      return data;
     },
 
     InicioSesion() {
@@ -324,7 +356,8 @@ export default {
 
       try {
         let data;
-        let url = this.$store.state.urlBackendElegida + "api/producto/ObtenerProducto";
+        let url =
+          this.$store.state.urlBackendElegida + "api/producto/ObtenerProducto";
 
         this.res = await fetch(url, {
           method: "POST",
@@ -357,7 +390,8 @@ export default {
     async ObtenerImagenes() {
       try {
         var data;
-        let url = this.$store.state.urlBackendElegida + "api/Imagenes/ObtenerImagenes";
+        let url =
+          this.$store.state.urlBackendElegida + "api/Imagenes/ObtenerImagenes";
 
         this.res = await fetch(url, {
           method: "POST",
@@ -384,7 +418,7 @@ export default {
     Comprar(id) {
       //Cuando damos clic en comprar añadir a la lista de productos del carrito el dueño es el cliente que ah iniciado sesion
       //imagen, titulo, precio, color, cantidad, descripcion
-      let indice = undefined;
+      /* let indice = undefined;
       let unidades = 1;
       let i = 0;
       let iguales = false;
@@ -431,7 +465,7 @@ export default {
         let valor2 = parseInt(this.total_compra);
         let valor3 = parseInt(producto.precio);
         this.total_compra = valor2 + valor3;
-      }
+      } */
     },
 
     CantidadDecrease() {

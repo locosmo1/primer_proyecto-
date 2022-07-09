@@ -42,7 +42,7 @@ export default new Vuex.Store({
 
     urlBackendRemota : "https://mercado.somee.com/",
     urlBackendLocal: "https://localhost:44370/",
-    urlBackendElegida: "https://mercado.somee.com/",
+    urlBackendElegida: "https://localhost:44370/",
   },
 
   mutations: {

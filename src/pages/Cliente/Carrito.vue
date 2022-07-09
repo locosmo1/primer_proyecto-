@@ -23,7 +23,7 @@
           <q-tab class="text-blue" name="carrito" label="Carrito" />
           <q-tab class="text-blue" name="guardados" label="Guardados" />
         </q-tabs>
-        <div v-if="(comprados.length = 0)">Sin productos en el carrito</div>
+        <!-- <div v-if="(comprados.length = 0)">Sin productos en el carrito</div> -->
       </q-card>
       <div class="col-xl-1 col-lg-2 col-md-1 col-sm-1 col-xs-0"></div>
       <!-- 2 -->
@@ -36,7 +36,8 @@
       transition-next="scale"
       class="text-black"
     >
-      <q-tab-panel v-if="comprados.length > 0" name="carrito">
+      <!-- v-if="comprados.length > 0" -->
+      <q-tab-panel name="carrito">
         <div class="row">
           <div class="col-xl-1 col-lg-2 col-md-1 col-sm-1 col-xs-0"></div>
 
@@ -99,7 +100,7 @@
                         class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12 self-center justify-center items-center content-center text-center"
                       >
                         <q-btn
-                          @click="CantidadDecrease(task)"
+                          @click="CantidadDecrease(task, index)"
                           class="glossy"
                           color="black"
                           rounded
@@ -111,7 +112,7 @@
                         class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12 self-center justify-center items-center content-center text-center"
                       >
                         <q-btn
-                          @click="CantidadPlus(task)"
+                          @click="CantidadPlus(task, index)"
                           class="glossy"
                           rounded
                           color="black"
@@ -370,7 +371,7 @@ export default {
       Cantidades: [{}],
       total: 0,
 
-      comprados: [
+      /* comprados: [
         {
           titulo: "Computador portatil",
           descripcion: "Vendido por: barak team",
@@ -396,8 +397,8 @@ export default {
           imagen: "https://cdn.vuetifyjs.com/images/parallax/material.jpg",
         },
       ],
-
-      /* comprados: [], */
+ */
+      comprados: [{ unidades: 0 }],
       total_compra: 0,
       lista: false,
       name: "",
@@ -467,6 +468,26 @@ export default {
     },
 
     async ObtenerProductos() {
+      let url =
+        this.$store.state.urlBackendElegida + "api/Producto/ObtenerProductos";
+
+      let productos = await this.EnviarPeticionRespuesta(url, "POST");
+      this.comprados = productos;
+
+      this.ObtenerCantidad();
+    },
+
+    async ObtenerCantidad() {
+      let url =
+        this.$store.state.urlBackendElegida + "api/Carrito/ObtenerCarrito";
+      let carrito = await this.EnviarPeticionRespuesta(url, "POST");
+
+      for (let index = 0; index < this.comprados.length; index++) {
+        this.$set(this.comprados[index], "unidades", carrito[index].cantidad);
+      }
+    },
+
+    /* async ObtenerProductos() {
       //Obtener los productos de la lista de compras de un cliente predeterminado
       try {
         let data;
@@ -486,13 +507,16 @@ export default {
           });
 
         let productos = await data.json();
+        console.log({productos});
         this.comprados = this.EliminarRepetidos(productos);
+        console.log(this.comprados);
         if (this.comprados.length > 0) {
           this.$set(
             this.comprados,
             this.OrdenarMetodoBorbuja(this.comprados, 1)
           );
         }
+        
       } catch (error) {
         console.error("Error: " + error);
       }
@@ -527,7 +551,7 @@ export default {
           /* Object.assign(
           this.Cantidades,
           this.ordenarMetodoBorbuja(cantidades, 2)
-        ); */
+        );
           this.Cantidades = Object.assign(
             {},
             this.Cantidades,
@@ -535,7 +559,6 @@ export default {
           );
 
           for (let index = 0; index < this.comprados.length; index++) {
-            //this.comprados[index].unidades = this.Cantidades[index].cantidad;
             this.$set(
               this.comprados[index],
               "unidades",
@@ -543,13 +566,10 @@ export default {
             );
           }
         }
-
-        /* console.log(this.comprados);
-        console.log(this.Cantidades); */
       } catch (error) {
         console.error("Error: " + error);
       }
-    },
+    }, */
 
     OrdenarMetodoBorbuja(arregloFinal, orden) {
       var length = arregloFinal.length;
@@ -674,25 +694,36 @@ export default {
       );
     },
 
-    CantidadDecrease(task) {
+    CantidadDecrease(task, index) {
       if (task.unidades > 1) {
         this.$set(
-          this.comprados[task.id_Producto - 1],
+          this.comprados[index],
           "unidades",
-          this.comprados[task.id_Producto - 1].unidades - 1
+          this.comprados[index].unidades - 1
         );
       }
     },
 
-    CantidadPlus(task) {
-      if (task.unidades < this.comprados[task.id_Producto - 1].cantidad) {
+    CantidadPlus(task, index) {
+      if (task.unidades < task.cantidad) {
         this.$set(
-          this.comprados[task.id_Producto - 1],
+          this.comprados[index],
           "unidades",
-          this.comprados[task.id_Producto - 1].unidades + 1
+          this.comprados[index].unidades + 1
         );
       }
     },
+
+    /* CantidadPlus(task) {
+      console.log({task})
+      if (task.unidades < this.comprados[task.idProducto - 1].cantidad) {
+        this.$set(
+          this.comprados[task.idProducto - 1],
+          "unidades",
+          this.comprados[task.idProducto - 1].unidades + 1
+        );
+      }
+    }, */
 
     //Corregir para que solo lo haga mientras el numero digitado
     //sea menor al numero disponible de productos
