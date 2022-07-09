@@ -59,6 +59,7 @@
                         transform: translateX(0%);
                         transform: translateY(-700%);
                       "
+                      @click="ImagenAnterior()"
                     />
                     <q-btn
                       fab
@@ -66,6 +67,7 @@
                       icon="chevron_right"
                       class="absolute"
                       style="top: 0pt; right: 0px; transform: translateY(-700%)"
+                      @click="ImagenSiguiente()"
                     />
                   </q-card-section>
                 </div>
@@ -231,6 +233,7 @@ export default {
       tamano: 0,
       editedItem: {},
       slide: 1,
+      indiceImagenActualProducto: 0,
 
       color: "",
       cantidad: 1,
@@ -253,6 +256,27 @@ export default {
   },
 
   methods: {
+    async ImagenAnterior() {
+      /* Si las imagenes ya han sido cargadas en el lado del cliente */
+      if (this.url_image == this.direcciones[0]) {
+        this.indiceImagenActualProducto = this.direcciones.length - 1;
+        this.url_image = this.direcciones[this.indiceImagenActualProducto];
+      } else if (this.indiceImagenActualProducto > 0) {
+        this.indiceImagenActualProducto--;
+        this.url_image = this.direcciones[this.indiceImagenActualProducto];
+      }
+    },
+
+    async ImagenSiguiente() {
+      if (this.indiceImagenActualProducto < this.direcciones.length) {
+        this.url_image = this.direcciones[this.indiceImagenActualProducto];
+        this.indiceImagenActualProducto++;
+      } else {
+        this.url_image = this.direcciones[this.direcciones.length - 1];
+        this.indiceImagenActualProducto = 0;
+      }
+    },
+
     RetornarPrecioFormateado(precio) {
       //convertir el entero a string
 
