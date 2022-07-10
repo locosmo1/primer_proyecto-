@@ -233,7 +233,7 @@ export default {
       tamano: 0,
       editedItem: {},
       slide: 1,
-      indiceImagenActualProducto: 0,
+      indiceImagenActualProducto: 1,
 
       color: "",
       cantidad: 1,
@@ -245,7 +245,7 @@ export default {
     };
   },
   created() {
-    this.UsuarioAccedioCorrectamente();
+    //this.UsuarioAccedioCorrectamente();
     this.producto_recibido = this.$route.query.producto;
     this.url_image = this.producto_recibido.imagen;
     this.idProductoRecibido = this.producto_recibido.id;
@@ -272,8 +272,8 @@ export default {
         this.url_image = this.direcciones[this.indiceImagenActualProducto];
         this.indiceImagenActualProducto++;
       } else {
-        this.url_image = this.direcciones[this.direcciones.length - 1];
-        this.indiceImagenActualProducto = 0;
+        this.url_image = this.direcciones[0];
+        this.indiceImagenActualProducto = 1;
       }
     },
 
@@ -308,7 +308,7 @@ export default {
       //id del producto,
       //el id del cliente,
       //cantidad de productos que vamos a llevar
-      if (this.InicioSesion()) {
+      if (this.UsuarioAccedioCorrectamente()) {
         try {
           let data;
           let carrito = {
@@ -322,8 +322,6 @@ export default {
         } catch (error) {
           console.error("Error: " + error);
         }
-      } else {
-        //Entrar a la pagina index
       }
     },
 
@@ -368,10 +366,6 @@ export default {
       }
       const data = await informacion.json();
       return data;
-    },
-
-    InicioSesion() {
-      return true;
     },
 
     async IniciarData() {

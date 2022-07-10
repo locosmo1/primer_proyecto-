@@ -621,11 +621,29 @@ export default {
     };
   },
 
-  created() {
-    this.UsuarioAccedioCorrectamente();
-    this.GetUsuarios();
-  },
+  /* Atajos de teclado
+   *ctrl + shift + n =      nueva ventana
+   *ctrl + k + s =          guardar todo
+   *ctrl + shift + s =      guardar archivo como
+   *ctrl + w =              cerrar pestaña actual
+   *ctrl + shift + k =      borrar la linea actual
+   *ctrl + shift + enter =  insertar una nueva linea
+   *ctrl + f =              buscar en el proyecto
+   *ctrl + h =              buscar y reemplazar
+   *ctrl + shift + f =      ir a la etiqueta de cierre
+   *ctrl + p =              acceder a un archivo del proyecto
+   *ctrl + b =              ocultar la barra lateral
+   *alt + shift + a =       comentar codigo
+   *shift + alt + flecha arriba o abajo = duplicar el codigo
+   *alt + flecha arriba o alt flecha abajo = mover codigo
+  */
+ 
 
+ created() {
+   this.UsuarioAccedioCorrectamente();
+   this.GetUsuarios();
+ },
+ 
   methods: {
     AgregarEditarDomicilio() {
       if (this.crear) {

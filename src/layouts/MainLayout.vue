@@ -333,14 +333,18 @@ export default {
     },
 
     IrPublicaciones() {
-      this.$router.replace({ path: "Publicaciones" });
+      if (this.$route.path !== "/Publicaciones") {
+        this.$router.replace({ path: "/Publicaciones" });
+      }
     },
 
     cerrarSesion() {
       signOut(this.$store.state.auth)
         .then(() => {
           //this.Response.Cookies.Delete("session");
-          console.log("Sesion cerrada");
+          if (this.$route.path !== "/") {
+            this.$router.replace("/");
+          }
         })
         .catch((error) => {
           // An error happened.
@@ -349,7 +353,9 @@ export default {
     },
 
     AbrirCompras() {
-      this.$router.replace({ path: "compras" });
+      if (this.$route.path !== "/compras") {
+        this.$router.replace({ path: "/compras" });
+      }
     },
 
     ocultar() {
@@ -388,11 +394,15 @@ export default {
     },
 
     IrCarrito() {
-      this.$router.replace({ path: "carrito" });
+      if (this.$route.path !== "/carrito") {
+        this.$router.replace({ path: "/carrito" });
+      }
     },
 
     IrHome() {
-      this.$router.replace({ path: "/" });
+      if (this.$route.path !== "/") {
+        this.$router.replace({ path: "/" });
+      }
     },
   },
 };

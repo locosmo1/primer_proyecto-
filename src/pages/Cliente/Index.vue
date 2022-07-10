@@ -181,7 +181,7 @@ export default {
     };
   },
   created() {
-    this.UsuarioAccedioCorrectamente();
+    //this.UsuarioAccedioCorrectamente();
     this.IniciarData();
     this.matMenu = matMenu;
   },
@@ -250,7 +250,31 @@ export default {
       this.tasks = arreglo;
     },
 
-    AgregarCarrito(id) {
+    async AgregarCarrito(index) {
+      //Crear un arreglo para recibir los datos del producto
+      //para llenar el carrito necesitamos el
+      //id del producto,
+      //el id del cliente,
+      //cantidad de productos que vamos a llevar
+
+      if (this.UsuarioAccedioCorrectamente()) {
+        try {
+          let data;
+          let carrito = {
+            cantidad: 1,
+            idProducto: this.tasks[index].id,
+          };
+          let url =
+            this.$store.state.urlBackendElegida + "api/Carrito/AgregarCarrito";
+
+          this.EnviarPeticion(url, "POST", carrito);
+        } catch (error) {
+          console.error("Error: " + error);
+        }
+      }
+    },
+
+    /* AgregarCarrito(id) {
       //Cuando damos clic en comprar añadir a la lista de productos del carrito el dueño es el cliente que ah iniciado sesion
       //imagen, titulo, precio, color, cantidad, descripcion
       let indice = undefined;
@@ -305,7 +329,7 @@ export default {
         let valor3 = parseInt(producto.precio);
         this.total_compra = valor2 + valor3;
       }
-    },
+    }, */
 
     /* AgregarIndice(id) {
       this.tab = "edit";
