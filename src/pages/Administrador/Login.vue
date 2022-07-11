@@ -110,7 +110,6 @@
                   class="q-pa-xs"
                   color="botones"
                   label="Olvide mi contraseña"
-                  @click="IngresarConCorreo()"
                   icon="lock_open"
                 />
               </div>

@@ -96,7 +96,11 @@
           <q-btn dark rounded color="blue-5" icon="edit" size="xs">
             <q-menu>
               <q-list dense style="min-width: 100px">
-                <q-item to="/EditProduct" clickable v-close-popup>
+                <q-item
+                  @click="IrEditarProducto(index)"
+                  clickable
+                  v-close-popup
+                >
                   Editar
                 </q-item>
                 <q-item clickable v-close-popup> Eliminar </q-item>
@@ -134,6 +138,13 @@ export default {
   },
 
   methods: {
+    IrEditarProducto(index) {
+      this.$router.push({
+        path: "EditProduct",
+        query: { producto: this.tasks[index] },
+      });
+    },
+
     AgregarImagenLista(id) {
       return this.tasks[id].imagen;
     },
@@ -152,13 +163,29 @@ export default {
           if (res.status == 200) {
             for (let i = 0; i < res.data.length; i++) {
               let producto = {
-                id: res.data[i].id_Producto,
-                imagen: res.data[i].imagen,
-                precio: res.data[i].precio,
+                idProducto: res.data[i].idProducto,
                 titulo: res.data[i].titulo,
                 descripcion: res.data[i].descripcion,
+                precio: res.data[i].precio,
                 cantidad: res.data[i].cantidad,
+                imagen: res.data[i].imagen,
+                color: res.data[i].color,
+                idCategoria: res.data[i].idCategoria,
+                idEmpresa: res.data[i].idEmpresa,
               };
+              let idCategoria =
+                producto.idCategoria === 1
+                  ? "Tecnologia"
+                  : producto.idCategoria === 2
+                  ? "Belleza"
+                  : producto.idCategoria === 3
+                  ? "Farmacia"
+                  : producto.idCategoria === 4
+                  ? "Moda"
+                  : producto.idCategoria === 5
+                  ? "Cocina"
+                  : "Deporte";
+              producto.idCategoria = idCategoria;
               arreglo.push(producto);
             }
           } else {
@@ -169,6 +196,20 @@ export default {
           console.log("Error en axios: " + err);
         });
       this.tasks = arreglo;
+    },
+
+    ObtenerCategoria(id) {
+      return id === 1
+        ? "Tecnologia"
+        : id === 2
+        ? "Belleza"
+        : id === 3
+        ? "Farmacia"
+        : id === 4
+        ? "Moda"
+        : id === 5
+        ? "Cocina"
+        : "Deporte";
     },
 
     RetornarPrecioFormateado(precio) {
@@ -187,7 +228,7 @@ export default {
 
       onAuthStateChanged(this.$store.state.auth, (user) => {
         if (user) {
-          this.ObtenerUsuarioActual();
+          //this.ObtenerUsuarioActual();
         } else {
           if (this.$route.path !== "/Login") {
             this.$router.replace("/Login");
@@ -197,7 +238,9 @@ export default {
     },
 
     async ObtenerUsuarioActual() {
-      let url = this.$store.state.urlBackendElegida + "api/Usuario/ObtenerUsuarioActual"
+      let url =
+        this.$store.state.urlBackendElegida +
+        "api/Usuario/ObtenerUsuarioActual";
 
       let usuarioActual = await this.EnviarPeticionRespuesta(url, "GET");
       if (usuarioActual.idRol !== 2) {

@@ -1,7 +1,7 @@
 <template>
-  <div class="row justify-around q-pa-md">
-    <div class="col-xl-3 col-lg-3 col-md-2 col-sm-2 col-xs-0"></div>
-    <div class="col-xl-6 col-lg-6 col-md-8 col-sm-8 col-xs-12">
+  <div class="row">
+    <div class="col-xl-1 col-lg-1 col-md-1 col-sm-1 col-xs-0"></div>
+    <div class="col-xl-10 col-lg-10 col-md-10 col-sm-10 col-xs-12">
       <div class="row">
         <q-card
           rounded
@@ -23,22 +23,14 @@
           <q-separator />
 
           <q-field color="blue" class="q-pa-md" rounded outlined stack-label>
-            <template v-slot:control>
-              <div class="self-center full-width no-outline" tabindex="0">
-                Digite la descripcion
-              </div>
-            </template>
           </q-field>
 
           <q-editor
             toolbar-rounded
-            color="info"
+            color="blue"
             class="q-pa-md"
             v-model="editedItem.descripcion"
             label="Añade una descripcion"
-            :definitions="{
-              bold: { label: 'Bold', icon: null, tip: 'My bold tooltip' },
-            }"
           />
 
           <q-separator />
@@ -65,8 +57,22 @@
             class="q-pa-md"
             filled
             v-model="editedItem.color"
-            :options="options"
-            label="Escoja el Color: "
+            :options="opcionesColor"
+            label="Seleccione el Color: "
+            stack-label
+            :dense="dense"
+            :options-dense="denseOpts"
+            color="blue"
+          />
+
+          <q-separator />
+
+          <q-select
+            class="q-pa-md"
+            filled
+            v-model="editedItem.categoria"
+            :options="opcionesCategoria"
+            label="Seleccione la Categoria: "
             stack-label
             :dense="dense"
             :options-dense="denseOpts"
@@ -92,7 +98,6 @@
 
           <q-separator />
 
-          <!-- pintar las imagenes cargadas -->
           <q-card bordered>
             <q-card-section>
               <div class="row items-star q-pa-md">
@@ -117,7 +122,6 @@
               </div>
             </q-card-section>
           </q-card>
-          <!-- pintar las imagenes cargadas -->
 
           <q-btn
             @click="AñadirTarea()"
@@ -134,7 +138,7 @@
         </q-card>
       </div>
     </div>
-    <div class="col-xl-3 col-lg-3 col-md-2 col-sm-2 col-xs-0 q-pa-md"></div>
+    <div class="col-xl-1 col-lg-1 col-md-1 col-sm-1 col-xs-0"></div>
   </div>
 </template>
 
@@ -164,8 +168,9 @@ export default {
         precio: "",
         cantidad: "",
         color: "",
+        categoria: "Tecnologia",
       },
-      options: [
+      opcionesColor: [
         "Rojo",
         "Verde",
         "Azul",
@@ -177,12 +182,20 @@ export default {
         "Magenta",
         "Cian",
       ],
+      opcionesCategoria: [
+        "Tecnologia",
+        "Belleza",
+        "Farmacia",
+        "Moda",
+        "Cocina",
+        "Deporte",
+      ],
       dense: false,
       denseOpts: false,
       formulario: true,
       indice: 0,
       mensaje:
-        "Arrastra tus archivos aqui para comenzar o haga clic para navegar",
+        "Arrastra tus archivos aqui para comenzar o haga clic para navegar las imagenes deben ser mayores a 60 Kilobytes y menores a 3 Mbs",
     };
   },
   mounted() {
@@ -200,12 +213,12 @@ export default {
 
     IniciarCarga(evento) {
       this.files = evento.target.files;
-      this.pintarImagenes();
+      this.PintarImagenes();
     },
 
     PintarImagenes() {
       for (let index = 0; index < this.files.length; index++) {
-        if (this.imagenCumpleRequisitos(index)) {
+        if (this.ImagenCumpleRequisitos(index)) {
           const reader = new FileReader();
           reader.readAsDataURL(this.files[index]);
           reader.onload = (e) => {
@@ -216,7 +229,7 @@ export default {
     },
 
     PintarImagen(index) {
-      if (this.imagenCumpleRequisitos(index)) {
+      if (this.ImagenCumpleRequisitos(index)) {
         const reader = new FileReader();
         reader.readAsDataURL(this.files[index]);
         reader.onload = (e) => {
@@ -247,11 +260,13 @@ export default {
         "api/Usuario/ObtenerUsuarioActual";
 
       let usuarioActual = await this.EnviarPeticionRespuesta(url, "GET");
+
       if (usuarioActual.idRol !== 2) {
-        if (this.$route.path !== "/") {
-          this.$router.replace("/");
+        if (this.$route.path !== "/Login") {
+          this.$router.replace("/Login");
         }
       }
+      return usuarioActual;
     },
 
     async EnviarPeticionRespuesta(url, method, body) {
@@ -283,10 +298,12 @@ export default {
       let nuevo = [];
 
       for (let index = 0; index < this.files.length; index++) {
-        if (this.imagenCumpleRequisitos(index)) {
+        if (this.ImagenCumpleRequisitos(index)) {
           nuevo.push(this.files[index]);
         }
       }
+
+      console.log(nuevo.length, " imagenes pasaron los requisitos de peso");
 
       let usuarioActual = await this.ObtenerUsuarioActual();
       let idUsuario = usuarioActual.idUsuario;
@@ -343,7 +360,7 @@ export default {
 
               const promesa = archivo.then((downloadURL) => {
                 this.urlDescarga.push(downloadURL);
-                this.añadirImagenApi(downloadURL, nuevo.length);
+                this.AnadirImagenApi(downloadURL, nuevo.length);
               });
             }
           );
@@ -384,27 +401,38 @@ export default {
 
       this.indice++;
       if (this.indice == tamano) {
-        this.crearProducto();
+        this.CrearProducto();
         this.indice = 0;
       }
     },
 
+    ObtenerIdCategoria() {
+      return this.editedItem.categoria === "Tecnologia"
+        ? "1"
+        : this.editedItem.categoria === "Belleza"
+        ? "2"
+        : this.editedItem.categoria === "Farmacia"
+        ? "3"
+        : this.editedItem.categoria === "Moda"
+        ? "4"
+        : this.editedItem.categoria === "Cocina"
+        ? "5"
+        : "6";
+    },
+
     CrearProducto() {
       console.log("Creando producto");
-      this.editedItem.titulo = "Teclado";
-      this.editedItem.descripcion = "Teclado Twerty";
-      this.editedItem.precio = "12";
-      this.editedItem.color = "Rojo";
-      this.editedItem.cantidad = "5";
 
       const Producto = {
+        idProducto: 0,
         imagen: this.urlDescarga[0],
         titulo: this.editedItem.titulo,
         precio: this.editedItem.precio,
         color: this.editedItem.color,
         cantidad: this.editedItem.cantidad,
         descripcion: this.editedItem.descripcion,
-        nit_Empresa: "",
+        idEmpresa: 0,
+        idCategoria: this.ObtenerIdCategoria(),
         imagenes: this.urlDescarga,
       };
 
@@ -461,7 +489,7 @@ export default {
     }, */
 
     async AñadirTarea() {
-      this.subirImagenes();
+      this.SubirImagenes();
       //Enlazar la url de cada imagen con el id del usuario que ah ingresado
       //Este enlace debe ser llamado mediante la api fetch
       //Necesitamos el id del usuario que esta logueado
@@ -470,6 +498,8 @@ export default {
   },
 };
 </script>
+
+
 
 <style lang="scss">
 .cargador {

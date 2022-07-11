@@ -8,7 +8,7 @@
           class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12 q-pa-md"
         >
           <div class="text-h5 text-bold text-strong text-center q-pa-md">
-            Publicacion de un Nuevo Producto
+            Editar Producto
           </div>
 
           <q-separator />
@@ -17,23 +17,16 @@
             class="q-pa-md"
             v-model="editedItem.titulo"
             label="Añade un Titulo"
+            color="blue-7"
           />
 
           <q-separator />
-
-          <q-field class="q-pa-md" rounded outlined stack-label>
-            <template v-slot:control>
-              <div class="self-center full-width no-outline" tabindex="0">
-                Digite la descripcion
-              </div>
-            </template>
-          </q-field>
 
           <q-editor
             toolbar-rounded
             class="q-pa-md"
             color="blue-7"
-            v-model="descripcion"
+            v-model="editedItem.descripcion"
             label="Añade una descripcion"
             :definitions="{
               bold: { label: 'Bold', icon: null, tip: 'My bold tooltip' },
@@ -46,14 +39,16 @@
             class="q-pa-md"
             v-model="editedItem.precio"
             label="Añade el Precio"
+            color="blue-7"
           />
 
           <q-separator />
 
           <q-input
             class="q-pa-md"
-            v-model="cantidad"
+            v-model="editedItem.cantidad"
             label="Digite la cantidad"
+            color="blue-7"
           />
 
           <q-separator />
@@ -61,23 +56,27 @@
           <q-select
             class="q-pa-md"
             filled
-            v-model="color"
-            :options="options"
+            v-model="editedItem.color"
+            :options="opcionesColor"
             label="Escoja el Color: "
             stack-label
             :dense="dense"
             :options-dense="denseOpts"
+            color="blue-7"
           />
 
           <q-separator />
 
-          <q-uploader
-            bordered
-            class="q-pa-md cargador"
-            url="http://localhost:4444/upload"
-            multiple
-            accept=".jpg, .png, image/*"
-            max-files="3"
+          <q-select
+            class="q-pa-md"
+            filled
+            v-model="editedItem.idCategoria"
+            :options="opcionesCategoria"
+            label="Seleccione la Categoria: "
+            stack-label
+            :dense="dense"
+            :options-dense="denseOpts"
+            color="blue"
           />
 
           <q-separator />
@@ -87,8 +86,8 @@
             class="glossy"
             dark
             rounded
-            color="primary"
             label="Modificar"
+            color="blue-7"
           />
 
           <q-separator />
@@ -100,17 +99,28 @@
 </template>
 
 <script>
-
 import { onAuthStateChanged } from "firebase/auth";
 
 export default {
   props: {},
   data() {
     return {
-      editedItem: {},
       cantidad: undefined,
       color: "",
-      options: [
+
+      dense: false,
+      denseOpts: false,
+      descripcion: "",
+      producto: {},
+      opcionesCategoria: [
+        "Tecnologia",
+        "Belleza",
+        "Farmacia",
+        "Moda",
+        "Cocina",
+        "Deporte",
+      ],
+      opcionesColor: [
         "Rojo",
         "Verde",
         "Azul",
@@ -122,13 +132,22 @@ export default {
         "Magenta",
         "Cian",
       ],
-      dense: false,
-      denseOpts: false,
-      descripcion: "",
+      editedItem: {
+        idProducto: 0,
+        titulo: "",
+        descripcion: "",
+        precio: 0,
+        cantidad: 0,
+        color: "",
+        IdCategoria: "",
+      },
     };
   },
   created() {
     this.UsuarioAccedioCorrectamente();
+    this.producto = this.$route.query.producto;
+    console.log(this.producto);
+    this.editedItem = this.producto;
   },
   methods: {
     async UsuarioAccedioCorrectamente() {
@@ -148,43 +167,108 @@ export default {
       });
     },
 
+    async ObtenerUsuarioActual() {
+      let url =
+        this.$store.state.urlBackendElegida +
+        "api/Usuario/ObtenerUsuarioActual";
+
+      let usuarioActual = await this.EnviarPeticionRespuesta(url, "GET");
+      if (usuarioActual.idRol !== 2) {
+        if (this.$route.path !== "/") {
+          this.$router.replace("/");
+        }
+      }
+    },
+
+    ObtenerIdCategoria(categoria) {
+      return categoria === "Tecnologia"
+        ? "1"
+        : categoria === "Belleza"
+        ? "2"
+        : categoria === "Farmacia"
+        ? "3"
+        : categoria === "Moda"
+        ? "4"
+        : categoria === "Cocina"
+        ? "5"
+        : "6";
+    },
+
+    ObtenerCategoria(id) {
+      return id === 1
+        ? "Tecnologia"
+        : id === 2
+        ? "Belleza"
+        : id === 3
+        ? "Farmacia"
+        : id === 4
+        ? "Moda"
+        : id === 5
+        ? "Cocina"
+        : "Deporte";
+    },
+
     EditarItem() {
-      let precio_v;
-      let new_item;
+      let idCategoria = this.ObtenerIdCategoria(this.editedItem.idCategoria);
+      this.editedItem.idCategoria = parseInt(idCategoria);
 
-      precio_v = parseInt(this.editedItem.precio);
-      new_item = {
-        titulo: this.editedItem.titulo,
-        precio: precio_v,
-        imagen: this.url_image,
-      };
-      Object.assign(this.tasks[this.indice_editar], new_item);
-      let indice = this.indice_editar + 1;
+      this.editedItem.descripcion = this.RemoveTags(
+        this.editedItem.descripcion
+      );
+      console.log(this.editedItem);
 
-      const data = {
-        Id: indice,
-        urlImagen: this.url_image,
-        nombre: this.editedItem.titulo,
-        precio: precio_v,
-      };
+      let url = this.$store.state.urlBackendElegida + "api/Producto";
 
-      let url = this.$store.state.urlBackendElegida + "api/prueba";
+      this.EnviarPeticion(url, "PUT", this.editedItem);
+    },
 
-      fetch(url, {
-        method: "PUT", // or 'PUT'
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      })
-        .then((response) => response) //.json()
-        .then((data) => {
-          console.log("Success:", data);
-        })
-        .catch((error) => {
-          console.error("Error EN FETCH:", error);
+    RemoveTags(html) {
+      if (html === null || html === "") return false;
+      else html = html.toString();
+      return html.replace(/(<([^>]+)>)/gi, "");
+    },
+
+    async EnviarPeticion(url, method, body) {
+      let opcion = body === "" ? false : true;
+      if (opcion) {
+        fetch(url, {
+          method: method,
+          body: JSON.stringify(body),
+          headers: {
+            "Content-Type": "application/json",
+          },
         });
-      this.tab = "consultar";
+      } else {
+        fetch(url, {
+          method: method,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      }
+    },
+
+    async EnviarPeticionRespuesta(url, method, body) {
+      let opcion = body === "" ? false : true;
+      let informacion;
+      if (opcion) {
+        informacion = await fetch(url, {
+          method: method,
+          body: JSON.stringify(body),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      } else {
+        informacion = await fetch(url, {
+          method: method,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      }
+      const data = await informacion.json();
+      return data;
     },
   },
 };
