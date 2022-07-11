@@ -217,7 +217,7 @@
 <script>
 const axios = require("axios");
 
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged } from "firebase/auth";
 export default {
   /* props: {
     idProductoRecibido: Number,
@@ -295,8 +295,8 @@ export default {
         if (user) {
           const uid = user.uid;
         } else {
-          if (this.$route.path !== "/") {
-            this.$router.push("/");
+          if (this.$route.path !== "/Login") {
+            this.$router.replace("/Login");
           }
         }
       });

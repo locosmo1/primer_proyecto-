@@ -470,6 +470,9 @@ export default {
       signOut(this.$store.state.auth)
         .then(() => {
           //this.Response.Cookies.Delete("session");
+          if (this.$route.path !== "/Login") {
+            this.$router.replace("/Login");
+          }
         })
         .catch((error) => {
           // An error happened.

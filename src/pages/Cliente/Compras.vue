@@ -123,12 +123,31 @@
 </template>
 
 <script>
+
+import { onAuthStateChanged } from "firebase/auth";
+
 export default {
   data() {
     return {};
   },
-  created() {},
-  methods: {},
+  created() {
+    this.UsuarioAccedioCorrectamente();
+  },
+  methods: {
+    UsuarioAccedioCorrectamente() {
+      //const auth = getAuth();
+
+      onAuthStateChanged(this.$store.state.auth, (user) => {
+        if (user) {
+          const uid = user.uid;
+        } else {
+          if (this.$route.path !== "/Login") {
+            this.$router.replace("/Login");
+          }
+        }
+      });
+    },
+  },
 };
 </script>
 

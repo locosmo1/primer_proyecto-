@@ -467,7 +467,7 @@
 </template>
 
 <script>
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged } from "firebase/auth";
 
 /* import {map} from src="https://maps.googleapis.com/maps/api/js?key=MY_API_KEY&callback=initMap"; */
 
@@ -973,8 +973,8 @@ export default {
           //administrador
           this.ObtenerUsuarioActual();
         } else {
-          if (this.$route.path !== "/") {
-            this.$router.replace("/");
+          if (this.$route.path !== "/Login") {
+            this.$router.replace("/Login");
           }
         }
       });

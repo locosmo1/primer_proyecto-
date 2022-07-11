@@ -139,7 +139,7 @@
 </template>
 
 <script>
-import { initializeApp } from "firebase/app";
+import { onAuthStateChanged } from "firebase/auth";
 
 import {
   getStorage,

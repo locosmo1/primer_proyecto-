@@ -32,7 +32,9 @@ export default {
   },
   methods: {
     GoHome() {
-      this.$router.replace({ path: "/" });
+      if (this.$route.path !== "/") {
+        this.$router.replace("/");
+      }
     },
   },
 };

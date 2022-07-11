@@ -3,9 +3,9 @@ const routes = [
 
   {
     path: "/",
-    component: () => import("layouts/initialLayout.vue"),
+    component: () => import("layouts/MainLayout.vue"),
     children: [
-      { path: "", component: () => import("pages/Administrador/Login.vue") }, //pages/Index.vue
+      { path: "", component: () => import("pages/Cliente/Index.vue") }, //pages/Login.vue
     ],
   },
 
@@ -48,9 +48,9 @@ const routes = [
 
   {
     path: "/",
-    component: () => import("layouts/MainLayout.vue"),
+    component: () => import("layouts/initialLayout.vue"),
     children: [
-      { path: "index", component: () => import("pages/Cliente/Index.vue") }, //pages/Index.vue
+      { path: "Login", component: () => import("pages/Administrador/Login.vue") }, //pages/Index.vue
     ],
   },
 

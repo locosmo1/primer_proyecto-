@@ -7,13 +7,12 @@
           rounded
           class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12 q-pa-md"
         >
+          <div class="text-h5 text-bold text-strong text-center q-pa-md">
+            Publicacion de un Nuevo Producto
+          </div>
 
-        <div class="text-h5 text-bold text-strong text-center q-pa-md">
-          Publicacion de un Nuevo Producto
-        </div>
+          <q-separator />
 
-        <q-separator />
-        
           <q-input
             class="q-pa-md"
             v-model="editedItem.titulo"
@@ -24,13 +23,16 @@
 
           <q-field class="q-pa-md" rounded outlined stack-label>
             <template v-slot:control>
-              <div class="self-center full-width no-outline" tabindex="0">Digite la descripcion</div>
+              <div class="self-center full-width no-outline" tabindex="0">
+                Digite la descripcion
+              </div>
             </template>
           </q-field>
 
-          <q-editor toolbar-rounded
-          class="q-pa-md"
-          color="blue-7"
+          <q-editor
+            toolbar-rounded
+            class="q-pa-md"
+            color="blue-7"
             v-model="descripcion"
             label="Añade una descripcion"
             :definitions="{
@@ -90,7 +92,6 @@
           />
 
           <q-separator />
-
         </q-card>
       </div>
     </div>
@@ -99,6 +100,9 @@
 </template>
 
 <script>
+
+import { onAuthStateChanged } from "firebase/auth";
+
 export default {
   props: {},
   data() {
@@ -123,8 +127,27 @@ export default {
       descripcion: "",
     };
   },
-  created() {},
+  created() {
+    this.UsuarioAccedioCorrectamente();
+  },
   methods: {
+    async UsuarioAccedioCorrectamente() {
+      //const auth = getAuth();
+
+      onAuthStateChanged(this.$store.state.auth, (user) => {
+        if (user) {
+          //Dejar entrar si esta autenticado solamente como administrador
+          //Consultar a usuarioActual desde el backend para saber si es
+          //administrador
+          this.ObtenerUsuarioActual();
+        } else {
+          if (this.$route.path !== "/Login") {
+            this.$router.replace("/Login");
+          }
+        }
+      });
+    },
+
     EditarItem() {
       let precio_v;
       let new_item;
@@ -145,7 +168,7 @@ export default {
         precio: precio_v,
       };
 
-      let url = this.$store.state.urlBackendElegida + "api/prueba"
+      let url = this.$store.state.urlBackendElegida + "api/prueba";
 
       fetch(url, {
         method: "PUT", // or 'PUT'

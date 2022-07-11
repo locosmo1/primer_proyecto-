@@ -421,8 +421,8 @@ export default {
         if (user) {
           this.ObtenerUsuarioActual();
         } else {
-          if (this.$route.path !== "/") {
-            this.$router.replace("/");
+          if (this.$route.path !== "/Login") {
+            this.$router.replace("/Login");
           }
         }
       });

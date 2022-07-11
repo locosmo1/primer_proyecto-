@@ -373,8 +373,8 @@ export default {
       console.log("Entro en rol respuesta: ", respuesta);
 
       if (respuesta === 1) {
-        if (this.$route.path !== "/Index") {
-          this.$router.replace({ path: "/Index" }).catch(() => {});
+        if (this.$route.path !== "/") {
+          this.$router.replace({ path: "/" }).catch(() => {});
         }
       } else if (respuesta === 2) {
         if (this.$route.path !== "/Publicaciones") {

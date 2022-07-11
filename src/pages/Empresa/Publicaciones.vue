@@ -59,6 +59,7 @@
               rounded
               color="blue-5"
               label="Modificar precio"
+              size="sm"
             />
           </div>
         </div>
@@ -114,7 +115,7 @@
 <script>
 const axios = require("axios");
 
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged } from "firebase/auth";
 
 export default {
   name: "Publicaciones",
@@ -188,8 +189,8 @@ export default {
         if (user) {
           this.ObtenerUsuarioActual();
         } else {
-          if (this.$route.path !== "/") {
-            this.$router.replace("/");
+          if (this.$route.path !== "/Login") {
+            this.$router.replace("/Login");
           }
         }
       });

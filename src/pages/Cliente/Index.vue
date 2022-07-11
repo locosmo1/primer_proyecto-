@@ -181,7 +181,6 @@ export default {
     };
   },
   created() {
-    //this.UsuarioAccedioCorrectamente();
     this.IniciarData();
     this.matMenu = matMenu;
   },
@@ -427,8 +426,8 @@ export default {
           const uid = user.uid;
           accedio = true;
         } else {
-          if (this.$route.path !== "/") {
-            this.$router.replace("/");
+          if (this.$route.path !== "/Login") {
+            this.$router.replace("/Login");
           }
         }
       });

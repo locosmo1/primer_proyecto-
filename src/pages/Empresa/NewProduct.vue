@@ -139,7 +139,7 @@
 </template>
 
 <script>
-import { initializeApp } from "firebase/app";
+import { onAuthStateChanged } from "firebase/auth";
 
 import {
   getStorage,
@@ -186,7 +186,11 @@ export default {
     };
   },
   mounted() {
-    this.iniciarFirebase();
+    //this.IniciarFirebase();
+  },
+
+  created() {
+    this.UsuarioAccedioCorrectamente();
   },
 
   methods: {
@@ -238,7 +242,9 @@ export default {
     },
 
     async ObtenerUsuarioActual() {
-      let url = this.$store.state.urlBackendElegida + "api/Usuario/ObtenerUsuarioActual";
+      let url =
+        this.$store.state.urlBackendElegida +
+        "api/Usuario/ObtenerUsuarioActual";
 
       let usuarioActual = await this.EnviarPeticionRespuesta(url, "GET");
       if (usuarioActual.idRol !== 2) {
@@ -282,10 +288,10 @@ export default {
         }
       }
 
-      let usuarioActual =  await this.ObtenerUsuarioActual();
+      let usuarioActual = await this.ObtenerUsuarioActual();
       let idUsuario = usuarioActual.idUsuario;
 
-      let direccionNube = "images/" + idUsuario +"/";
+      let direccionNube = "images/" + idUsuario + "/";
       let indice = 1;
 
       for (let index = 0; index < nuevo.length; index++) {
@@ -354,7 +360,8 @@ export default {
       };
       try {
         if (this.indice > 0) {
-          let url = this.$store.state.urlBackendElegida + "api/prueba/recibirImagen"
+          let url =
+            this.$store.state.urlBackendElegida + "api/prueba/recibirImagen";
 
           fetch(url, {
             method: "POST", // or 'PUT'
@@ -404,7 +411,8 @@ export default {
       //Quitar la primera imagen del array
       //this.urlDescarga.shift();
 
-      let url = this.$store.state.urlBackendElegida + "api/prueba/CreateProducto"
+      let url =
+        this.$store.state.urlBackendElegida + "api/prueba/CreateProducto";
 
       fetch(url, {
         method: "POST", // or 'PUT'
@@ -420,6 +428,23 @@ export default {
         .catch((error) => {
           console.error("Error EN FETCH:", error);
         });
+    },
+
+    async UsuarioAccedioCorrectamente() {
+      //const auth = getAuth();
+
+      onAuthStateChanged(this.$store.state.auth, (user) => {
+        if (user) {
+          //Dejar entrar si esta autenticado solamente como administrador
+          //Consultar a usuarioActual desde el backend para saber si es
+          //administrador
+          this.ObtenerUsuarioActual();
+        } else {
+          if (this.$route.path !== "/Login") {
+            this.$router.replace("/Login");
+          }
+        }
+      });
     },
 
     /* IniciarFirebase() {
@@ -445,8 +470,6 @@ export default {
   },
 };
 </script>
-
-
 
 <style lang="scss">
 .cargador {
