@@ -89,7 +89,8 @@
                         dark
                         rounded
                         color="blue-7"
-                        label="Agregar al carrito"
+                        label="Agregar al Carrito"
+                        no-caps
                       />
                     </div>
                   </div>
@@ -108,9 +109,11 @@
 const axios = require("axios");
 import { matMenu } from "@quasar/extras/material-icons";
 
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged } from "firebase/auth";
 
 import { initializeApp } from "firebase/app";
+
+import { getAuth, signOut } from "firebase/auth";
 
 export default {
   /*props: {

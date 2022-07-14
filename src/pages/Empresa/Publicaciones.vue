@@ -103,7 +103,9 @@
                 >
                   Editar
                 </q-item>
-                <q-item clickable v-close-popup> Eliminar </q-item>
+                <q-item @click="EliminarItem(index)" clickable v-close-popup>
+                  Eliminar
+                </q-item>
                 <q-separator />
                 <q-separator />
               </q-list>
@@ -121,12 +123,13 @@ const axios = require("axios");
 
 import { onAuthStateChanged } from "firebase/auth";
 
+import { getAuth, signOut } from "firebase/auth";
+
 export default {
   name: "Publicaciones",
 
   created() {
     this.UsuarioAccedioCorrectamente();
-    this.IniciarData();
   },
 
   data() {
@@ -138,11 +141,37 @@ export default {
   },
 
   methods: {
+    EliminarItem(index) {
+      /* let url = this.$store.state.urlBackendElegida + "api/Producto";
+      let id = index+1
+      this.EnviarPeticion(url, "DELETE", id); */
+    },
+
     IrEditarProducto(index) {
       this.$router.push({
         path: "EditProduct",
         query: { producto: this.tasks[index] },
       });
+    },
+
+    async EnviarPeticion(url, method, body) {
+      let opcion = body === "" ? false : true;
+      if (opcion) {
+        fetch(url, {
+          method: method,
+          body: JSON.stringify(body),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      } else {
+        fetch(url, {
+          method: method,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      }
     },
 
     AgregarImagenLista(id) {
@@ -224,11 +253,10 @@ export default {
     },
 
     UsuarioAccedioCorrectamente() {
-      //const auth = getAuth();
-
       onAuthStateChanged(this.$store.state.auth, (user) => {
         if (user) {
-          //this.ObtenerUsuarioActual();
+          this.ObtenerUsuarioActual();
+          this.IniciarData();
         } else {
           if (this.$route.path !== "/Login") {
             this.$router.replace("/Login");
@@ -244,10 +272,22 @@ export default {
 
       let usuarioActual = await this.EnviarPeticionRespuesta(url, "GET");
       if (usuarioActual.idRol !== 2) {
-        if (this.$route.path !== "/") {
-          this.$router.replace("/");
-        }
+        this.CerrarSesion();
       }
+    },
+
+    CerrarSesion() {
+      signOut(this.$store.state.auth)
+        .then(() => {
+          //this.Response.Cookies.Delete("session");
+          if (this.$route.path !== "/Login") {
+            this.$router.replace("/Login");
+          }
+        })
+        .catch((error) => {
+          // An error happened.
+          console.log(error);
+        });
     },
 
     async EnviarPeticionRespuesta(url, method, body) {

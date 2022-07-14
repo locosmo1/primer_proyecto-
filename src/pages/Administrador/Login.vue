@@ -309,47 +309,54 @@ export default {
   },
   created() {
     this.$store.dispatch("iniciarFirebaseAction");
-    if (this.UsuarioAccedio()) {
-      //Averiguar si es Administrador, Empresa o Cliente
-      //this.IngresoUsuarioActual();
-    }
   },
 
   methods: {
-    UsuarioAccedio() {
-      //const auth = getAuth();
-      let accedio = false;
-      onAuthStateChanged(this.$store.state.auth, (user) => {
-        if (user) {
-          const uid = user.uid;
-          accedio = true;
+    async IngresarConCorreo() {
+      let contraseñaCifrada = await this.ObtenerContraseñaCifrada(this.pass);
+
+      const auth = this.$store.state.auth;
+      let promesa;
+      try {
+        promesa = await setPersistence(auth, browserSessionPersistence)
+          .then(() => {
+            return signInWithEmailAndPassword(
+              auth,
+              this.user,
+              contraseñaCifrada
+            );
+          })
+          .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            console.log(errorCode, " ", errorMessage);
+          });
+        if (promesa !== undefined) {
+          //Diferenciar entre Cliente y Empresa
+          this.InicioSesionRol();
         }
-      });
-      return accedio;
+      } catch (error) {
+        console.log("Error general: " + error);
+      }
     },
 
-    /* async IngresoUsuarioActual() {
-      let url = this.$store.state.urlBackendElegida + "api/Usuario/ObtenerUsuarioActual"
-      let usuarioActual = await this.EnviarPeticionRespuesta(url, "GET");
+    async ObtenerContraseñaCifrada(pass) {
+      //Obtener contraseña cifrada
+      //let url = "https://localhost:44370/api/Cliente/obtenerContraseña";
+      let url =
+        this.$store.state.urlBackendElegida + "api/Cliente/obtenerContraseña";
 
-      console.log("Entro en usuario actual rol");
+      const informacion = await fetch(url, {
+        method: "POST",
+        body: JSON.stringify(pass),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
-      if (usuarioActual.idRol === 1) {
-        if (this.$route.path !== "/Index") {
-          this.$router.replace({ path: "/Index" }).catch(() => {});
-        }
-      } else if (usuarioActual.idRol === 2) {
-        if (this.$route.path !== "/Publicaciones") {
-          this.$router.replace({ path: "/Publicaciones" }).catch(() => {});
-        }
-      } else if (usuarioActual.idRol === 3) {
-        if (this.$route.path !== "/Principal") {
-          this.$router.replace({ path: "/Principal" }).catch(() => {});
-        }
-      } else if (usuarioActual.idRol === 4) {
-        //this.$router.replace({ path: "/Index" }).catch(() => {});
-      }
-    }, */
+      const contraseñaCifrada = await informacion.json();
+      return contraseñaCifrada;
+    },
 
     async InicioSesionRol() {
       let usuario = {
@@ -368,8 +375,6 @@ export default {
 
       this.user = "";
       this.pass = "";
-
-      console.log("Entro en rol respuesta: ", respuesta);
 
       if (respuesta === 1) {
         if (this.$route.path !== "/") {
@@ -393,7 +398,8 @@ export default {
       this.modalRegistro = false;
       let respuesta;
 
-      let url = this.$store.state.urlBackendElegida + "api/Usuario/GuardarUsuario"
+      let url =
+        this.$store.state.urlBackendElegida + "api/Usuario/GuardarUsuario";
 
       const usuario = {
         idUsuario: 0,
@@ -422,7 +428,6 @@ export default {
       }
 
       let contraseñaCifrada = await this.obtenerContraseñaCifrada(this.pass);
-      console.log({ contraseñaCifrada });
 
       //const auth = getAuth();
       try {
@@ -445,52 +450,6 @@ export default {
           });
       } catch (error) {
         console.log(error);
-      }
-    },
-
-    async ObtenerContraseñaCifrada(pass) {
-      //Obtener contraseña cifrada
-      //let url = "https://localhost:44370/api/Cliente/obtenerContraseña";
-      let url =
-        this.$store.state.urlBackendElegida + "api/Cliente/obtenerContraseña";
-
-      const informacion = await fetch(url, {
-        method: "POST",
-        body: JSON.stringify(pass),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      const contraseñaCifrada = await informacion.json();
-      return contraseñaCifrada;
-    },
-
-    async IngresarConCorreo() {
-      let contraseñaCifrada = await this.ObtenerContraseñaCifrada(this.pass);
-
-      const auth = this.$store.state.auth;
-      let promesa;
-      try {
-        promesa = await setPersistence(auth, browserSessionPersistence)
-          .then(() => {
-            return signInWithEmailAndPassword(
-              auth,
-              this.user,
-              contraseñaCifrada
-            );
-          })
-          .catch((error) => {
-            const errorCode = error.code;
-            const errorMessage = error.message;
-          });
-      } catch (error) {
-        console.log("Error general: " + error);
-      } finally {
-        if (promesa !== undefined) {
-          //Diferenciar entre Cliente y Empresa
-          this.InicioSesionRol();
-        }
       }
     },
 
@@ -541,7 +500,6 @@ export default {
       signOut(this.$store.state.auth)
         .then(() => {
           //this.Response.Cookies.Delete("session");
-          console.log("Sesion cerrada");
         })
         .catch((error) => {
           // An error happened.
@@ -563,6 +521,29 @@ export default {
         color: "blue-6",
       });
     },
+
+    /* async IngresoUsuarioActual() {
+      let url = this.$store.state.urlBackendElegida + "api/Usuario/ObtenerUsuarioActual"
+      let usuarioActual = await this.EnviarPeticionRespuesta(url, "GET");
+
+      console.log("Entro en usuario actual rol");
+
+      if (usuarioActual.idRol === 1) {
+        if (this.$route.path !== "/Index") {
+          this.$router.replace({ path: "/Index" }).catch(() => {});
+        }
+      } else if (usuarioActual.idRol === 2) {
+        if (this.$route.path !== "/Publicaciones") {
+          this.$router.replace({ path: "/Publicaciones" }).catch(() => {});
+        }
+      } else if (usuarioActual.idRol === 3) {
+        if (this.$route.path !== "/Principal") {
+          this.$router.replace({ path: "/Principal" }).catch(() => {});
+        }
+      } else if (usuarioActual.idRol === 4) {
+        //this.$router.replace({ path: "/Index" }).catch(() => {});
+      }
+    }, */
 
     /* async loginGoogle() {
       const auth = this.$store.state.auth;

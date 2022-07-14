@@ -95,14 +95,6 @@
                     rounded
                     no-caps
                   />
-                  <q-btn
-                    class="glossy"
-                    color="blue-8"
-                    label="Borrar Todo"
-                    @click="BorrarTodosDomicilios()"
-                    rounded
-                    no-caps
-                  />
                 </q-item>
               </q-list>
             </q-btn-dropdown>
@@ -293,6 +285,7 @@
                       class="glossy"
                       color="blue-8"
                       label="Añadir Nuevo Producto"
+                      @click="NuevoProducto()"
                       no-caps
                       rounded
                     />
@@ -300,6 +293,7 @@
                       class="glossy"
                       color="blue-8"
                       label="Actualizar este Producto"
+                      @click="ActualizarProducto()"
                       no-caps
                       rounded
                     />
@@ -307,13 +301,7 @@
                       class="glossy"
                       color="blue-8"
                       label="Borrar Seleccionado"
-                      no-caps
-                      rounded
-                    />
-                    <q-btn
-                      class="glossy"
-                      color="blue-8"
-                      label="Borrar Todo"
+                      @click="BorrarProducto()"
                       no-caps
                       rounded
                     />
@@ -468,6 +456,8 @@
 
 <script>
 import { onAuthStateChanged } from "firebase/auth";
+
+import { getAuth, signOut } from "firebase/auth";
 
 /* import {map} from src="https://maps.googleapis.com/maps/api/js?key=MY_API_KEY&callback=initMap"; */
 
@@ -636,14 +626,12 @@ export default {
    *alt + shift + a =       comentar codigo
    *shift + alt + flecha arriba o abajo = duplicar el codigo
    *alt + flecha arriba o alt flecha abajo = mover codigo
-  */
- 
+   */
 
- created() {
-   this.UsuarioAccedioCorrectamente();
-   this.GetUsuarios();
- },
- 
+  created() {
+    this.UsuarioAccedioCorrectamente();
+  },
+
   methods: {
     AgregarEditarDomicilio() {
       if (this.crear) {
@@ -652,6 +640,12 @@ export default {
         this.ActualizarDomicilio();
       }
     },
+
+    NuevoProducto() {},
+
+    ActualizarProducto() {},
+
+    BorrarProducto() {},
 
     AgregarDomicilio() {
       let nuevoDomicilio = {
@@ -720,10 +714,6 @@ export default {
         this.$store.state.urlBackendElegida +
         "api/Domicilio/EliminarDomicilioUbicacion";
       this.enviarPeticion(url2, "DELETE", domicilio);
-    },
-
-    BorrarTodosDomicilios() {
-      console.log("BorrarTodosDomicilios");
     },
 
     CargarLatitudLongitud(latitud, longitud, ciudad) {
@@ -871,13 +861,15 @@ export default {
     },
 
     async ObtenerProductos(idEmpresa) {
-      let url = this.$store.state.urlBackendElegida + "api/Producto/" + idEmpresa;
+      let url =
+        this.$store.state.urlBackendElegida + "api/Producto/" + idEmpresa;
       this.productos = await this.EnviarPeticionRespuesta(url, "GET");
     },
 
     //Obtener todos los usuarios con todas sus propiedades
     async GetUsuarios() {
-      let url = this.$store.state.urlBackendElegida + "api/Usuario/ObtenerUsuarios"
+      let url =
+        this.$store.state.urlBackendElegida + "api/Usuario/ObtenerUsuarios";
       this.usuarios = await this.EnviarPeticionRespuesta(url, "GET");
       for (let i = 0; i < this.usuarios.length; i++) {
         this.nombreUsuarios.push(this.usuarios[i].usuario);
@@ -964,30 +956,45 @@ export default {
     },
 
     async UsuarioAccedioCorrectamente() {
-      //const auth = getAuth();
-
+      let accedio = false;
       onAuthStateChanged(this.$store.state.auth, (user) => {
         if (user) {
           //Dejar entrar si esta autenticado solamente como administrador
           //Consultar a usuarioActual desde el backend para saber si es
           //administrador
-          this.ObtenerUsuarioActual();
+          accedio = true;
+          this.GetUsuarios();
         } else {
           if (this.$route.path !== "/Login") {
             this.$router.replace("/Login");
           }
         }
       });
+      return accedio;
     },
 
     async ObtenerUsuarioActual() {
-      let url = this.$store.state.urlBackendElegida + "api/Usuario/ObtenerUsuarioActual"
+      let url =
+        this.$store.state.urlBackendElegida +
+        "api/Usuario/ObtenerUsuarioActual";
       let usuarioActual = await this.EnviarPeticionRespuesta(url, "GET");
       if (usuarioActual.idRol !== 3) {
-        if (this.$route.path !== "/") {
-          this.$router.replace("/");
-        }
+        this.CerrarSesion();
       }
+    },
+
+    CerrarSesion() {
+      signOut(this.$store.state.auth)
+        .then(() => {
+          //this.Response.Cookies.Delete("session");
+          if (this.$route.path !== "/Login") {
+            this.$router.replace("/Login");
+          }
+        })
+        .catch((error) => {
+          // An error happened.
+          console.log(error);
+        });
     },
 
     ObtenerCategoria(id) {

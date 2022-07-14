@@ -340,7 +340,8 @@
 //this.$set SE UTILIZA CUANDO SE ASIGNAN VALORES COMPLEJOS EN ARREGLOS
 
 import "firebase/compat/storage";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged } from "firebase/auth";
+import { getAuth, signOut } from "firebase/auth";
 
 export default {
   data() {
@@ -407,8 +408,6 @@ export default {
   },
   created() {
     this.UsuarioAccedioCorrectamente();
-    this.tab = "carrito";
-    this.ObtenerProductos();
   },
   methods: {
     //.cantidad = stock disponible
@@ -420,6 +419,8 @@ export default {
       onAuthStateChanged(this.$store.state.auth, (user) => {
         if (user) {
           this.ObtenerUsuarioActual();
+          this.tab = "carrito";
+          this.ObtenerProductos();
         } else {
           if (this.$route.path !== "/Login") {
             this.$router.replace("/Login");
@@ -434,10 +435,22 @@ export default {
         "api/Usuario/ObtenerUsuarioActual";
       let usuarioActual = await this.EnviarPeticionRespuesta(url, "GET");
       if (usuarioActual.idRol !== 1) {
-        if (this.$route.path !== "/") {
-          this.$router.replace("/");
-        }
+        this.CerrarSesion();
       }
+    },
+
+    CerrarSesion() {
+      signOut(this.$store.state.auth)
+        .then(() => {
+          //this.Response.Cookies.Delete("session");
+          if (this.$route.path !== "/Login") {
+            this.$router.replace("/Login");
+          }
+        })
+        .catch((error) => {
+          // An error happened.
+          console.log(error);
+        });
     },
 
     async EnviarPeticionRespuesta(url, method, body) {
@@ -468,6 +481,7 @@ export default {
     },
 
     async ObtenerProductos() {
+      console.log("Obtener Productos");
       let url =
         this.$store.state.urlBackendElegida + "api/Producto/ObtenerProductos";
 

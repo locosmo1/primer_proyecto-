@@ -290,16 +290,19 @@ export default {
 
     UsuarioAccedioCorrectamente() {
       //const auth = getAuth();
+      let acceder = false;
 
       onAuthStateChanged(this.$store.state.auth, (user) => {
         if (user) {
           const uid = user.uid;
+          acceder = true;
         } else {
           if (this.$route.path !== "/Login") {
             this.$router.replace("/Login");
           }
         }
       });
+      return acceder;
     },
 
     async AgregarCarrito() {
