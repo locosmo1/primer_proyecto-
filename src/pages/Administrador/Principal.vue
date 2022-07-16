@@ -208,9 +208,6 @@
               @row-click="ClickProducto"
               no-data-label="Sin Productos para mostrar"
             />
-
-            Producto(s) seleccionado(s) {{ productosSeleccionados }}
-
             <!-- Dialogo para mostrar todo el contenido del producto con
             sus detalles -->
             <q-dialog v-model="dialogoProducto">
@@ -309,6 +306,11 @@
                 </q-list>
               </q-btn-dropdown>
             </div>
+
+            <!-- componente para crear y actualizar un producto -->
+            <q-dialog v-model="crearActualizarProducto">
+              <ComponenteProducto :crear="crearProducto"> </ComponenteProducto>
+            </q-dialog>
           </q-expansion-item>
         </div>
       </div>
@@ -459,9 +461,15 @@ import { onAuthStateChanged } from "firebase/auth";
 
 import { getAuth, signOut } from "firebase/auth";
 
+import ComponenteProducto from "components/CrearActualizaProducto.vue";
+
 /* import {map} from src="https://maps.googleapis.com/maps/api/js?key=MY_API_KEY&callback=initMap"; */
 
 export default {
+  name: "Principal",
+  components: {
+    ComponenteProducto,
+  },
   data() {
     return {
       separator: "horizontal",
@@ -473,6 +481,8 @@ export default {
       domiciliosSeleccionados: [],
       dialogoProducto: false,
       dialogoDomicilio: false,
+      crearActualizarProducto: false,
+      crearProducto: true,
       nuevoDomicilio: {},
 
       productos: [],
@@ -494,6 +504,7 @@ export default {
       crear: true,
 
       item: {},
+      editedItem: {},
       latitud: 1.6236144612112966,
       longitud: -75.60657254557084,
       center: {
@@ -626,6 +637,7 @@ export default {
    *alt + shift + a =       comentar codigo
    *shift + alt + flecha arriba o abajo = duplicar el codigo
    *alt + flecha arriba o alt flecha abajo = mover codigo
+   npm install -g @quasar/cli
    */
 
   created() {
@@ -641,11 +653,22 @@ export default {
       }
     },
 
-    NuevoProducto() {},
+    NuevoProducto() {
+      this.crearActualizarProducto = true;
+      this.crearProducto = true;
+    },
 
-    ActualizarProducto() {},
+    ActualizarProducto() {
+      if (this.productosSeleccionados.length === 1) {
+        this.crearActualizarProducto = true;
+        this.crearProducto = false;
+      }
+    },
 
-    BorrarProducto() {},
+    BorrarProducto() {
+      if (this.productosSeleccionados.length === 1) {
+      }
+    },
 
     AgregarDomicilio() {
       let nuevoDomicilio = {

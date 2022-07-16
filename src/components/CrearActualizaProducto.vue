@@ -7,10 +7,6 @@
           rounded
           class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12 q-pa-md"
         >
-          <div class="text-h5 text-bold text-strong text-center q-pa-md">
-            Publicacion de un Nuevo Producto
-          </div>
-
           <q-separator />
 
           <q-input
@@ -21,9 +17,6 @@
           />
 
           <q-separator />
-
-          <q-field color="blue" class="q-pa-md" rounded outlined stack-label>
-          </q-field>
 
           <q-editor
             toolbar-rounded
@@ -81,7 +74,7 @@
 
           <q-separator />
 
-          <form enctype="multipart/form-data" novalidate v-if="formulario">
+          <form v-if="this.crear" enctype="multipart/form-data" novalidate>
             <div class="dropbox">
               <input
                 type="file"
@@ -129,7 +122,8 @@
             dark
             rounded
             color="blue-7"
-            label="Guardar"
+            :label="labelProducto"
+            no-caps
           />
 
           <q-separator />
@@ -145,8 +139,6 @@
 <script>
 import { onAuthStateChanged } from "firebase/auth";
 
-import { defineComponent } from 'vue'
-
 import {
   getStorage,
   ref,
@@ -156,15 +148,15 @@ import {
 
 export default {
   name: "ComponenteProducto",
-  /* props: {
+  props: {
     //Type control style
-    nombre: {
-      type: String,
-      default: "default",
+    crear: {
+      type: Boolean,
     },
-  }, */
+  },
   data() {
     return {
+      labelProducto: "Undefined",
       valor: false,
       files: [{}],
       promesa: {},
@@ -204,16 +196,25 @@ export default {
       formulario: true,
       indice: 0,
       mensaje:
-        "Arrastra tus archivos aqui para comenzar o haga clic para navegar las imagenes deben ser mayores a 60 Kilobytes y menores a 3 Mbs",
+        "Arrastra tus archivos aqui para comenzar o haga clic para navegar. Las imagenes deben ser mayores a 60 Kilobytes y menores a 3 Mbs",
     };
   },
-  mounted() {
-    //this.IniciarFirebase();
+  created() {
+    if (this.crear) {
+      this.labelProducto = "Crear Producto";
+    } else {
+      this.labelProducto = "Actualizar Producto";
+    }
+    //this.labelProducto = this.crear ? "Crear Producto" : "Actualizar Producto";
   },
 
-  created() {
-    this.UsuarioAccedioCorrectamente();
-  },
+  /* updated(){
+    if (this.crear) {
+      this.labelProducto = "Crear Producto";
+    } else {
+      this.labelProducto = "Actualizar Producto";
+    }
+  }, */
 
   methods: {
     EliminarImagen(index) {
@@ -498,11 +499,32 @@ export default {
     }, */
 
     async AñadirTarea() {
-      this.SubirImagenes();
       //Enlazar la url de cada imagen con el id del usuario que ah ingresado
       //Este enlace debe ser llamado mediante la api fetch
       //Necesitamos el id del usuario que esta logueado
       //El id del usuario se obtiene se obtiene a traves de la store de vue
+      if (this.crear) {
+        //Crear Producto
+        this.SubirImagenes();
+      } else {
+        //Actualizar producto falta
+        this.EditarItem();
+        
+      }      
+    },
+
+    EditarItem() {
+      let idCategoria = this.ObtenerIdCategoria(this.editedItem.idCategoria);
+      this.editedItem.idCategoria = parseInt(idCategoria);
+
+      this.editedItem.descripcion = this.RemoveTags(
+        this.editedItem.descripcion
+      );
+      console.log(this.editedItem);
+
+      let url = this.$store.state.urlBackendElegida + "api/Producto";
+
+      this.EnviarPeticion(url, "PUT", this.editedItem);
     },
   },
 };
