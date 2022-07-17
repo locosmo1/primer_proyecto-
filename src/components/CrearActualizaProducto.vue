@@ -153,6 +153,9 @@ export default {
     crear: {
       type: Boolean,
     },
+    producto: {
+      type: Object,
+    },
   },
   data() {
     return {
@@ -208,13 +211,9 @@ export default {
     //this.labelProducto = this.crear ? "Crear Producto" : "Actualizar Producto";
   },
 
-  /* updated(){
-    if (this.crear) {
-      this.labelProducto = "Crear Producto";
-    } else {
-      this.labelProducto = "Actualizar Producto";
-    }
-  }, */
+  mounted(){
+    this.editedItem = this.producto;
+  },
 
   methods: {
     EliminarImagen(index) {
@@ -509,17 +508,13 @@ export default {
       } else {
         //Actualizar producto falta
         this.EditarItem();
-        
-      }      
+      }
     },
 
     EditarItem() {
       let idCategoria = this.ObtenerIdCategoria(this.editedItem.idCategoria);
       this.editedItem.idCategoria = parseInt(idCategoria);
 
-      this.editedItem.descripcion = this.RemoveTags(
-        this.editedItem.descripcion
-      );
       console.log(this.editedItem);
 
       let url = this.$store.state.urlBackendElegida + "api/Producto";

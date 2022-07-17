@@ -309,7 +309,12 @@
 
             <!-- componente para crear y actualizar un producto -->
             <q-dialog v-model="crearActualizarProducto">
-              <ComponenteProducto :crear="crearProducto"> </ComponenteProducto>
+              <!-- Enviar informacion del producto que queremos actualizar -->
+              <ComponenteProducto
+                :crear="crearProducto"
+                :producto="this.productosSeleccionados[0]"
+              >
+              </ComponenteProducto>
             </q-dialog>
           </q-expansion-item>
         </div>
@@ -662,6 +667,7 @@ export default {
       if (this.productosSeleccionados.length === 1) {
         this.crearActualizarProducto = true;
         this.crearProducto = false;
+        //console.log("Producto a enviar: ",this.productosSeleccionados[0])
       }
     },
 
