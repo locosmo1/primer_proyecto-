@@ -6,6 +6,7 @@ import * as VueGoogleMaps from "vue2-google-maps";
 import { getAuth } from "firebase/auth";
 
 import { initializeApp } from "firebase/app";
+/* AIzaSyCOe6XiKYkPA1q3u4v_SVZy5Pw9yIXOnVQ */
 
 import {
   setPersistence,

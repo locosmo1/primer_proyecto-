@@ -59,7 +59,7 @@
               no-data-label="Sin Domicilios Por favor seleccione un usuario"
             />
 
-            <!-- Domicilios Seleccionados {{ domiciliosSeleccionados }}<br/> -->
+            <!-- Domicilios Seleccionados {{ domiciliosSeleccionados }}<br /> -->
             <!-- Boton para seleccionar las opciones de los domicilios -->
             <q-btn-dropdown
               auto-close
@@ -102,87 +102,10 @@
 
           <!-- Ventana para modificar el domicilio del usuario con mapa -->
           <q-dialog v-model="dialogoDomicilio">
-            <q-card class="entrar">
-              <!-- Boton de salir(X) -->
-              <div class="text-right">
-                <!-- crear un nuevo boton para cambiar los colores de la vista -->
-                <q-btn
-                  no-caps
-                  dense
-                  class="q-pa-xs"
-                  color="black"
-                  label="X"
-                  @click="dialogoDomicilio = false"
-                  size="sm"
-                />
-              </div>
-              <q-select
-                class="q-pa-md"
-                color="blue-7"
-                v-model="modelCiudad"
-                :options="ciudadesDisponibles"
-                label="Seleccione la ciudad"
-                @input="CargarMapaUbicacion"
-              >
-              </q-select>
-
-              <!-- Mostrar Mapa -->
-              <q-card>
-                <q-card-section>
-                  <!-- api de google maps
-                  AIzaSyCOe6XiKYkPA1q3u4v_SVZy5Pw9yIXOnVQ -->
-                  <GmapMap
-                    :center="center"
-                    :zoom="14"
-                    map-type-id="terrain"
-                    style="width: 700px; height: 500px"
-                  >
-                    <GmapMarker
-                      v-model="item"
-                      :key="index"
-                      v-for="(m, index) in markers"
-                      :position="m.position"
-                      :clickable="true"
-                      :draggable="true"
-                      @dragend="ActualizarCoordenadas($event.latLng)"
-                    />
-                  </GmapMap>
-                </q-card-section>
-                <q-card-section>
-                  Latitud Actual {{ latitud }}<br />
-                  Longitud Actual {{ longitud }}<br />
-                </q-card-section>
-              </q-card>
-
-              <q-input
-                class="q-pa-md justify-center items-center content-center text-center text-white"
-                color="black"
-                rounded
-                outlined
-                v-model="nuevaDireccion"
-                label="Digite la direccion"
-                clearable
-                dense
-              >
-                <template v-slot:append>
-                  <q-icon class="cursor-pointer" />
-                </template>
-              </q-input>
-
-              <div class="row"></div>
-              <div class="row"></div>
-              <div class="column q-pa-md text-center text-black text-h6">
-                <q-btn
-                  dense
-                  no-caps
-                  class="text-center q-pa-xs"
-                  color="info"
-                  label="Enviar"
-                  icon="people_alt"
-                  @click="AgregarEditarDomicilio()"
-                />
-              </div>
-            </q-card>
+            <ComponenteDomicilio
+              :crear="crear"
+              :domicilio="this.domiciliosSeleccionados[0]"
+            ></ComponenteDomicilio>
           </q-dialog>
 
           <!-- Mostrar los Productos de las empresas -->
@@ -320,136 +243,6 @@
         </div>
       </div>
 
-      <!-- graphics than represent the data. -->
-      <!-- <div class="row">
-        <div class="q-pa-md col-xl-3 col-lg-3 col-md-3 col-sm-12 col-xs-12">
-          <q-card bordered>
-            <q-card-section>
-              <div class="row">
-                <div class="col-xl-10 col-lg-10 col-md-10 col-sm-10 col-xs-10">
-                  $ 340234 23% <br />
-                  Bitcoin Price
-                </div>
-                <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-xs-2">
-                  <q-icon size="md" color="blue" name="downloading" />
-                </div>
-              </div>
-            </q-card-section>
-          </q-card>
-        </div>
-        <div class="q-pa-md col-xl-3 col-lg-3 col-md-3 col-sm-12 col-xs-12">
-          <q-card bordered>
-            <q-card-section>
-              <div class="row">
-                <div class="col-xl-10 col-lg-10 col-md-10 col-sm-10 col-xs-10">
-                  $ 340234 23% <br />
-                  Bitcoin Price
-                </div>
-                <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-xs-2">
-                  <q-icon size="md" color="blue" name="downloading" />
-                </div>
-              </div>
-            </q-card-section>
-          </q-card>
-        </div>
-        <div class="q-pa-md col-xl-3 col-lg-3 col-md-3 col-sm-12 col-xs-12">
-          <q-card bordered>
-            <q-card-section>
-              <div class="row">
-                <div class="col-xl-10 col-lg-10 col-md-10 col-sm-10 col-xs-10">
-                  $ 340234 23% <br />
-                  Bitcoin Price
-                </div>
-                <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-xs-2">
-                  <q-icon size="md" color="blue" name="downloading" />
-                </div>
-              </div>
-            </q-card-section>
-          </q-card>
-        </div>
-        <div class="q-pa-md col-xl-3 col-lg-3 col-md-3 col-sm-12 col-xs-12">
-          <q-card bordered>
-            <q-card-section>
-              <div class="row">
-                <div class="col-xl-10 col-lg-10 col-md-10 col-sm-10 col-xs-10">
-                  $ 340234 23% <br />
-                  Bitcoin Price
-                </div>
-                <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-xs-2">
-                  <q-icon size="md" color="blue" name="downloading" />
-                </div>
-              </div>
-            </q-card-section>
-          </q-card>
-        </div>
-      </div> -->
-
-      <!-- <div class="row">
-        <div class="q-pa-md col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
-          <q-card bordered>
-            <q-card-section>
-              <div class="row">
-                <div class="col-xl-10 col-lg-10 col-md-10 col-sm-10 col-xs-10">
-                  $ 340234 23% <br />
-                  Bitcoin Price
-                </div>
-                <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-xs-2">
-                  <q-icon size="md" color="blue" name="downloading" />
-                </div>
-              </div>
-            </q-card-section>
-          </q-card>
-        </div>
-        <div class="q-pa-md col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
-          <q-card bordered>
-            <q-card-section>
-              <div class="row">
-                <div class="col-xl-10 col-lg-10 col-md-10 col-sm-10 col-xs-10">
-                  $ 340234 23% <br />
-                  Bitcoin Price
-                </div>
-                <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-xs-2">
-                  <q-icon size="md" color="blue" name="downloading" />
-                </div>
-              </div>
-            </q-card-section>
-          </q-card>
-        </div>
-      </div> -->
-
-      <!-- <div class="row">
-        <div class="q-pa-md col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
-          <q-card bordered>
-            <q-card-section>
-              <div class="row">
-                <div class="col-xl-10 col-lg-10 col-md-10 col-sm-10 col-xs-10">
-                  $ 340234 23% <br />
-                  Bitcoin Price
-                </div>
-                <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-xs-2">
-                  <q-icon size="md" color="blue" name="downloading" />
-                </div>
-              </div>
-            </q-card-section>
-          </q-card>
-        </div>
-        <div class="q-pa-md col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
-          <q-card bordered>
-            <q-card-section>
-              <div class="row">
-                <div class="col-xl-10 col-lg-10 col-md-10 col-sm-10 col-xs-10">
-                  $ 340234 23% <br />
-                  Bitcoin Price
-                </div>
-                <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-xs-2">
-                  <q-icon size="md" color="blue" name="downloading" />
-                </div>
-              </div>
-            </q-card-section>
-          </q-card>
-        </div>
-      </div> -->
-
       <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="row">&nbsp;&nbsp;&nbsp;</div>
         <div class="row">&nbsp;&nbsp;&nbsp;</div>
@@ -466,7 +259,9 @@ import { onAuthStateChanged } from "firebase/auth";
 
 import { getAuth, signOut } from "firebase/auth";
 
-import ComponenteProducto from "components/CrearActualizaProducto.vue";
+import ComponenteProducto from "components/CrearActualizarProducto.vue";
+
+import ComponenteDomicilio from "components/CrearActualizarDomicilio.vue";
 
 /* import {map} from src="https://maps.googleapis.com/maps/api/js?key=MY_API_KEY&callback=initMap"; */
 
@@ -474,6 +269,7 @@ export default {
   name: "Principal",
   components: {
     ComponenteProducto,
+    ComponenteDomicilio,
   },
   data() {
     return {
@@ -650,13 +446,6 @@ export default {
   },
 
   methods: {
-    AgregarEditarDomicilio() {
-      if (this.crear) {
-        this.AgregarDomicilio();
-      } else {
-        this.ActualizarDomicilio();
-      }
-    },
 
     NuevoProducto() {
       this.crearActualizarProducto = true;
@@ -673,48 +462,6 @@ export default {
 
     BorrarProducto() {
       if (this.productosSeleccionados.length === 1) {
-      }
-    },
-
-    AgregarDomicilio() {
-      let nuevoDomicilio = {
-        idDomicilio: 1,
-        ciudad: this.modelCiudad,
-        direccion: this.nuevaDireccion,
-        idUsuario: this.usuarioSeleccionado.idUsuario,
-        latitud: this.latitud,
-        longitud: this.longitud,
-      }; //idDomicilio, ciudad, direccion, idUsuario, idUbicacion, latitud, longitud
-      //console.log(nuevoDomicilio);
-      let url =
-        this.$store.state.urlBackendElegida + "api/Domicilio/crearDomicilio";
-      this.enviarPeticion(url, "POST", nuevoDomicilio);
-      this.dialogoDomicilio = false;
-    },
-
-    async ActualizarDomicilio() {
-      let url =
-        this.$store.state.urlBackendElegida +
-        "api/Domicilio/ObtenerIdUbicacion";
-      if (this.domiciliosSeleccionados.length == 1) {
-        let idUbicacionn = await this.enviarPeticionRespuesta(
-          url,
-          "POST",
-          this.domiciliosSeleccionados[0].idDomicilio
-        );
-        let nuevoDomicilio = {
-          idDomicilio: this.domiciliosSeleccionados[0].idDomicilio,
-          ciudad: this.modelCiudad,
-          direccion: this.nuevaDireccion,
-          idUsuario: this.usuarioSeleccionado.idUsuario,
-          idUbicacion: idUbicacionn,
-          latitud: this.latitud,
-          longitud: this.longitud,
-        };
-        this.enviarPeticion(this.urlBaseDomicilio, "PUT", nuevoDomicilio);
-        this.dialogoDomicilio = false;
-      } else {
-        console.log("Debes seleccionar un solo domicilio");
       }
     },
 
@@ -745,89 +492,7 @@ export default {
       this.enviarPeticion(url2, "DELETE", domicilio);
     },
 
-    CargarLatitudLongitud(latitud, longitud, ciudad) {
-      this.center = {
-        lat: latitud,
-        lng: longitud,
-      };
-      this.markers = [
-        {
-          position: {
-            lat: latitud,
-            lng: longitud,
-          },
-          title: ciudad,
-        },
-      ];
-      this.latitud = latitud;
-      this.longitud = longitud;
-    },
-
-    GeocodedAddress() {
-      var self = this;
-      let geocoder = new google.maps.Geocoder();
-      let theLocations = this.locations;
-
-      return Promise.all(
-        _.map(theLocations, (addr) => {
-          var geocoder = new google.maps.Geocoder();
-
-          var locationss = {
-            lat: parseFloat(addr.lat),
-            lng: parseFloat(addr.lng),
-          };
-
-          // var sampleLocation = { lat: 1.39, lng: 103.8 };
-
-          return new Promise(function (resolve, reject) {
-            geocoder.geocode(
-              { location: locationss },
-              function (results, status) {
-                if (status === "OK") {
-                  if (results[0]) {
-                    return results[0].formatted_address;
-                  } else {
-                    console.log(status);
-                    window.alert("No results found");
-                    return null;
-                  }
-                }
-              }
-            );
-          });
-        })
-      ).then((data) => {
-        console.log(data);
-        this.formatedAddresses = data;
-      });
-    },
-
-    CargarMapaUbicacion() {
-      let ciudad = this.modelCiudad;
-      let latitud, longitud;
-      switch (ciudad) {
-        case "Bogota":
-          latitud = 4.665984005374667;
-          longitud = -74.11201953238661;
-          this.CargarLatitudLongitud(latitud, longitud, "Bogota");
-          break;
-        case "Medellin":
-          latitud = 6.24381223144814;
-          longitud = -75.56822986305791;
-          this.CargarLatitudLongitud(latitud, longitud, "Medellin");
-          break;
-        case "Cali":
-          latitud = 3.404300027947404;
-          longitud = -76.52189083073294;
-          this.CargarLatitudLongitud(latitud, longitud, "Cali");
-          break;
-        case "Barranquilla":
-          latitud = 10.97601594837661;
-          longitud = -74.80522932533702;
-          this.CargarLatitudLongitud(latitud, longitud, "Barranquilla");
-          break;
-      }
-    },
+    
 
     CargarDatosUsuario() {
       for (let i = 0; i < this.usuarios.length; i++) {
@@ -927,11 +592,6 @@ export default {
         this.imagenActualProducto = this.productoSeleccionado.imagen;
         this.indiceImagenActualProducto = 0;
       }
-    },
-
-    ActualizarCoordenadas(evnt) {
-      this.latitud = evnt.lat();
-      this.longitud = evnt.lng();
     },
 
     ClickProducto(evt, row) {
