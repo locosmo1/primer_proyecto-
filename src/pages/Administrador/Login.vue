@@ -153,7 +153,7 @@
                     class="text-center q-pa-xs"
                     color="info"
                     label="Registrarme"
-                    @click="modalRegistro = true"
+                    @click="modalRegistro = true, pass=''"
                     icon="people_alt"
                   />
                   <q-dialog v-model="modalRegistro">
@@ -409,25 +409,9 @@ export default {
         idRol: 1,
       };
 
-      try {
-        //Sirve
-        fetch(url, {
-          method: "POST",
-          body: JSON.stringify(usuario),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
-          .then((res) => (respuesta = res))
-          .catch((error) => console.error("Error en fetch:", error))
-          .then(function (response) {
-            //contraseñaCifrada = response;
-          });
-      } catch (error) {
-        console.log("error en fetch", error);
-      }
+      this.EnviarPeticion(url, "POST", usuario);
 
-      let contraseñaCifrada = await this.obtenerContraseñaCifrada(this.pass);
+      let contraseñaCifrada = await this.ObtenerContraseñaCifrada(this.pass);
 
       //const auth = getAuth();
       try {

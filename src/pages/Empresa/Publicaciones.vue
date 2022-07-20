@@ -154,26 +154,6 @@ export default {
       });
     },
 
-    async EnviarPeticion(url, method, body) {
-      let opcion = body === "" ? false : true;
-      if (opcion) {
-        fetch(url, {
-          method: method,
-          body: JSON.stringify(body),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-      } else {
-        fetch(url, {
-          method: method,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-      }
-    },
-
     AgregarImagenLista(id) {
       return this.tasks[id].imagen;
     },
@@ -288,6 +268,26 @@ export default {
           // An error happened.
           console.log(error);
         });
+    },
+
+    async EnviarPeticion(url, method, body) {
+      let opcion = body === "" ? false : true;
+      if (opcion) {
+        fetch(url, {
+          method: method,
+          body: JSON.stringify(body),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      } else {
+        fetch(url, {
+          method: method,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      }
     },
 
     async EnviarPeticionRespuesta(url, method, body) {

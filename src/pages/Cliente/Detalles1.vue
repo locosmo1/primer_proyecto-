@@ -328,49 +328,6 @@ export default {
       }
     },
 
-    async EnviarPeticion(url, method, body) {
-      let opcion = body === "" ? false : true;
-      if (opcion) {
-        fetch(url, {
-          method: method,
-          body: JSON.stringify(body),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-      } else {
-        fetch(url, {
-          method: method,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-      }
-    },
-
-    async EnviarPeticionRespuesta(url, method, body) {
-      let opcion = body === "" ? false : true;
-      let informacion;
-      if (opcion) {
-        informacion = await fetch(url, {
-          method: method,
-          body: JSON.stringify(body),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-      } else {
-        informacion = await fetch(url, {
-          method: method,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-      }
-      const data = await informacion.json();
-      return data;
-    },
-
     async IniciarData() {
       //Iniciar los datos con la informacion del producto y de sus respectivas imagenes
       //Necesito el id del producto
@@ -434,6 +391,49 @@ export default {
       this.tamano = this.direcciones.length;
       //this.members[newMember.name] = newMember;
       //this.$set(this.direcciones, await data.json());
+    },
+
+    async EnviarPeticion(url, method, body) {
+      let opcion = body === "" ? false : true;
+      if (opcion) {
+        fetch(url, {
+          method: method,
+          body: JSON.stringify(body),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      } else {
+        fetch(url, {
+          method: method,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      }
+    },
+
+    async EnviarPeticionRespuesta(url, method, body) {
+      let opcion = body === "" ? false : true;
+      let informacion;
+      if (opcion) {
+        informacion = await fetch(url, {
+          method: method,
+          body: JSON.stringify(body),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      } else {
+        informacion = await fetch(url, {
+          method: method,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      }
+      const data = await informacion.json();
+      return data;
     },
 
     Comprar(id) {

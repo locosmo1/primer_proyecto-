@@ -217,8 +217,6 @@ export default {
   mounted() {
     if (this.producto !== undefined) {
       this.editedItem = this.producto;
-    } else {
-      //console.log(this.usuarioSeleccionado);
     }
   },
 
@@ -368,7 +366,7 @@ export default {
       try {
         if (this.indice > 0) {
           let url =
-            this.$store.state.urlBackendElegida + "api/prueba/recibirImagen";
+            this.$store.state.urlBackendElegida + "api/Imagenes/recibirImagen";
 
           fetch(url, {
             method: "POST", // or 'PUT'
@@ -397,8 +395,6 @@ export default {
     },
 
     CrearProducto() {
-      console.log("Creando producto");
-
       const Producto = {
         idProducto: 0,
         imagen: this.urlDescarga[0],
@@ -415,24 +411,9 @@ export default {
       //Quitar la primera imagen del array
       //this.urlDescarga.shift();
       let url =
-        this.$store.state.urlBackendElegida + "api/prueba/CreateProducto";
+        this.$store.state.urlBackendElegida + "api/Producto";
 
       this.EnviarPeticion(url, "POST", Producto);
-
-      /* fetch(url, {
-        method: "POST", // or 'PUT'
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(Producto),
-      })
-        .then((response) => response) //.json()
-        .then((data) => {
-          //console.log("Success:", data);
-        })
-        .catch((error) => {
-          console.error("Error EN FETCH:", error);
-        }); */
     },
 
     async UsuarioAccedioCorrectamente() {
@@ -450,29 +431,6 @@ export default {
           }
         }
       });
-    },
-
-    async EnviarPeticionRespuesta(url, method, body) {
-      let opcion = body === "" ? false : true;
-      let informacion;
-      if (opcion) {
-        informacion = await fetch(url, {
-          method: method,
-          body: JSON.stringify(body),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-      } else {
-        informacion = await fetch(url, {
-          method: method,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-      }
-      const data = await informacion.json();
-      return data;
     },
 
     ObtenerIdCategoria() {

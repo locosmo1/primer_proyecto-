@@ -276,72 +276,6 @@ export default {
       }
     },
 
-    /* AgregarCarrito(id) {
-      //Cuando damos clic en comprar añadir a la lista de productos del carrito el dueño es el cliente que ah iniciado sesion
-      //imagen, titulo, precio, color, cantidad, descripcion
-      let indice = undefined;
-      let unidades = 1;
-      let i = 0;
-      let iguales = false;
-      let salir = false;
-      let producto;
-      if (this.id_producto === -1) {
-        producto = {
-          imagen: this.tasks[id].imagen,
-          titulo: this.tasks[id].titulo,
-          precio: this.tasks[id].precio,
-          color: this.color,
-          cantidad: unidades,
-          descripcion: this.descripcion,
-          unidades: 1,
-        };
-      } else {
-        producto = {
-          titulo: this.tasks[this.id_producto].titulo,
-          precio: this.tasks[this.id_producto].precio,
-          unidades: 1,
-        };
-      }
-
-      if (this.comprados.length == 0) {
-        this.total_compra = producto.precio;
-        this.comprados.push(producto);
-      } else {
-        do {
-          if (i < this.comprados.length) {
-            iguales = this.objetos_iguales(producto, this.comprados[i])
-              ? true
-              : false;
-            i++;
-            salir = iguales ? true : false;
-          } else {
-            salir = true;
-          }
-        } while (!salir);
-
-        if (!iguales) {
-          this.comprados.push(producto);
-        } else if (iguales) {
-          indice = this.encontrar_indice(producto, this.comprados);
-          unidades = this.comprados[indice].unidades + 1;
-          this.comprados[indice].unidades = unidades;
-        }
-
-        let valor2 = parseInt(this.total_compra);
-        let valor3 = parseInt(producto.precio);
-        this.total_compra = valor2 + valor3;
-      }
-    }, */
-
-    /* AgregarIndice(id) {
-      this.tab = "edit";
-      this.indice_editar = id;
-      let titulo = this.tasks[this.indice_editar].titulo;
-
-      this.buscar = titulo;
-      this.obtenerImagenes();
-    }, */
-
     EncontrarIndice(producto, arreglo) {
       let x, indice;
       for (x = 0; x < arreglo.length; x++) {
@@ -436,6 +370,74 @@ export default {
       });
       return accedio;
     },
+
+
+
+    /* AgregarCarrito(id) {
+      //Cuando damos clic en comprar añadir a la lista de productos del carrito el dueño es el cliente que ah iniciado sesion
+      //imagen, titulo, precio, color, cantidad, descripcion
+      let indice = undefined;
+      let unidades = 1;
+      let i = 0;
+      let iguales = false;
+      let salir = false;
+      let producto;
+      if (this.id_producto === -1) {
+        producto = {
+          imagen: this.tasks[id].imagen,
+          titulo: this.tasks[id].titulo,
+          precio: this.tasks[id].precio,
+          color: this.color,
+          cantidad: unidades,
+          descripcion: this.descripcion,
+          unidades: 1,
+        };
+      } else {
+        producto = {
+          titulo: this.tasks[this.id_producto].titulo,
+          precio: this.tasks[this.id_producto].precio,
+          unidades: 1,
+        };
+      }
+
+      if (this.comprados.length == 0) {
+        this.total_compra = producto.precio;
+        this.comprados.push(producto);
+      } else {
+        do {
+          if (i < this.comprados.length) {
+            iguales = this.objetos_iguales(producto, this.comprados[i])
+              ? true
+              : false;
+            i++;
+            salir = iguales ? true : false;
+          } else {
+            salir = true;
+          }
+        } while (!salir);
+
+        if (!iguales) {
+          this.comprados.push(producto);
+        } else if (iguales) {
+          indice = this.encontrar_indice(producto, this.comprados);
+          unidades = this.comprados[indice].unidades + 1;
+          this.comprados[indice].unidades = unidades;
+        }
+
+        let valor2 = parseInt(this.total_compra);
+        let valor3 = parseInt(producto.precio);
+        this.total_compra = valor2 + valor3;
+      }
+    }, */
+
+    /* AgregarIndice(id) {
+      this.tab = "edit";
+      this.indice_editar = id;
+      let titulo = this.tasks[this.indice_editar].titulo;
+
+      this.buscar = titulo;
+      this.obtenerImagenes();
+    }, */
 
     /* AñadirProducto() {
       if (

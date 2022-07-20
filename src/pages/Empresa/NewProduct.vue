@@ -278,29 +278,6 @@ export default {
       return usuarioActual;
     },
 
-    async EnviarPeticionRespuesta(url, method, body) {
-      let opcion = body === "" ? false : true;
-      let informacion;
-      if (opcion) {
-        informacion = await fetch(url, {
-          method: method,
-          body: JSON.stringify(body),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-      } else {
-        informacion = await fetch(url, {
-          method: method,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-      }
-      const data = await informacion.json();
-      return data;
-    },
-
     async SubirImagenes() {
       const storage = getStorage();
 
@@ -407,7 +384,6 @@ export default {
       } catch (error) {
         console.log("Error general: ", error);
       }
-
       this.indice++;
       if (this.indice == tamano) {
         this.CrearProducto();
@@ -430,8 +406,6 @@ export default {
     },
 
     CrearProducto() {
-      console.log("Creando producto");
-
       const Producto = {
         idProducto: 0,
         imagen: this.urlDescarga[0],
@@ -482,6 +456,29 @@ export default {
           }
         }
       });
+    },
+
+     async EnviarPeticionRespuesta(url, method, body) {
+      let opcion = body === "" ? false : true;
+      let informacion;
+      if (opcion) {
+        informacion = await fetch(url, {
+          method: method,
+          body: JSON.stringify(body),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      } else {
+        informacion = await fetch(url, {
+          method: method,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      }
+      const data = await informacion.json();
+      return data;
     },
 
     /* IniciarFirebase() {

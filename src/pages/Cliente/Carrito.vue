@@ -453,29 +453,6 @@ export default {
         });
     },
 
-    async EnviarPeticionRespuesta(url, method, body) {
-      let opcion = body === "" ? false : true;
-      let informacion;
-      if (opcion) {
-        informacion = await fetch(url, {
-          method: method,
-          body: JSON.stringify(body),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-      } else {
-        informacion = await fetch(url, {
-          method: method,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-      }
-      const data = await informacion.json();
-      return data;
-    },
-
     ObtenerImagen(index) {
       return this.comprados[index].imagen;
     },
@@ -500,90 +477,6 @@ export default {
         this.$set(this.comprados[index], "unidades", carrito[index].cantidad);
       }
     },
-
-    /* async ObtenerProductos() {
-      //Obtener los productos de la lista de compras de un cliente predeterminado
-      try {
-        let data;
-        let url = this.$store.state.urlBackendElegida + "api/Producto/ObtenerProductos"
-
-        this.res = await fetch(url, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
-          .then((res) => (data = res))
-          .catch((error) => console.error("Error en la matriz:", error))
-          .then(function (response) {
-            //console.log(response);
-            //Object.assign(this.producto, response);
-          });
-
-        let productos = await data.json();
-        console.log({productos});
-        this.comprados = this.EliminarRepetidos(productos);
-        console.log(this.comprados);
-        if (this.comprados.length > 0) {
-          this.$set(
-            this.comprados,
-            this.OrdenarMetodoBorbuja(this.comprados, 1)
-          );
-        }
-        
-      } catch (error) {
-        console.error("Error: " + error);
-      }
-
-      //Obtener las cantidades de cada uno de los productos del carrito
-      try {
-        let data;
-        let url = this.$store.state.urlBackendElegida + "api/Carrito/ObtenerCarrito"
-
-        this.res = await fetch(url, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
-          .then((res) => (data = res))
-          .catch((error) => console.error("Error en la matriz:", error))
-          .then(function (response) {
-            //console.log(response);
-            //Object.assign(this.producto, response);
-          });
-
-        let carrito = await data.json();
-
-        if (carrito.length > 0) {
-          let relacion = this.UnirArreglo(carrito);
-
-          let arreglo = this.ContarUnidadesArreglo(relacion);
-
-          let cantidades = this.EliminarIdsRepetidos(arreglo);
-
-          /* Object.assign(
-          this.Cantidades,
-          this.ordenarMetodoBorbuja(cantidades, 2)
-        );
-          this.Cantidades = Object.assign(
-            {},
-            this.Cantidades,
-            this.OrdenarMetodoBorbuja(cantidades, 2)
-          );
-
-          for (let index = 0; index < this.comprados.length; index++) {
-            this.$set(
-              this.comprados[index],
-              "unidades",
-              this.Cantidades[index].cantidad
-            );
-          }
-        }
-      } catch (error) {
-        console.error("Error: " + error);
-      }
-    }, */
 
     OrdenarMetodoBorbuja(arregloFinal, orden) {
       var length = arregloFinal.length;
@@ -728,16 +621,6 @@ export default {
       }
     },
 
-    /* CantidadPlus(task) {
-      console.log({task})
-      if (task.unidades < this.comprados[task.idProducto - 1].cantidad) {
-        this.$set(
-          this.comprados[task.idProducto - 1],
-          "unidades",
-          this.comprados[task.idProducto - 1].unidades + 1
-        );
-      }
-    }, */
 
     //Corregir para que solo lo haga mientras el numero digitado
     //sea menor al numero disponible de productos
@@ -794,6 +677,125 @@ export default {
         this.$set(this.comprados[index], "unidades", 1);
       }
     },
+
+    async EnviarPeticionRespuesta(url, method, body) {
+      let opcion = body === "" ? false : true;
+      let informacion;
+      if (opcion) {
+        informacion = await fetch(url, {
+          method: method,
+          body: JSON.stringify(body),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      } else {
+        informacion = await fetch(url, {
+          method: method,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      }
+      const data = await informacion.json();
+      return data;
+    },
+
+
+    /* CantidadPlus(task) {
+      console.log({task})
+      if (task.unidades < this.comprados[task.idProducto - 1].cantidad) {
+        this.$set(
+          this.comprados[task.idProducto - 1],
+          "unidades",
+          this.comprados[task.idProducto - 1].unidades + 1
+        );
+      }
+    }, */
+
+    /* async ObtenerProductos() {
+      //Obtener los productos de la lista de compras de un cliente predeterminado
+      try {
+        let data;
+        let url = this.$store.state.urlBackendElegida + "api/Producto/ObtenerProductos"
+
+        this.res = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+          .then((res) => (data = res))
+          .catch((error) => console.error("Error en la matriz:", error))
+          .then(function (response) {
+            //console.log(response);
+            //Object.assign(this.producto, response);
+          });
+
+        let productos = await data.json();
+        console.log({productos});
+        this.comprados = this.EliminarRepetidos(productos);
+        console.log(this.comprados);
+        if (this.comprados.length > 0) {
+          this.$set(
+            this.comprados,
+            this.OrdenarMetodoBorbuja(this.comprados, 1)
+          );
+        }
+
+      } catch (error) {
+        console.error("Error: " + error);
+      }
+
+      //Obtener las cantidades de cada uno de los productos del carrito
+      try {
+        let data;
+        let url = this.$store.state.urlBackendElegida + "api/Carrito/ObtenerCarrito"
+
+        this.res = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+          .then((res) => (data = res))
+          .catch((error) => console.error("Error en la matriz:", error))
+          .then(function (response) {
+            //console.log(response);
+            //Object.assign(this.producto, response);
+          });
+
+        let carrito = await data.json();
+
+        if (carrito.length > 0) {
+          let relacion = this.UnirArreglo(carrito);
+
+          let arreglo = this.ContarUnidadesArreglo(relacion);
+
+          let cantidades = this.EliminarIdsRepetidos(arreglo);
+
+          /* Object.assign(
+          this.Cantidades,
+          this.ordenarMetodoBorbuja(cantidades, 2)
+        );
+          this.Cantidades = Object.assign(
+            {},
+            this.Cantidades,
+            this.OrdenarMetodoBorbuja(cantidades, 2)
+          );
+
+          for (let index = 0; index < this.comprados.length; index++) {
+            this.$set(
+              this.comprados[index],
+              "unidades",
+              this.Cantidades[index].cantidad
+            );
+          }
+        }
+      } catch (error) {
+        console.error("Error: " + error);
+      }
+    }, */
   },
 };
 </script>
