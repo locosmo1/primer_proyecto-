@@ -83,7 +83,7 @@
                     class="glossy"
                     color="blue-8"
                     label="Actualizar esta Direccion"
-                    @click="(dialogoDomicilio = true), (crear = false)"
+                    @click="ActualizarDomicilio()"
                     rounded
                     no-caps
                   />
@@ -105,7 +105,8 @@
             <ComponenteDomicilio
               :crear="crear"
               :domicilio="this.domiciliosSeleccionados[0]"
-            ></ComponenteDomicilio>
+              :usuarioSeleccionado="this.usuarioSeleccionado"
+            />
           </q-dialog>
 
           <!-- Mostrar los Productos de las empresas -->
@@ -236,6 +237,7 @@
               <ComponenteProducto
                 :crear="crearProducto"
                 :producto="this.productosSeleccionados[0]"
+                :usuarioSeleccionado="this.usuarioSeleccionado"
               >
               </ComponenteProducto>
             </q-dialog>
@@ -262,8 +264,7 @@ import { getAuth, signOut } from "firebase/auth";
 import ComponenteProducto from "components/CrearActualizarProducto.vue";
 
 import ComponenteDomicilio from "components/CrearActualizarDomicilio.vue";
-
-/* import {map} from src="https://maps.googleapis.com/maps/api/js?key=MY_API_KEY&callback=initMap"; */
+import CrearActualizarDomicilioVue from "components/CrearActualizarDomicilio.vue";
 
 export default {
   name: "Principal",
@@ -446,6 +447,12 @@ export default {
   },
 
   methods: {
+    ActualizarDomicilio() {
+      if (this.domiciliosSeleccionados.length === 1) {
+        this.dialogoDomicilio = true;
+        this.crear = false;
+      }
+    },
 
     NuevoProducto() {
       this.crearActualizarProducto = true;
@@ -462,6 +469,7 @@ export default {
 
     BorrarProducto() {
       if (this.productosSeleccionados.length === 1) {
+
       }
     },
 
@@ -471,7 +479,7 @@ export default {
         "api/Domicilio/ObtenerIdUbicacion";
 
       let idDomicilio = this.domiciliosSeleccionados[0].idDomicilio;
-      let idUbicacionn = await this.enviarPeticionRespuesta(
+      let idUbicacionn = await this.EnviarPeticionRespuesta(
         url,
         "POST",
         idDomicilio
@@ -489,10 +497,8 @@ export default {
       let url2 =
         this.$store.state.urlBackendElegida +
         "api/Domicilio/EliminarDomicilioUbicacion";
-      this.enviarPeticion(url2, "DELETE", domicilio);
+      this.EnviarPeticion(url2, "DELETE", domicilio);
     },
-
-    
 
     CargarDatosUsuario() {
       for (let i = 0; i < this.usuarios.length; i++) {

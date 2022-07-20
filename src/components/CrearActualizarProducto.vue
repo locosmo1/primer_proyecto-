@@ -156,6 +156,9 @@ export default {
     producto: {
       type: Object,
     },
+    usuarioSeleccionado: {
+      type: Object,
+    },
   },
   data() {
     return {
@@ -211,8 +214,12 @@ export default {
     //this.labelProducto = this.crear ? "Crear Producto" : "Actualizar Producto";
   },
 
-  mounted(){
-    this.editedItem = this.producto;
+  mounted() {
+    if (this.producto !== undefined) {
+      this.editedItem = this.producto;
+    } else {
+      //console.log(this.usuarioSeleccionado);
+    }
   },
 
   methods: {
@@ -270,35 +277,12 @@ export default {
 
       let usuarioActual = await this.EnviarPeticionRespuesta(url, "GET");
 
-      if (usuarioActual.idRol !== 2) {
+      /* if (usuarioActual.idRol !== 2) {
         if (this.$route.path !== "/Login") {
           this.$router.replace("/Login");
         }
-      }
+      } */
       return usuarioActual;
-    },
-
-    async EnviarPeticionRespuesta(url, method, body) {
-      let opcion = body === "" ? false : true;
-      let informacion;
-      if (opcion) {
-        informacion = await fetch(url, {
-          method: method,
-          body: JSON.stringify(body),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-      } else {
-        informacion = await fetch(url, {
-          method: method,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-      }
-      const data = await informacion.json();
-      return data;
     },
 
     async SubirImagenes() {
@@ -311,8 +295,6 @@ export default {
           nuevo.push(this.files[index]);
         }
       }
-
-      console.log(nuevo.length, " imagenes pasaron los requisitos de peso");
 
       let usuarioActual = await this.ObtenerUsuarioActual();
       let idUsuario = usuarioActual.idUsuario;
@@ -380,7 +362,6 @@ export default {
     },
 
     async AnadirImagenApi(downloadURL, tamano) {
-      console.log("Añadiendo imagen a la api");
       let imagen = {
         direccion: downloadURL,
       };
@@ -415,20 +396,6 @@ export default {
       }
     },
 
-    ObtenerIdCategoria() {
-      return this.editedItem.categoria === "Tecnologia"
-        ? "1"
-        : this.editedItem.categoria === "Belleza"
-        ? "2"
-        : this.editedItem.categoria === "Farmacia"
-        ? "3"
-        : this.editedItem.categoria === "Moda"
-        ? "4"
-        : this.editedItem.categoria === "Cocina"
-        ? "5"
-        : "6";
-    },
-
     CrearProducto() {
       console.log("Creando producto");
 
@@ -440,18 +407,19 @@ export default {
         color: this.editedItem.color,
         cantidad: this.editedItem.cantidad,
         descripcion: this.editedItem.descripcion,
-        idEmpresa: 0,
+        idEmpresa: this.usuarioSeleccionado.idUsuario, //Revisar antes = 0
         idCategoria: this.ObtenerIdCategoria(),
         imagenes: this.urlDescarga,
       };
 
       //Quitar la primera imagen del array
       //this.urlDescarga.shift();
-
       let url =
         this.$store.state.urlBackendElegida + "api/prueba/CreateProducto";
 
-      fetch(url, {
+      this.EnviarPeticion(url, "POST", Producto);
+
+      /* fetch(url, {
         method: "POST", // or 'PUT'
         headers: {
           "Content-Type": "application/json",
@@ -464,7 +432,7 @@ export default {
         })
         .catch((error) => {
           console.error("Error EN FETCH:", error);
-        });
+        }); */
     },
 
     async UsuarioAccedioCorrectamente() {
@@ -484,18 +452,42 @@ export default {
       });
     },
 
-    /* IniciarFirebase() {
-      const firebaseConfig = {
-        apiKey: "AIzaSyCzVaDxudQnk2wzAe4m8pF5BtdgGKVsxso",
-        authDomain: "buy-online-7b548.firebaseapp.com",
-        projectId: "buy-online-7b548",
-        storageBucket: "buy-online-7b548.appspot.com",
-        messagingSenderId: "472565836098",
-        appId: "1:472565836098:web:b1ef86075a6ded313a80db",
-        measurementId: "G-M27HCV275E",
-      };
-      const app = initializeApp(firebaseConfig);
-    }, */
+    async EnviarPeticionRespuesta(url, method, body) {
+      let opcion = body === "" ? false : true;
+      let informacion;
+      if (opcion) {
+        informacion = await fetch(url, {
+          method: method,
+          body: JSON.stringify(body),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      } else {
+        informacion = await fetch(url, {
+          method: method,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      }
+      const data = await informacion.json();
+      return data;
+    },
+
+    ObtenerIdCategoria() {
+      return this.editedItem.categoria === "Tecnologia"
+        ? "1"
+        : this.editedItem.categoria === "Belleza"
+        ? "2"
+        : this.editedItem.categoria === "Farmacia"
+        ? "3"
+        : this.editedItem.categoria === "Moda"
+        ? "4"
+        : this.editedItem.categoria === "Cocina"
+        ? "5"
+        : "6";
+    },
 
     async AñadirTarea() {
       //Enlazar la url de cada imagen con el id del usuario que ah ingresado
@@ -515,12 +507,66 @@ export default {
       let idCategoria = this.ObtenerIdCategoria(this.editedItem.idCategoria);
       this.editedItem.idCategoria = parseInt(idCategoria);
 
-      console.log(this.editedItem);
-
       let url = this.$store.state.urlBackendElegida + "api/Producto";
 
       this.EnviarPeticion(url, "PUT", this.editedItem);
     },
+
+    async EnviarPeticion(url, method, body) {
+      let opcion = body === "" ? false : true;
+      if (opcion) {
+        fetch(url, {
+          method: method,
+          body: JSON.stringify(body),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      } else {
+        fetch(url, {
+          method: method,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      }
+    },
+
+    async EnviarPeticionRespuesta(url, method, body) {
+      let opcion = body === "" ? false : true;
+      let informacion;
+      if (opcion) {
+        informacion = await fetch(url, {
+          method: method,
+          body: JSON.stringify(body),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      } else {
+        informacion = await fetch(url, {
+          method: method,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      }
+      const data = await informacion.json();
+      return data;
+    },
+
+    /* IniciarFirebase() {
+      const firebaseConfig = {
+        apiKey: "AIzaSyCzVaDxudQnk2wzAe4m8pF5BtdgGKVsxso",
+        authDomain: "buy-online-7b548.firebaseapp.com",
+        projectId: "buy-online-7b548",
+        storageBucket: "buy-online-7b548.appspot.com",
+        messagingSenderId: "472565836098",
+        appId: "1:472565836098:web:b1ef86075a6ded313a80db",
+        measurementId: "G-M27HCV275E",
+      };
+      const app = initializeApp(firebaseConfig);
+    }, */
   },
 };
 </script>

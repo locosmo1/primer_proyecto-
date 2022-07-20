@@ -66,7 +66,7 @@
         no-caps
         class="text-center q-pa-xs"
         color="info"
-        label="Enviar"
+        :label="labelDomicilio"
         icon="people_alt"
         @click="AgregarEditarDomicilio()"
       />
@@ -75,6 +75,8 @@
 </template>
 
 <script>
+/* import {map} from src="https://maps.googleapis.com/maps/api/js?key=MY_API_KEY&callback=initMap"; */
+
 import {
   getStorage,
   ref,
@@ -92,6 +94,9 @@ export default {
     domicilio: {
       type: Object,
     },
+    usuarioSeleccionado: {
+      type: Object,
+    },
   },
   data() {
     return {
@@ -99,6 +104,7 @@ export default {
       modelCiudad: "",
       nuevaCiudad: "",
       nuevaDireccion: "",
+      labelDomicilio: undefined,
       latitud: 2.9348758774625936,
       longitud: -75.27874052139391,
       ciudadesDisponibles: ["Bogota", "Medellin", "Cali", "Barranquilla"],
@@ -117,20 +123,27 @@ export default {
       ],
     };
   },
-  mounted() {},
+  mounted() {
+    this.labelDomicilio = this.crear
+      ? "Crear Domicilio"
+      : "Actualizar Domicilio";
+  },
 
   methods: {
     AgregarEditarDomicilio() {
       if (this.crear) {
+        this.labelDomicilio = "Crear Domicilio";
         this.AgregarDomicilio();
       } else {
         if (this.domicilio !== undefined) {
+          this.labelDomicilio = "Actualizar Domicilio";
           this.ActualizarDomicilio();
         }
       }
     },
 
     AgregarDomicilio() {
+      //idDomicilio, ciudad, direccion, idUsuario, idUbicacion, latitud, longitud
       let nuevoDomicilio = {
         idDomicilio: 1,
         ciudad: this.modelCiudad,
@@ -138,11 +151,10 @@ export default {
         idUsuario: this.usuarioSeleccionado.idUsuario,
         latitud: this.latitud,
         longitud: this.longitud,
-      }; //idDomicilio, ciudad, direccion, idUsuario, idUbicacion, latitud, longitud
-      //console.log(nuevoDomicilio);
+      };
       let url =
         this.$store.state.urlBackendElegida + "api/Domicilio/crearDomicilio";
-      this.enviarPeticion(url, "POST", nuevoDomicilio);
+      this.EnviarPeticion(url, "POST", nuevoDomicilio);
       this.dialogoDomicilio = false;
     },
 
@@ -150,26 +162,24 @@ export default {
       let url =
         this.$store.state.urlBackendElegida +
         "api/Domicilio/ObtenerIdUbicacion";
-      if (this.domiciliosSeleccionados.length == 1) {
-        let idUbicacionn = await this.enviarPeticionRespuesta(
-          url,
-          "POST",
-          this.domiciliosSeleccionados[0].idDomicilio
-        );
-        let nuevoDomicilio = {
-          idDomicilio: this.domiciliosSeleccionados[0].idDomicilio,
-          ciudad: this.modelCiudad,
-          direccion: this.nuevaDireccion,
-          idUsuario: this.usuarioSeleccionado.idUsuario,
-          idUbicacion: idUbicacionn,
-          latitud: this.latitud,
-          longitud: this.longitud,
-        };
-        this.enviarPeticion(this.urlBaseDomicilio, "PUT", nuevoDomicilio);
-        this.dialogoDomicilio = false;
-      } else {
-        console.log("Debes seleccionar un solo domicilio");
-      }
+      let idUbicacionn = await this.EnviarPeticionRespuesta(
+        url,
+        "POST",
+        this.domicilio.idDomicilio
+      ); //this.domiciliosSeleccionados[0].idDomicilio
+      let nuevoDomicilio = {
+        idDomicilio: this.domicilio.idDomicilio,
+        ciudad: this.modelCiudad,
+        direccion: this.nuevaDireccion,
+        idUsuario: this.usuarioSeleccionado.idUsuario,
+        idUbicacion: idUbicacionn,
+        latitud: this.latitud,
+        longitud: this.longitud,
+      };
+      console.log({nuevoDomicilio})
+      let url2 = this.$store.state.urlBackendElegida + "api/Domicilio";
+      this.EnviarPeticion(url2, "PUT", nuevoDomicilio);
+      this.dialogoDomicilio = false;
     },
 
     CargarMapaUbicacion() {
@@ -259,6 +269,49 @@ export default {
         console.log(data);
         this.formatedAddresses = data;
       });
+    },
+
+    async EnviarPeticion(url, method, body) {
+      let opcion = body === "" ? false : true;
+      if (opcion) {
+        fetch(url, {
+          method: method,
+          body: JSON.stringify(body),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      } else {
+        fetch(url, {
+          method: method,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      }
+    },
+
+    async EnviarPeticionRespuesta(url, method, body) {
+      let opcion = body === "" ? false : true;
+      let informacion;
+      if (opcion) {
+        informacion = await fetch(url, {
+          method: method,
+          body: JSON.stringify(body),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      } else {
+        informacion = await fetch(url, {
+          method: method,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      }
+      const data = await informacion.json();
+      return data;
     },
   },
 };
