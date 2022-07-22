@@ -1,4 +1,5 @@
 import Vue from "vue";
+
 import Vuex from "vuex";
 
 import * as VueGoogleMaps from "vue2-google-maps";
@@ -6,7 +7,8 @@ import * as VueGoogleMaps from "vue2-google-maps";
 import { getAuth } from "firebase/auth";
 
 import { initializeApp } from "firebase/app";
-/* AIzaSyCOe6XiKYkPA1q3u4v_SVZy5Pw9yIXOnVQ */
+
+import _, { map } from "underscore";
 
 import {
   setPersistence,
@@ -14,8 +16,6 @@ import {
   GoogleAuthProvider,
   signInWithRedirect,
 } from "firebase/auth";
-
-import _, { map } from "underscore";
 
 Vue.use(VueGoogleMaps, {
   load: {
@@ -43,7 +43,7 @@ export default new Vuex.Store({
 
     urlBackendRemota : "https://mercado.somee.com/",
     urlBackendLocal: "https://localhost:44370/",
-    urlBackendElegida: "https://localhost:44370/",
+    urlBackendElegida: "https://mercado.somee.com/",
   },
 
   mutations: {
@@ -51,6 +51,7 @@ export default new Vuex.Store({
     add_amigo(state) {
       state.amigos.push(state.amigo);
     },
+
     cerrarSesion(state) {
       if (_.isEmpty(state.auth)){
         signOut(state.auth)
@@ -64,6 +65,7 @@ export default new Vuex.Store({
         });
       }
     },
+
     iniciarFirebase(state) {
       if (_.isEmpty(state.auth)) {
         const firebaseConfig = {
@@ -80,6 +82,7 @@ export default new Vuex.Store({
         state.auth = getAuth();
       }
     },
+
     modificarPersistencia(state) {
       const auth = state.auth;
       setPersistence(auth, inMemoryPersistence)
@@ -100,6 +103,49 @@ export default new Vuex.Store({
         });
       console.log("Persistencia modificada");
     },
+
+    async EnviarPeticion(url, method, body) {
+      let opcion = body === "" ? false : true;
+      if (opcion) {
+        fetch(url, {
+          method: method,
+          body: JSON.stringify(body),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      } else {
+        fetch(url, {
+          method: method,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      }
+    },
+
+    async EnviarPeticionRespuesta(url, method, body) {
+      let opcion = body === "" ? false : true;
+      let informacion;
+      if (opcion) {
+        informacion = await fetch(url, {
+          method: method,
+          body: JSON.stringify(body),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      } else {
+        informacion = await fetch(url, {
+          method: method,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      }
+      const data = await informacion.json();
+      return data;
+    },
   },
 
   actions: {
@@ -114,7 +160,7 @@ export default new Vuex.Store({
       context.commit("modificarPersistencia");
     },
   },
-  
+
   getters: {
     //Obtener datos globales
     dialogo(state) {
