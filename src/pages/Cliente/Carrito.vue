@@ -34,8 +34,7 @@
       animated
       transition-prev="scale"
       transition-next="scale"
-      class="text-black"
-    >
+      class="text-black">
       <!-- v-if="comprados.length > 0" -->
       <q-tab-panel name="carrito">
         <div class="row">
